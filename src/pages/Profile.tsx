@@ -1,4 +1,26 @@
-import * as SiIcons from "react-icons/si"
+import {
+  SiChartdotjs,
+  SiCloudflare,
+  SiDigitalocean,
+  SiExpress,
+  SiFirebase,
+  SiGithub,
+  SiGooglecloud,
+  SiJavascript,
+  SiLaravel,
+  SiMongodb,
+  SiMysql,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiPhp,
+  SiPolygon,
+  SiPostgresql,
+  SiReact,
+  SiRedis,
+  SiSass,
+  SiSocketdotio,
+  SiTailwindcss,
+} from "react-icons/si"
 import type { IconType } from "react-icons"
 import Rubiks from "../components/rubiks"
 import Laptop from "../components/laptop"
@@ -205,38 +227,31 @@ function TechMarquee({ categories }: { categories: SkillCategory[] }) {
   const items = categories.flatMap((c) => c.items)
   const tripled = [...items, ...items, ...items]
 
-  const ICON_NAME_BY_ID: Record<string, string> = {
-    javascript: "SiJavascript",
-    react: "SiReact",
-    nextjs: "SiNextdotjs",
-    css: "SiCss3",
-    scss: "SiSass",
-    tailwind: "SiTailwindcss",
-    mui: "SiMaterialui",
-    chartjs: "SiChartdotjs",
-    node: "SiNodedotjs",
-    express: "SiExpress",
-    php: "SiPhp",
-    laravel: "SiLaravel",
-    mysql: "SiMysql",
-    postgres: "SiPostgresql",
-    mongo: "SiMongodb",
-    redis: "SiRedis",
-    websocket: "SiSocketdotio",
-    firebase: "SiFirebase",
-    aws: "SiAmazonaws",
-    gcp: "SiGooglecloud",
-    digitalocean: "SiDigitalocean",
-    cloudflare: "SiCloudflare",
-    polygon: "SiPolygon",
-    metamask: "SiMetamask",
+  const ICON_BY_ID: Record<string, IconType> = {
+    javascript: SiJavascript,
+    react: SiReact,
+    nextjs: SiNextdotjs,
+    scss: SiSass,
+    tailwind: SiTailwindcss,
+    chartjs: SiChartdotjs,
+    node: SiNodedotjs,
+    express: SiExpress,
+    php: SiPhp,
+    laravel: SiLaravel,
+    mysql: SiMysql,
+    postgres: SiPostgresql,
+    mongo: SiMongodb,
+    redis: SiRedis,
+    websocket: SiSocketdotio,
+    firebase: SiFirebase,
+    gcp: SiGooglecloud,
+    digitalocean: SiDigitalocean,
+    cloudflare: SiCloudflare,
+    polygon: SiPolygon,
   }
 
   const renderItem = (it: SkillItem, i: number, size = 48) => {
-    const iconName = ICON_NAME_BY_ID[it.id]
-    const Comp = iconName
-      ? ((SiIcons as Record<string, IconType>)[iconName] as IconType)
-      : undefined
+    const Comp = ICON_BY_ID[it.id]
     if (Comp)
       return (
         <div key={it.id + "-" + i} className="tech-icon-pill" title={it.label}>
@@ -491,6 +506,13 @@ export default function Profile() {
 
   return (
     <div className="app-shell min-h-screen antialiased">
+      <Link
+        to="/"
+        className="fixed right-4 top-4 z-50 inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-slate-800"
+      >
+        ← Back to v2
+      </Link>
+
       <div className="bg-grid" aria-hidden="true" />
       <div className="halo halo-1" aria-hidden="true" />
       <div className="halo halo-2" aria-hidden="true" />
@@ -538,7 +560,7 @@ export default function Profile() {
               className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:text-slate-900"
               title="GitHub"
             >
-              <SiIcons.SiGithub size={20} />
+              <SiGithub size={20} />
             </a>
           </div>
 

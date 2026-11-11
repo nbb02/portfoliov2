@@ -1,8 +1,10 @@
 import {
   Suspense,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
+  useState,
   type RefObject,
 } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
@@ -16,15 +18,11 @@ import {
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import * as THREE from "three"
+import type { RoleItem } from "./journeyRoles"
 const sunModelUrl = "/assets/sun/sun/scene.gltf"
 const moonModelUrl = "/assets/moon/scene.gltf"
 
-type RoleItem = {
-  title: string
-  company: string
-  range: string
-  highlights: string[]
-}
+export type { RoleItem }
 
 type SkyBody = "sun" | "moon"
 
@@ -36,6 +34,7 @@ type SkyOrbProps = {
   left: string
   top: string
   opacity: number
+  active: boolean
 }
 
 type SceneStyles = {
@@ -191,6 +190,9 @@ function buildSceneStyles(progress: number): SceneStyles {
         textProgress,
         0.08 + textProgress * 0.37,
       ),
+      "--stars-opacity": String(clamp((sceneProgress - 0.55) / 0.35)),
+      "--clouds-opacity": String(1 - clamp((sceneProgress - 0.4) / 0.35)),
+      "--clouds-shift": `${-6 + sceneProgress * 12}%`,
     },
     sunLeft: toPercent(33, 108, sunMotion),
     moonLeft: toPercent(24, 68, moonMotion),
@@ -269,6 +271,7 @@ function SkyOrb({
   left,
   top,
   opacity,
+  active,
 }: SkyOrbProps) {
   return (
     <div
@@ -277,7 +280,8 @@ function SkyOrb({
       style={{ left, top, opacity }}
       aria-hidden="true"
     >
-      <Canvas
+      {active && (
+        <Canvas
         className="sky-model-canvas"
         camera={{ position: [0, 0, 9], fov: body === "sun" ? 32 : 30 }}
         dpr={[1, 2]}
@@ -307,19 +311,72 @@ function SkyOrb({
           autoRotateSpeed={1.5}
         />
       </Canvas>
+      )}
     </div>
   )
 }
 
-useGLTF.preload(sunModelUrl)
-useGLTF.preload(moonModelUrl)
-
-export default function ProfessionalExperience() {
+export default function ProfessionalExperience({
+  roles = ROLES,
+  kicker = "Journey",
+  title = "Professional Experience",
+  className = "",
+  atmosphere = false,
+}: {
+  roles?: RoleItem[]
+  kicker?: string
+  title?: string
+  className?: string
+  atmosphere?: boolean
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const sectionPanelRef = useRef<HTMLDivElement>(null)
   const sunRef = useRef<HTMLDivElement>(null)
   const moonRef = useRef<HTMLDivElement>(null)
+  const [isNight, setIsNight] = useState(false)
+  const [showHint, setShowHint] = useState(true)
+  const [showSky, setShowSky] = useState(false)
   const initialScene = buildSceneStyles(0)
+
+  useEffect(() => {
+    if (!atmosphere) {
+      setShowSky(true)
+      return
+    }
+
+    const section = sectionRef.current
+    if (!section) return
+
+    const desktopQuery = window.matchMedia("(min-width: 769px)")
+    let inRange = false
+
+    const sync = () => {
+      const active = desktopQuery.matches && inRange
+      setShowSky(active)
+
+      if (active) {
+        void useGLTF.preload(sunModelUrl)
+        void useGLTF.preload(moonModelUrl)
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        inRange = entries.some((entry) => entry.isIntersecting)
+        if (inRange) observer.disconnect()
+        sync()
+      },
+      { rootMargin: "700px 0px" },
+    )
+
+    observer.observe(section)
+    desktopQuery.addEventListener("change", sync)
+
+    return () => {
+      observer.disconnect()
+      desktopQuery.removeEventListener("change", sync)
+    }
+  }, [atmosphere])
 
   useLayoutEffect(() => {
     const shell = sectionRef.current
@@ -354,6 +411,53 @@ export default function ProfessionalExperience() {
       })
     }
 
+    if (atmosphere) {
+      renderScene()
+
+      const isDesktop = window.matchMedia("(min-width: 769px)").matches
+      if (!isDesktop) {
+        return
+      }
+
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches
+      let currentState = 0
+      let hintVisible = true
+
+      const trigger = ScrollTrigger.create({
+        trigger: shell,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          const shouldShowHint = self.progress < 0.8
+          if (shouldShowHint !== hintVisible) {
+            hintVisible = shouldShowHint
+            setShowHint(shouldShowHint)
+          }
+
+          const nextState = self.progress >= 0.25 ? 1 : 0
+          if (nextState === currentState) return
+
+          currentState = nextState
+          setIsNight(nextState === 1)
+
+          gsap.killTweensOf(state)
+          gsap.to(state, {
+            progress: nextState,
+            duration: prefersReducedMotion ? 0.01 : 1.1,
+            ease: "power2.inOut",
+            onUpdate: renderScene,
+          })
+        },
+      })
+
+      return () => {
+        trigger.kill()
+        gsap.killTweensOf(state)
+      }
+    }
+
     const ctx = gsap.context(() => {
       renderScene()
 
@@ -371,15 +475,29 @@ export default function ProfessionalExperience() {
     }, shell)
 
     return () => ctx.revert()
-  }, [])
+  }, [atmosphere])
 
   return (
-    <section ref={sectionRef} className="professional-scroll-shell">
+    <section
+      ref={sectionRef}
+      className={`professional-scroll-shell ${className}`}
+    >
       <div
         className="professional-section"
         ref={sectionPanelRef}
         style={{ backgroundImage: initialScene.sectionBackground }}
       >
+        {atmosphere && (
+          <>
+            <div className="professional-stars" aria-hidden="true" />
+            <div className="professional-clouds" aria-hidden="true">
+              <span className="cloud cloud-1" />
+              <span className="cloud cloud-2" />
+              <span className="cloud cloud-3" />
+            </div>
+          </>
+        )}
+
         <div className="professional-sky">
           <SkyOrb
             body="sun"
@@ -389,6 +507,7 @@ export default function ProfessionalExperience() {
             left={initialScene.sunLeft}
             top={initialScene.sunTop}
             opacity={initialScene.sunOpacity}
+            active={showSky}
           />
           <SkyOrb
             body="moon"
@@ -398,22 +517,26 @@ export default function ProfessionalExperience() {
             left={initialScene.moonLeft}
             top={initialScene.moonTop}
             opacity={initialScene.moonOpacity}
+            active={showSky}
           />
         </div>
 
         <div className="professional-content">
-          <p className="section-kicker professional-kicker">Journey</p>
-          <h2 className="section-title professional-title">
-            Professional Experience
-          </h2>
+          <p className="section-kicker professional-kicker">{kicker}</p>
+          <h2 className="section-title professional-title">{title}</h2>
 
           <div className="mt-6 space-y-4">
-            {ROLES.map((role) => (
+            {roles.map((role) => (
               <article
                 key={`${role.title}-${role.company}`}
                 className="professional-role"
               >
-                <h3 className="professional-role-title">{role.title}</h3>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="professional-role-title">{role.title}</h3>
+                  {role.current && (
+                    <span className="professional-current">Current</span>
+                  )}
+                </div>
                 <p className="professional-role-meta">
                   {role.company} <span aria-hidden="true">|</span> {role.range}
                 </p>
@@ -426,6 +549,24 @@ export default function ProfessionalExperience() {
             ))}
           </div>
         </div>
+
+        {atmosphere && (
+          <div
+            className={`journey-scroll-hint ${
+              showHint ? "" : "journey-scroll-hint--hidden"
+            }`}
+            role="status"
+            aria-live="polite"
+            aria-hidden={!showHint}
+          >
+            <span>
+              {isNight ? "Keep scrolling" : "Scroll to switch to night"}
+            </span>
+            <span className="journey-hint-arrow" aria-hidden="true">
+              ↓
+            </span>
+          </div>
+        )}
       </div>
     </section>
   )

@@ -39,6 +39,22 @@ export default function Sidebar() {
             </li>
             <li>
               <NavLink
+                to="/projects/client-portal"
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Client Portal
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/projects/logistics"
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Logistics
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/projects/vitech"
                 className={({ isActive }) => linkClass(isActive)}
               >

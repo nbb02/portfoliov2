@@ -30,12 +30,12 @@ export default function Rubiks() {
       style={{ background: "transparent" }}
       gl={{ alpha: true, antialias: true }}
     >
-      <hemisphereLight args={[0xffffff, 0x444444, 0.7]} />
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
+      <hemisphereLight args={[0xffffff, 0x444444, 0.45]} />
+      <ambientLight intensity={0.65} />
+      <directionalLight position={[5, 5, 5]} intensity={0.9} />
 
       <Suspense fallback={null}>
-        <Environment preset="studio" />
+        <Environment preset="studio" environmentIntensity={0.6} />
         <Float speed={1.05} rotationIntensity={0.4} floatIntensity={0.8}>
           <RubiksModel />
         </Float>

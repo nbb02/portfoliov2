@@ -1,11 +1,3 @@
-import {
-  doc,
-  increment,
-  runTransaction,
-  serverTimestamp,
-} from "firebase/firestore"
-import { db } from "./firebase"
-
 const VISITOR_COOKIE = "portfolio_visitor_id"
 const VISITOR_STORAGE = "portfolio_visitor_id"
 const SESSION_STORAGE = "portfolio_session_id"
@@ -105,6 +97,14 @@ function parseClientInfo(userAgent: string): { browser: string; os: string } {
 export async function trackPageVisit(pathname: string): Promise<void> {
   if (typeof window === "undefined") return
   if (!shouldTrack(pathname)) return
+
+  const [
+    { doc, increment, runTransaction, serverTimestamp },
+    { db },
+  ] = await Promise.all([
+    import("firebase/firestore"),
+    import("./firebase"),
+  ])
 
   const visitorId = getOrCreateVisitorId()
   const { sessionId, isNewSession } = getOrCreateSessionId()

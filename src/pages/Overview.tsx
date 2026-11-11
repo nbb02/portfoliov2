@@ -1,522 +1,56 @@
-import { useState, useEffect } from "react"
-
-type ProjectDef = {
-  title: string
-  code?: string
-  role: "Backend" | "Fullstack" | "Tooling"
-  description: string
-  highlights?: string[]
-  techs: string[]
-  images?: string[]
-}
-
-type CategoryDef = {
-  id: string
-  title: string
-  description: string
-  icon?: string
-  highlights?: string[]
-  keyTechs: string[]
-  projects: ProjectDef[]
-}
-
-// Tech badge mapping with shields.io URLs
-const TECH_BADGES: Record<string, string> = {
-  "Express.js":
-    "https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white",
-  MySQL: "https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white",
-  Redis: "https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white",
-  WebSocket:
-    "https://img.shields.io/badge/WebSocket-010101?logo=socketdotio&logoColor=white",
-  AWS: "https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white",
-  Prometheus:
-    "https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white",
-  Grafana:
-    "https://img.shields.io/badge/Grafana-F2CC0C?logo=grafana&logoColor=black",
-  BullMQ:
-    "https://img.shields.io/badge/BullMQ-DC382D?logo=redis&logoColor=white",
-  Docker:
-    "https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white",
-  "GitHub Actions":
-    "https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white",
-  PayMongo:
-    "https://img.shields.io/badge/PayMongo-6B46C1?logo=paymongo&logoColor=white",
-  cPanel:
-    "https://img.shields.io/badge/cPanel-FF6B35?logo=cpanel&logoColor=white",
-  "AWS Lightsail":
-    "https://img.shields.io/badge/AWS%20Lightsail-FF9900?logo=amazonaws&logoColor=white",
-  Firebase:
-    "https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black",
-  React: "https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black",
-  "Google Authentication":
-    "https://img.shields.io/badge/Google-4285F4?logo=google&logoColor=white",
-  Laravel:
-    "https://img.shields.io/badge/Laravel-FF2D20?logo=laravel&logoColor=white",
-  "Next.js":
-    "https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white",
-  MongoDB:
-    "https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white",
-  Render:
-    "https://img.shields.io/badge/Render-46E3B7?logo=render&logoColor=white",
-  Hostinger:
-    "https://img.shields.io/badge/Hostinger-6736C6?logo=hostinger&logoColor=white",
-  MetaMask:
-    "https://img.shields.io/badge/MetaMask-F6851B?logo=metamask&logoColor=white",
-  Infura:
-    "https://img.shields.io/badge/Infura-FF6B6B?logo=infura&logoColor=white",
-  Polygon:
-    "https://img.shields.io/badge/Polygon-8247E5?logo=polygon&logoColor=white",
-  Git: "https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white",
-  GitHub:
-    "https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white",
-  WSL: "https://img.shields.io/badge/WSL-0A97F5?logo=windows&logoColor=white",
-  VSCode:
-    "https://img.shields.io/badge/VSCode-007ACC?logo=visualstudiocode&logoColor=white",
-}
-
-function TechBadge({ tech }: { tech: string }) {
-  const badgeUrl = TECH_BADGES[tech] || null
-
-  if (!badgeUrl) {
-    return (
-      <span className="inline-flex items-center px-3 py-2 rounded-lg bg-slate-100/60 text-xs font-medium text-slate-700 border border-slate-200/60 backdrop-blur-sm hover:bg-slate-200/60 hover:shadow-md transition-all duration-300 cursor-default">
-        {tech}
-      </span>
-    )
-  }
-
-  return (
-    <img
-      src={badgeUrl}
-      alt={tech}
-      className="h-7 hover:scale-110 hover:drop-shadow-lg transition-all duration-300 cursor-pointer"
-      title={tech}
-    />
-  )
-}
-
-function ProjectCard({ p }: { p: ProjectDef }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  // Auto-rotate images every 3 seconds
-  useEffect(() => {
-    if (!p.images || p.images.length <= 1) return
-
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % p.images!.length)
-    }, 3000)
-
-    return () => clearInterval(interval)
-  }, [p.images])
-
-  const currentImage = p.images?.[currentImageIndex] || p.images?.[0]
-
-  return (
-    <div className="h-max project-card glass p-5 rounded-lg border border-slate-200/40 backdrop-blur-md hover:shadow-lg hover:border-indigo-300/40 transition-all duration-300">
-      {currentImage && (
-        <div className="mb-4 -m-1 relative overflow-hidden rounded-lg">
-          <img
-            src={currentImage}
-            alt={`${p.title} preview`}
-            className="w-full h-48 object-cover transition-all duration-700 ease-in-out hover:scale-105"
-          />
-          {/* Image indicator dots */}
-          {p.images && p.images.length > 1 && (
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-              {p.images.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    idx === currentImageIndex
-                      ? "bg-white shadow-lg"
-                      : "bg-white/50"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-          {/* Gradient overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-        </div>
-      )}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-slate-900">
-              {p.title}
-            </h3>
-            {p.code && (
-              <span className="text-xs font-mono bg-indigo-100/60 backdrop-blur-sm px-2 py-1 rounded text-slate-700 border border-indigo-200/40">
-                {p.code}
-              </span>
-            )}
-          </div>
-        </div>
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap backdrop-blur-sm border ${
-            p.role === "Fullstack"
-              ? "bg-indigo-100/50 text-indigo-800 border-indigo-300/40"
-              : p.role === "Backend"
-                ? "bg-slate-100/50 text-slate-800 border-slate-300/40"
-                : "bg-amber-100/50 text-amber-800 border-amber-300/40"
-          }`}
-        >
-          {p.role}
-        </span>
-      </div>
-
-      <p className="mt-3 text-sm text-slate-700">{p.description}</p>
-
-      {p.highlights && p.highlights.length > 0 && (
-        <div className="mt-4">
-          <ul className="space-y-1.5 text-sm text-slate-700">
-            {p.highlights.map((h, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="text-indigo-600 flex-shrink-0 font-semibold">
-                  •
-                </span>
-                <span>{h}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div className="mt-4 pt-4 border-t border-slate-200/40">
-        <div className="flex flex-wrap gap-2.5">
-          {p.techs.map((t) => (
-            <TechBadge key={t} tech={t} />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const CATEGORIES: CategoryDef[] = [
-  {
-    id: "real-time-booking",
-    title: "Location-Based Real-Time Booking",
-    description:
-      "Real-time, geo-aware booking systems for dispatching, tracking, and live updates. These systems handle complex operational requirements with live location tracking, intelligent dispatch, and comprehensive monitoring.",
-    highlights: [
-      "Live location tracking & real-time dispatch",
-      "WebSocket-based real-time assignment",
-      "Redis-backed performance optimizations",
-      "BullMQ job queue management",
-      "Prometheus + Grafana monitoring & alerting",
-    ],
-    keyTechs: [
-      "Express.js",
-      "MySQL",
-      "Redis",
-      "WebSocket",
-      "AWS",
-      "Prometheus",
-    ],
-    projects: [
-      {
-        title: "Logistics Booking",
-        code: "logistics",
-        role: "Fullstack",
-        description:
-          "Production-grade real-time booking and dispatch platform with mobile integrations, live-tracking, and operational dashboards.",
-        highlights: [
-          "Mobile app integration and admin extension",
-          "Live location tracking and real-time dispatching",
-          "Deployment, CI/CD, and monitoring infrastructure",
-          "Performance optimizations with Redis & BullMQ",
-        ],
-        techs: [
-          "Express.js",
-          "MySQL",
-          "Redis",
-          "BullMQ",
-          "WebSocket",
-          "Prometheus",
-          "Grafana",
-          "AWS",
-          "Docker",
-          "GitHub Actions",
-        ],
-      },
-    ],
-  },
-  {
-    id: "booking-systems",
-    title: "Booking & Reservation Systems",
-    description:
-      "End-to-end booking platforms with scheduling, availability management, role-based access, and transactional workflows. Scalable systems designed for user and admin experiences.",
-    highlights: [
-      "Complete booking lifecycle management",
-      "Admin & user dashboards",
-      "Secure authentication and authorization",
-      "Real-time updates and availability sync",
-    ],
-    keyTechs: ["Express.js", "MySQL", "WebSocket", "AWS Lightsail"],
-    projects: [
-      {
-        title: "Places Booking",
-        code: "arc",
-        role: "Backend",
-        description:
-          "Venue and place booking platform with availability management, payments, and comprehensive admin workflows.",
-        highlights: [
-          "Complete backend API development",
-          "Payment integration (PayMongo)",
-          "Availability scheduling system",
-        ],
-        techs: ["Express.js", "MySQL", "PayMongo", "cPanel"],
-      },
-      {
-        title: "Event Booking & Social System",
-        code: "wrc",
-        role: "Backend",
-        description:
-          "Event booking platform with lightweight social features, real-time assignment capabilities, and message flows.",
-        highlights: [
-          "Real-time event assignments",
-          "Social interaction features",
-          "Scalable message processing",
-        ],
-        techs: ["Express.js", "MySQL", "WebSocket", "AWS Lightsail"],
-      },
-    ],
-  },
-  {
-    id: "data-processing",
-    title: "Data Processing & Visualization",
-    description:
-      "Systems for collecting, processing, and visualizing datasets for operational decision-making. Includes dashboards, reports, inventory management, and POS analytics.",
-    highlights: [
-      "Real-time data aggregation and processing",
-      "Interactive dashboards and analytics",
-      "POS system with inventory tracking",
-      "Firebase real-time synchronization",
-    ],
-    keyTechs: ["Firebase", "Laravel", "MySQL", "Analytics"],
-    projects: [
-      {
-        title: "POS & Inventory System",
-        code: "pos",
-        role: "Fullstack",
-        description:
-          "Complete point-of-sale and inventory management system with Firebase-backed real-time features and Google authentication.",
-        highlights: [
-          "Real-time inventory tracking",
-          "Point-of-sale transactions",
-          "Firebase real-time database sync",
-          "Google Sign-In authentication",
-        ],
-        techs: ["Firebase", "React", "Google Authentication"],
-      },
-      {
-        title: "Population Management System",
-        code: "population",
-        role: "Fullstack",
-        description:
-          "Data processing and visualization system for population and demographic data management and analysis.",
-        highlights: [
-          "Data aggregation and processing",
-          "Custom reporting tools",
-          "Interactive visualizations",
-        ],
-        techs: ["Laravel", "React", "MySQL"],
-      },
-      {
-        title: "ViTech Analytics Platform",
-        code: "vitech",
-        role: "Fullstack",
-        description:
-          "Comprehensive data analytics and visualization platform for population demographics, sector analysis, and administrative management with QR scanning and export capabilities.",
-        highlights: [
-          "Interactive dashboards with sector-based filtering",
-          "QR scanner integration for member management",
-          "Exportable reports and data visualization",
-          "Role-based access control and audit trails",
-        ],
-        techs: ["Laravel", "MySQL", "React", "SCSS"],
-        images: [
-          "/assets/projects/vitech/dashboard.png",
-          "/assets/projects/vitech/dashboard-full.png",
-          "/assets/projects/vitech/dashboard-2.png",
-          "/assets/projects/vitech/dashboard-groupings.png",
-          "/assets/projects/vitech/dashboard-export.png",
-          "/assets/projects/vitech/exploration-full.png",
-          "/assets/projects/vitech/members-list.png",
-          "/assets/projects/vitech/member-qr.png",
-          "/assets/projects/vitech/accounts.png",
-          "/assets/projects/vitech/settings-sectors.png",
-          "/assets/projects/vitech/settings-programs.png",
-          "/assets/projects/vitech/settings-inputs.png",
-          "/assets/projects/vitech/settings-colors.png",
-          "/assets/projects/vitech/reports.png",
-        ],
-      },
-    ],
-  },
-  {
-    id: "ecommerce-management",
-    title: "E-Commerce & Management Systems",
-    description:
-      "Full-stack e-commerce solutions and custom management systems with product catalogs, checkout flows, payments, and administrative interfaces.",
-    highlights: [
-      "Complete product lifecycle management",
-      "Custom admin dashboards and reporting",
-    ],
-    keyTechs: ["Next.js", "Laravel", "MongoDB", "MySQL"],
-    projects: [
-      {
-        title: "E-Commerce System",
-        role: "Fullstack",
-        description:
-          "Full-featured e-commerce platform with storefront and admin with serverless and managed hosting components.",
-        highlights: [
-          "Complete storefront implementation",
-          "Admin dashboard for product management",
-          "Serverless architecture components",
-        ],
-        techs: ["Next.js", "MongoDB", "Render"],
-      },
-      {
-        title: "E-Commerce System 2 & 3",
-        role: "Backend",
-        description: "Full-featured e-commerce platform.",
-        highlights: ["React frontend integrations"],
-        techs: ["Laravel", "MySQL", "React", "Hostinger"],
-      },
-    ],
-  },
-  {
-    id: "social-blockchain",
-    title: "Social & Blockchain Systems",
-    description:
-      "Social modules, decentralized integrations, and tokenized transaction systems with blockchain interoperability.",
-    highlights: [
-      "MetaMask and Infura integration",
-      "On-chain audit trails and transparency",
-      "Polygon network integration",
-      "Decentralized token exchanges",
-    ],
-    keyTechs: ["MetaMask", "Infura", "Polygon", "Express.js", "Laravel"],
-    projects: [
-      {
-        title: "Social System",
-        code: "jm",
-        role: "Backend",
-        description:
-          "Social platform with user interactions, messaging, and community features.",
-        highlights: [
-          "User messaging and notifications",
-          "Social graph and connections",
-          "Activity feed and timelines",
-        ],
-        techs: ["Express.js", "MySQL", "AWS Lightsail"],
-      },
-      {
-        title: "Points Exchange & Blockchain",
-        code: "exchange",
-        role: "Backend",
-        description:
-          "Tokenized points exchange system with blockchain integrations for deposits and withdrawals, enabling decentralized transactions.",
-        highlights: [
-          "MetaMask wallet integration",
-          "Infura blockchain interaction",
-          "On-chain transaction audit trails",
-          "Polygon network support",
-        ],
-        techs: [
-          "MetaMask",
-          "Infura",
-          "Polygon",
-          "Laravel",
-          "Express.js",
-          "MySQL",
-        ],
-      },
-    ],
-  },
-  {
-    id: "dev-tools",
-    title: "Development Tools & Infrastructure",
-    description:
-      "Developer tools, environment configurations, and DevOps practices used across all projects for efficient development and deployment.",
-    keyTechs: ["Docker", "Git", "GitHub Actions", "WSL", "GitHub"],
-    projects: [
-      {
-        title: "Development Environment Setup",
-        role: "Tooling",
-        description:
-          "Comprehensive developer tools and workflow optimization using modern development practices and containerization.",
-        highlights: [
-          "Docker containerization and orchestration",
-          "GitHub Actions CI/CD pipelines",
-          "Version control management",
-          "WSL development environment",
-        ],
-        techs: ["Git", "GitHub", "Docker", "GitHub Actions", "WSL", "VSCode"],
-      },
-      {
-        title: "Load Balancer + Observability Platform",
-        code: "monitoring",
-        role: "Backend",
-        description:
-          "Containerized multi-instance backend system with NGINX load balancing, JWT authentication, Socket.IO realtime messaging, and comprehensive monitoring stack.",
-        highlights: [
-          "Multi-instance load balancing with NGINX",
-          "Full observability stack (Prometheus, Grafana, Loki)",
-          "Application metrics and service exporters",
-          "Resilience testing with failure simulation",
-        ],
-        techs: [
-          "Node.js",
-          "Express",
-          "PostgreSQL",
-          "Redis",
-          "NGINX",
-          "Docker",
-          "Prometheus",
-          "Grafana",
-          "Socket.IO",
-          "JWT",
-        ],
-        images: [
-          "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.png",
-          "/assets/projects/load-balancer-monitoring/HTTP Monitoring.png",
-          "/assets/projects/load-balancer-monitoring/Docker Monitoring.png",
-          "/assets/projects/load-balancer-monitoring/Docker Desktop.png",
-          "/assets/projects/load-balancer-monitoring/Postgresql Exporter.png",
-          "/assets/projects/load-balancer-monitoring/Redis Exporter.png",
-          "/assets/projects/load-balancer-monitoring/Node Exporter.png",
-        ],
-      },
-    ],
-  },
-]
+import {
+  ClientPortalCard,
+  EcommerceCard,
+  FinanceCard,
+  LoadBalancerCard,
+  LogisticsCard,
+  SocialCard,
+  ViTechCard,
+  VirtualOfficeCard,
+} from "../components/home/ProjectCards"
 
 export default function Overview() {
-  // Flatten all projects from all categories
-  const allProjects = CATEGORIES.flatMap((category) => category.projects)
-
   return (
-    <main className="flex-1 space-y-12">
-      <div className="space-y-3">
-        <h1 className="text-4xl font-bold text-slate-900">
-          Projects & Systems
+    <div className="space-y-8">
+      <div className="border-b border-slate-300 pb-6">
+        <p className="text-sm font-semibold text-teal-700">All work</p>
+        <h1 className="mt-2 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">
+          Projects &amp; systems.
         </h1>
-        <p className="text-lg text-slate-700 max-w-2xl font-medium">
-          Featured work showcasing expertise across backend, fullstack, and
-          DevOps domains
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
+          A visual index of production systems across enterprise platforms,
+          realtime booking, observability, and data.
         </p>
       </div>
 
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-3 space-y-3">
-        {allProjects.map((p, i) => (
-          <div key={i} className="break-inside-avoid mb-3 inline-block w-full">
-            <ProjectCard p={p} />
-          </div>
-        ))}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <ClientPortalCard className="lg:col-span-7 lg:h-[420px]" />
+        <div className="grid gap-4 lg:col-span-5">
+          <LoadBalancerCard className="lg:h-[202px]" />
+          <ViTechCard className="lg:h-[202px]" />
+        </div>
       </div>
-    </main>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <LogisticsCard />
+        <EcommerceCard />
+        <SocialCard />
+      </div>
+
+      <div className="space-y-4 border-t border-slate-300 pt-8">
+        <div>
+          <p className="text-sm font-semibold text-teal-700">
+            Personal &amp; experiments
+          </p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+            Side builds.
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FinanceCard />
+          <VirtualOfficeCard />
+        </div>
+      </div>
+    </div>
   )
 }
