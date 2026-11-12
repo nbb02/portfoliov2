@@ -21,6 +21,8 @@ const TECH_TAGS = [
   "Supabase",
   "Tailwind",
   "Laravel",
+  "PHP",
+  "Sanctum",
   "Express",
   "Grafana",
   "Drizzle",

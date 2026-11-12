@@ -21,6 +21,7 @@ const ClientPortal = lazy(() => import("./components/projects/client-portal"))
 const Logistics = lazy(() => import("./components/projects/logistics"))
 const Finance = lazy(() => import("./components/projects/finance"))
 const HuntXP = lazy(() => import("./components/projects/huntxp"))
+const CleanBaliwag = lazy(() => import("./components/projects/clean-baliwag"))
 const VirtualOffice = lazy(() => import("./components/projects/virtual-office"))
 
 function VisitorTracking() {
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="logistics" element={<Logistics />} />
             <Route path="finance" element={<Finance />} />
             <Route path="huntxp" element={<HuntXP />} />
+            <Route path="clean-baliwag" element={<CleanBaliwag />} />
             <Route path="virtual-office" element={<VirtualOffice />} />
             <Route path="vitech" element={<ViTech />} />
             <Route

@@ -3,7 +3,7 @@ import {
   FiArrowUpRight,
   FiAward,
   FiBox,
-  FiLink,
+  FiHeart,
   FiShoppingBag,
   FiTrendingUp,
 } from "react-icons/fi"
@@ -390,33 +390,42 @@ export function VirtualOfficeCard({ className = "" }: { className?: string }) {
   )
 }
 
-export function SocialCard({ className = "" }: { className?: string }) {
+export function CleanBaliwagCard({ className = "" }: { className?: string }) {
   return (
-    <div
-      className={`flex min-h-[250px] flex-col justify-between rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+    <Link
+      to="/projects/clean-baliwag"
+      className={`group relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
-      <div>
+      <div
+        className="pointer-events-none absolute inset-0 opacity-25"
+        style={DOT_PATTERN}
+        aria-hidden="true"
+      />
+
+      <div className="relative">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-teal-300">
-          <FiLink size={18} aria-hidden="true" />
+          <FiHeart size={18} aria-hidden="true" />
         </div>
         <p className="mt-4 text-[10px] font-semibold text-slate-400">
-          Experiments · 2024–2025
+          Social &amp; blockchain · 2024–2025
         </p>
         <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
-          Social &amp; Blockchain
+          Clean Baliwag
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-300">
-          Social modules, tokenized transactions, and wallet integrations.
+          A community recycling platform with verified collections, points,
+          tiers, partner rewards, and a blockchain-backed ledger.
         </p>
       </div>
-      <div className="mt-5 flex flex-wrap gap-1.5">
-        {["Social", "Blockchain", "Integrations"].map((tag) => (
-          <TagPill key={tag} tag={tag} dark />
-        ))}
+
+      <div className="relative mt-5 flex items-end justify-between gap-3">
+        <div className="flex flex-wrap gap-1.5">
+          {["Social", "Blockchain", "Civic tech"].map((tag) => (
+            <TagPill key={tag} tag={tag} dark />
+          ))}
+        </div>
+        <Arrow />
       </div>
-      <p className="mt-4 text-xs font-semibold text-slate-500">
-        Case study on request
-      </p>
-    </div>
+    </Link>
   )
 }

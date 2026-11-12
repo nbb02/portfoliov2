@@ -12,6 +12,7 @@ const TABS = [
   },
   { to: "/projects/finance", label: "Finance" },
   { to: "/projects/huntxp", label: "HuntXP" },
+  { to: "/projects/clean-baliwag", label: "Clean Baliwag" },
   { to: "/projects/virtual-office", label: "Virtual Office" },
 ]
 

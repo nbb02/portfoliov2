@@ -99,8 +99,8 @@ export default function HuntXP() {
         "Privacy-aware handling of personal documents",
         "AI tool UX: context, suggestions, and reasoning views",
       ]}
-      nextHref="/projects/virtual-office"
-      nextLabel="Next: Virtual Office"
+      nextHref="/projects/clean-baliwag"
+      nextLabel="Next: Clean Baliwag"
     />
   )
 }

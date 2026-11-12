@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { FaGithub, FaLinkedin } from "react-icons/fa"
 import ScrollLink from "./ScrollLink"
 
@@ -7,6 +7,15 @@ export default function HomeNav({
 }: {
   showExperience?: boolean
 }) {
+  const location = useLocation()
+  const isWork = location.pathname.startsWith("/projects")
+
+  const handleWorkClick = () => {
+    if (isWork) {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
+
   return (
     <header className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-5 sm:px-8">
       <Link to="/" className="flex items-center gap-3">
@@ -19,7 +28,14 @@ export default function HomeNav({
       </Link>
 
       <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-        <Link to="/projects" className="transition-colors hover:text-slate-950">
+        <Link
+          to="/projects"
+          onClick={handleWorkClick}
+          aria-current={isWork ? "page" : undefined}
+          className={`transition-colors ${
+            isWork ? "font-semibold text-slate-950" : "hover:text-slate-950"
+          }`}
+        >
           Work
         </Link>
         {showExperience && (
@@ -33,6 +49,18 @@ export default function HomeNav({
       </nav>
 
       <div className="flex items-center gap-2">
+        <Link
+          to="/projects"
+          onClick={handleWorkClick}
+          aria-current={isWork ? "page" : undefined}
+          className={`text-sm font-semibold transition-colors md:hidden ${
+            isWork
+              ? "text-slate-950"
+              : "text-slate-600 hover:text-slate-950"
+          }`}
+        >
+          Work
+        </Link>
         <Link
           to="/v1"
           aria-label="View version 1"
