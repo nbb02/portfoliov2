@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
-import { FiCheck, FiMaximize2, FiX } from "react-icons/fi"
+import { FiCheck, FiMaximize2 } from "react-icons/fi"
+import ImageLightbox from "../ImageLightbox"
 import TagPill from "../home/TagPill"
 import TechText from "../home/TechText"
 
@@ -69,24 +70,12 @@ export default function CaseStudy({
   nextHref: string
   nextLabel: string
 }) {
-  const [activeImage, setActiveImage] = useState<GalleryImage | null>(null)
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
-  useEffect(() => {
-    if (!activeImage) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setActiveImage(null)
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = "hidden"
-    document.addEventListener("keydown", onKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      document.removeEventListener("keydown", onKeyDown)
-    }
-  }, [activeImage])
+  const closeLightbox = useCallback(() => setActiveIndex(null), [])
+  const changeLightbox = useCallback((index: number) => {
+    setActiveIndex(index)
+  }, [])
 
   return (
     <>
@@ -218,11 +207,11 @@ export default function CaseStudy({
             </h2>
 
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {gallery.map((image) => (
+              {gallery.map((image, index) => (
                 <button
                   key={image.src}
                   type="button"
-                  onClick={() => setActiveImage(image)}
+                  onClick={() => changeLightbox(index)}
                   aria-label={`Open image: ${image.alt}`}
                   className="group relative block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-left transition-colors hover:border-slate-300"
                 >
@@ -259,34 +248,12 @@ export default function CaseStudy({
         </div>
       </div>
 
-      {activeImage && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-sm sm:p-8"
-          role="dialog"
-          aria-modal="true"
-          aria-label={activeImage.alt}
-          onClick={() => setActiveImage(null)}
-        >
-          <div
-            className="relative w-full max-w-6xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setActiveImage(null)}
-              aria-label="Close image"
-              className="absolute -top-12 right-0 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-slate-900/80 text-white transition-colors hover:bg-slate-800"
-            >
-              <FiX size={18} aria-hidden="true" />
-            </button>
-            <img
-              src={activeImage.src}
-              alt={activeImage.alt}
-              className="max-h-[88vh] w-full rounded-2xl bg-slate-900 object-contain shadow-2xl"
-            />
-          </div>
-        </div>
-      )}
+      <ImageLightbox
+        images={gallery ?? []}
+        activeIndex={activeIndex}
+        onChange={changeLightbox}
+        onClose={closeLightbox}
+      />
     </>
   )
 }
