@@ -9,8 +9,10 @@ const Profile = lazy(() => import("./pages/Profile"))
 const Desktop = lazy(() => import("./pages/Desktop"))
 const Projects = lazy(() => import("./pages/Projects"))
 const Overview = lazy(() => import("./pages/Overview"))
-const References = lazy(() => import("./pages/Refences"))
-const Stats = lazy(() => import("./pages/Stats"))
+const References = lazy(() => import("./pages/References"))
+const Stats = import.meta.env.DEV
+  ? lazy(() => import("./pages/Stats"))
+  : null
 const ViTech = lazy(() => import("./components/desktop/vitech"))
 const LoadBalancerMonitoring = lazy(
   () => import("./components/projects/load-balancer-monitoring"),
@@ -18,6 +20,7 @@ const LoadBalancerMonitoring = lazy(
 const ClientPortal = lazy(() => import("./components/projects/client-portal"))
 const Logistics = lazy(() => import("./components/projects/logistics"))
 const Finance = lazy(() => import("./components/projects/finance"))
+const HuntXP = lazy(() => import("./components/projects/huntxp"))
 const VirtualOffice = lazy(() => import("./components/projects/virtual-office"))
 
 function VisitorTracking() {
@@ -47,6 +50,7 @@ export default function App() {
             <Route path="client-portal" element={<ClientPortal />} />
             <Route path="logistics" element={<Logistics />} />
             <Route path="finance" element={<Finance />} />
+            <Route path="huntxp" element={<HuntXP />} />
             <Route path="virtual-office" element={<VirtualOffice />} />
             <Route path="vitech" element={<ViTech />} />
             <Route
@@ -55,7 +59,9 @@ export default function App() {
             />
           </Route>
           <Route path="/references" element={<References />} />
-          <Route path="/stats" element={<Stats />} />
+          {import.meta.env.DEV && Stats && (
+            <Route path="/stats" element={<Stats />} />
+          )}
         </Routes>
       </Suspense>
     </>

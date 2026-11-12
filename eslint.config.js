@@ -20,4 +20,17 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Legacy v1 / easter-egg code kept for the /v1 and /desktop routes.
+    files: [
+      'src/components/liquid-ether.tsx',
+      'src/components/InteractiveCards.tsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'react-hooks/unsupported-syntax': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+    },
+  },
 ])

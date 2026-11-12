@@ -335,14 +335,11 @@ export default function ProfessionalExperience({
   const moonRef = useRef<HTMLDivElement>(null)
   const [isNight, setIsNight] = useState(false)
   const [showHint, setShowHint] = useState(true)
-  const [showSky, setShowSky] = useState(false)
+  const [showSky, setShowSky] = useState(!atmosphere)
   const initialScene = buildSceneStyles(0)
 
   useEffect(() => {
-    if (!atmosphere) {
-      setShowSky(true)
-      return
-    }
+    if (!atmosphere) return
 
     const section = sectionRef.current
     if (!section) return

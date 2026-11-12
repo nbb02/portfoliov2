@@ -40,6 +40,16 @@ export default function VirtualOffice() {
           body: "The 3D environment and agent/presence layer are implemented. Real project, server, and tooling integrations are not connected yet; the next step is wiring those events into the scene.",
         },
       ]}
+      gallery={[
+        {
+          src: "/assets/projects/virtual-office/office.png",
+          alt: "Virtual Office scene with desks, server rack, breakroom, and agent characters",
+        },
+        {
+          src: "/assets/projects/virtual-office/tools-wing.png",
+          alt: "Virtual Office Tools Wing with Antigravity, Codex, and OpenCode consoles",
+        },
+      ]}
       highlightsKicker="Capabilities"
       highlightsTitle="Skills"
       highlights={[
@@ -49,8 +59,8 @@ export default function VirtualOffice() {
         "Developer-tool integration and local tooling",
         "Performance-aware rendering and visibility control",
       ]}
-      nextHref="/projects/finance"
-      nextLabel="Next: Finance PWA"
+      nextHref="/projects/client-portal"
+      nextLabel="Next: Client Portal Platform"
     />
   )
 }

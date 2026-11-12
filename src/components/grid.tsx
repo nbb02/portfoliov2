@@ -137,7 +137,7 @@ const APPS: AppDef[] = [
       <div
         style={{
           ...s.appContent,
-          background: "linear-gradient(135deg,#1a0533,#0d1b2a)",
+          background: "linear-gradient(135deg,#052e2b,#0b1f2a)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -150,12 +150,12 @@ const APPS: AppDef[] = [
             width: 100,
             height: 100,
             borderRadius: "50%",
-            background: "linear-gradient(135deg,#e91e63,#9c27b0)",
+            background: "linear-gradient(135deg,#B45309,#0f766e)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 40,
-            boxShadow: "0 0 30px rgba(233,30,99,.5)",
+            boxShadow: "0 0 30px rgba(180,83,9,.45)",
           }}
         >
           🎵
@@ -192,7 +192,7 @@ const APPS: AppDef[] = [
             style={{
               width: "40%",
               height: "100%",
-              background: "#e91e63",
+              background: "#B45309",
               borderRadius: 2,
             }}
           />
@@ -696,7 +696,7 @@ const s: Record<string, React.CSSProperties> = {
     inset: 0,
     pointerEvents: "none",
     backgroundImage:
-      "radial-gradient(ellipse at 20% 50%,rgba(120,40,200,.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(40,120,200,.12) 0%,transparent 50%)",
+      "radial-gradient(ellipse at 20% 50%,rgba(15,118,110,.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(180,83,9,.14) 0%,transparent 50%)",
   },
   window: {
     background: "#fff",

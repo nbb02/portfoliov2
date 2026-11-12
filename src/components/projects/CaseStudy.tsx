@@ -112,22 +112,28 @@ export default function CaseStudy({
       {gallery && gallery.length > 0 && (
         <section className="border-t border-slate-300 pt-6">
           <p className="text-sm font-semibold text-teal-700">Screens</p>
-          <h2 className="mt-1 text-2xl font-bold text-slate-950">
+          <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
             Selected views
           </h2>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {gallery.map((image) => (
-              <div
+              <a
                 key={image.src}
-                className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50"
+                href={image.src}
+                target="_blank"
+                rel="noreferrer"
+                title="Open full size"
+                className="group block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 transition-colors hover:border-slate-300"
               >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  loading="lazy"
-                  className="h-56 w-full object-contain p-2"
-                />
-              </div>
+                <div className="aspect-[16/10] w-full overflow-hidden">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    loading="lazy"
+                    className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-[1.01]"
+                  />
+                </div>
+              </a>
             ))}
           </div>
         </section>

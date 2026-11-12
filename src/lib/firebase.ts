@@ -1,13 +1,16 @@
 import { initializeApp } from "firebase/app"
 import { getAnalytics, isSupported } from "firebase/analytics"
 import { getFirestore } from "firebase/firestore"
-import config from "../../firebase.json"
+import { firebaseConfig, isFirebaseConfigured } from "./firebaseConfig"
 
-export const app = initializeApp(config)
-export const db = getFirestore(app)
+export { isFirebaseConfigured }
+
+export const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null
+
+export const db = app ? getFirestore(app) : null
 
 export const analyticsPromise =
-  typeof window === "undefined"
+  !app || typeof window === "undefined"
     ? Promise.resolve(null)
     : isSupported()
         .then((supported) => (supported ? getAnalytics(app) : null))

@@ -81,8 +81,8 @@ export default function LoadBalancerMonitoring() {
         "Observability with Prometheus, Grafana, and Loki",
         "Dockerized environments and resilience testing",
       ]}
-      nextHref="/projects/client-portal"
-      nextLabel="Next: Client Portal Platform"
+      nextHref="/projects/finance"
+      nextLabel="Next: Finance PWA"
     />
   )
 }

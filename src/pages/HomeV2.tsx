@@ -14,14 +14,14 @@ import {
   SiTailwindcss,
   SiTypescript,
 } from "react-icons/si"
-import Laptop from "../components/laptop"
-import Rubiks from "../components/rubiks"
 import { JOURNEY_ROLES } from "../components/journeyRoles"
 import HomeNav from "../components/home/HomeNav"
 import SelectedWork from "../components/home/SelectedWork"
 import ScrollLink from "../components/home/ScrollLink"
 import SiteFooter from "../components/home/SiteFooter"
 
+const Laptop = lazy(() => import("../components/laptop"))
+const Rubiks = lazy(() => import("../components/rubiks"))
 const ProfessionalExperience = lazy(
   () => import("../components/ProfessionalExperience"),
 )
@@ -132,11 +132,26 @@ export default function HomeV2() {
 
             <div className="relative pb-6">
               <div className="relative h-[420px] overflow-hidden rounded-[30px] bg-[#0D1117] shadow-[0_30px_80px_rgba(15,23,42,0.24)] sm:h-[540px]">
-                <Laptop />
+                <Suspense
+                  fallback={
+                    <div
+                      className="h-full w-full bg-[#0D1117]"
+                      aria-hidden="true"
+                    />
+                  }
+                >
+                  <Laptop />
+                </Suspense>
               </div>
 
               <div className="absolute -bottom-8 -left-2 h-[170px] w-[170px] sm:-left-8 sm:h-[215px] sm:w-[215px]">
-                <Rubiks />
+                <Suspense
+                  fallback={
+                    <div className="h-full w-full" aria-hidden="true" />
+                  }
+                >
+                  <Rubiks />
+                </Suspense>
               </div>
 
               <div className="absolute -right-2 top-5 hidden rounded-full border border-slate-300 bg-white/90 px-4 py-2 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur sm:block">

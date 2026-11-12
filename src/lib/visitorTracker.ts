@@ -100,11 +100,13 @@ export async function trackPageVisit(pathname: string): Promise<void> {
 
   const [
     { doc, increment, runTransaction, serverTimestamp },
-    { db },
+    { db, isFirebaseConfigured },
   ] = await Promise.all([
     import("firebase/firestore"),
     import("./firebase"),
   ])
+
+  if (!isFirebaseConfigured || !db) return
 
   const visitorId = getOrCreateVisitorId()
   const { sessionId, isNewSession } = getOrCreateSessionId()
@@ -141,8 +143,6 @@ export async function trackPageVisit(pathname: string): Promise<void> {
       os,
       language: navigator.language,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      screen: `${window.screen.width}x${window.screen.height}`,
-      userAgent: navigator.userAgent,
       referrer,
       lastPath: pathname,
       lastSeen: serverTimestamp(),

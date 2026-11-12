@@ -1,6 +1,7 @@
 import type { IconType } from "react-icons"
 import {
   FiActivity,
+  FiAward,
   FiBarChart2,
   FiBox,
   FiBriefcase,
@@ -27,6 +28,7 @@ import {
   FiShoppingBag,
   FiSmartphone,
   FiTerminal,
+  FiTrendingUp,
   FiTool,
   FiUserCheck,
   FiUsers,
@@ -74,6 +76,12 @@ export const TAG_ICONS: Record<
   "React Three Fiber": { icon: SiReact, color: "#61DAFB" },
   Agents: { icon: FiUsers, color: "#0f766e" },
   "Local tools": { icon: FiTool, color: "#0f766e" },
+  "Local-first AI": { icon: FiCpu, color: "#0f766e" },
+  WebLLM: { icon: FiTerminal, color: "#B45309" },
+  "Resume parsing": { icon: FiFileText, color: "#0f766e" },
+  Gamification: { icon: FiAward, color: "#B45309" },
+  Pipeline: { icon: FiGrid, color: "#0f766e" },
+  Leaderboard: { icon: FiTrendingUp, color: "#B45309" },
   "In progress": {
     icon: FiClock,
     color: "#B45309",

@@ -11,6 +11,7 @@ const TABS = [
     label: "Load Balancer",
   },
   { to: "/projects/finance", label: "Finance" },
+  { to: "/projects/huntxp", label: "HuntXP" },
   { to: "/projects/virtual-office", label: "Virtual Office" },
 ]
 

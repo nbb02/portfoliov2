@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import {
   FiArrowUpRight,
+  FiAward,
   FiBox,
   FiLink,
   FiShoppingBag,
@@ -275,6 +276,45 @@ export function FinanceCard({ className = "" }: { className?: string }) {
       <div className="relative mt-5 flex items-end justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
           {["PWA", "Next.js", "AI", "Security"].map((tag) => (
+            <TagPill key={tag} tag={tag} />
+          ))}
+        </div>
+        <LightArrow />
+      </div>
+    </Link>
+  )
+}
+
+export function HuntXPCard({ className = "" }: { className?: string }) {
+  return (
+    <Link
+      to="/projects/huntxp"
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-300 bg-white/60 p-5 ${className}`}
+    >
+      <div
+        className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-amber-400/15 blur-3xl"
+        aria-hidden="true"
+      />
+
+      <div className="relative">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-700">
+          <FiAward size={18} aria-hidden="true" />
+        </div>
+        <p className="mt-4 text-[10px] font-semibold text-slate-500">
+          Job-hunting platform · 2026
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
+          HuntXP
+        </h2>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
+          A gamified application pipeline with XP, a leaderboard, resume
+          parsing, and AI coaching that runs locally in the browser.
+        </p>
+      </div>
+
+      <div className="relative mt-5 flex items-end justify-between gap-3">
+        <div className="flex flex-wrap gap-1.5">
+          {["Local-first AI", "WebLLM", "Gamification"].map((tag) => (
             <TagPill key={tag} tag={tag} />
           ))}
         </div>

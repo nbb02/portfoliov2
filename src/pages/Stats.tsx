@@ -20,7 +20,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { db } from "../lib/firebase"
+import { db, isFirebaseConfigured } from "../lib/firebase"
 
 type GlobalStats = {
   totalVisitors: number
@@ -92,6 +92,8 @@ export default function Stats() {
   )
 
   useEffect(() => {
+    if (!db) return
+
     const globalRef = doc(db, "siteStats", "global")
     const visitorsQuery = query(
       collection(db, "visitors"),
@@ -152,50 +154,76 @@ export default function Stats() {
     }
   }, [])
 
+  if (!isFirebaseConfigured) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F4F0E8] p-6 text-[#11161D]">
+        <div className="max-w-md rounded-2xl border border-slate-300 bg-white/70 p-6">
+          <h1 className="text-2xl font-semibold">Visitor stats are offline</h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            Add the Firebase keys to <code className="font-mono">.env</code> to
+            enable local visitor tracking. See{" "}
+            <code className="font-mono">.env.example</code>.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">
+    <div className="min-h-screen bg-[#F4F0E8] p-4 text-[#11161D] antialiased md:p-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <header className="rounded-2xl border border-cyan-500/30 bg-slate-900/70 p-6 backdrop-blur">
-          <h1 className="text-3xl font-bold">Visitor Stats</h1>
-          <p className="mt-2 text-slate-300">
-            Live Firebase monitor for unique visitors, sessions, and page views.
-          </p>
-          <p className="mt-2 text-xs text-slate-400">
-            Last updated: {formatDate(globalStats.lastUpdated)}
-          </p>
+        <header className="rounded-2xl border border-slate-300 bg-white/70 p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-teal-700">
+                Local dashboard
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+                Visitor stats
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
+                Dev-only Firebase monitor for unique visitors, sessions, and
+                page views. This route is not included in production builds.
+              </p>
+            </div>
+            <p className="text-xs text-slate-500">
+              Last updated: {formatDate(globalStats.lastUpdated)}
+            </p>
+          </div>
         </header>
 
         <section className="grid gap-4 sm:grid-cols-3">
-          <article className="rounded-xl border border-cyan-500/20 bg-slate-900 p-4">
-            <p className="text-xs uppercase tracking-wider text-slate-400">
+          <article className="rounded-xl border border-slate-300 bg-white/70 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
               Unique visitors
             </p>
-            <p className="mt-1 text-3xl font-semibold text-cyan-300">
+            <p className="mt-1.5 text-3xl font-semibold text-teal-700">
               {globalStats.totalVisitors.toLocaleString()}
             </p>
           </article>
-          <article className="rounded-xl border border-cyan-500/20 bg-slate-900 p-4">
-            <p className="text-xs uppercase tracking-wider text-slate-400">
+          <article className="rounded-xl border border-slate-300 bg-white/70 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
               Sessions
             </p>
-            <p className="mt-1 text-3xl font-semibold text-emerald-300">
+            <p className="mt-1.5 text-3xl font-semibold text-slate-900">
               {globalStats.totalSessions.toLocaleString()}
             </p>
           </article>
-          <article className="rounded-xl border border-cyan-500/20 bg-slate-900 p-4">
-            <p className="text-xs uppercase tracking-wider text-slate-400">
+          <article className="rounded-xl border border-slate-300 bg-white/70 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
               Page views
             </p>
-            <p className="mt-1 text-3xl font-semibold text-fuchsia-300">
+            <p className="mt-1.5 text-3xl font-semibold text-amber-700">
               {globalStats.totalPageViews.toLocaleString()}
             </p>
           </article>
         </section>
 
-        <section className="rounded-2xl border border-cyan-500/30 bg-slate-900/70 p-4 md:p-6">
-          <h2 className="text-xl font-semibold">
-            Visitors Per Day (Last 30 days)
+        <section className="rounded-2xl border border-slate-300 bg-white/70 p-4 md:p-6">
+          <h2 className="text-xl font-semibold tracking-[-0.02em]">
+            Visitors per day
           </h2>
+          <p className="mt-1 text-xs text-slate-500">Last 30 days</p>
           <div className="mt-4 h-80">
             {dailyStats.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -225,52 +253,54 @@ export default function Stats() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="#475569"
-                    opacity={0.5}
+                    stroke="#cbd5e1"
+                    opacity={0.6}
                   />
                   <XAxis
                     dataKey="date"
-                    stroke="#94a3b8"
+                    stroke="#64748b"
                     style={{ fontSize: "12px" }}
                   />
-                  <YAxis stroke="#94a3b8" style={{ fontSize: "12px" }} />
+                  <YAxis stroke="#64748b" style={{ fontSize: "12px" }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1e293b",
-                      border: "1px solid #475569",
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #cbd5e1",
                       borderRadius: "8px",
                     }}
-                    labelStyle={{ color: "#cbd5e1" }}
+                    labelStyle={{ color: "#334155" }}
                   />
                   <Line
                     type="monotone"
                     dataKey="visitorCount"
-                    stroke="#06b6d4"
+                    stroke="#0f766e"
                     strokeWidth={2}
-                    dot={{ fill: "#06b6d4", r: 4 }}
+                    dot={{ fill: "#0f766e", r: 4 }}
                     activeDot={{ r: 6 }}
                     name="Visitors"
                   />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex h-full items-center justify-center text-slate-400">
+              <div className="flex h-full items-center justify-center text-sm text-slate-500">
                 No daily stats yet. Visit your site to generate data.
               </div>
             )}
           </div>
         </section>
 
-        <section className="rounded-2xl border border-cyan-500/30 bg-slate-900/70 p-4 md:p-6">
-          <h2 className="text-xl font-semibold">Top Visitors</h2>
-          <p className="mt-1 text-sm text-slate-400">
+        <section className="rounded-2xl border border-slate-300 bg-white/70 p-4 md:p-6">
+          <h2 className="text-xl font-semibold tracking-[-0.02em]">
+            Top visitors
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
             Persisted by cookie/local storage visitor ID and tracked live from
             Firestore.
           </p>
 
           <div className="mt-4 overflow-auto">
             <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-slate-700 text-xs uppercase tracking-wider text-slate-400">
+              <thead className="border-b border-slate-300 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
                 <tr>
                   <th className="py-2 pr-4">Visitor ID</th>
                   <th className="py-2 pr-4">Views</th>
@@ -285,8 +315,11 @@ export default function Stats() {
               </thead>
               <tbody>
                 {visitors.map((visitor) => (
-                  <tr key={visitor.id} className="border-b border-slate-800/70">
-                    <td className="py-2 pr-4 text-cyan-300">
+                  <tr
+                    key={visitor.id}
+                    className="border-b border-slate-200 text-slate-600 last:border-0"
+                  >
+                    <td className="py-2 pr-4 font-mono text-xs text-teal-700">
                       {visitor.visitorId}
                     </td>
                     <td className="py-2 pr-4">{visitor.totalPageViews}</td>
@@ -297,7 +330,7 @@ export default function Stats() {
                     </td>
                     <td className="py-2 pr-4">{visitor.language}</td>
                     <td className="py-2 pr-4">{visitor.timezone}</td>
-                    <td className="py-2 pr-4 max-w-[220px] truncate">
+                    <td className="max-w-[220px] truncate py-2 pr-4">
                       {visitor.referrer}
                     </td>
                     <td className="py-2 pr-4">
@@ -307,7 +340,7 @@ export default function Stats() {
                 ))}
                 {visitors.length === 0 ? (
                   <tr>
-                    <td className="py-6 text-slate-400" colSpan={9}>
+                    <td className="py-6 text-slate-500" colSpan={9}>
                       No visitor data yet. Open your site in another tab and
                       refresh to generate activity.
                     </td>

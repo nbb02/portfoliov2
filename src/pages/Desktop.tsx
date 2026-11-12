@@ -9,12 +9,12 @@ export default function Desktop() {
           width: "100%",
           height: "100%",
           position: "fixed",
-          backgroundColor: "black",
+          backgroundColor: "#0B0F14",
           zIndex: -1,
         }}
       >
         <LiquidEther
-          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          colors={["#0f766e", "#5eead4", "#B45309"]}
           mouseForce={20}
           cursorSize={100}
           isViscous
@@ -35,7 +35,7 @@ export default function Desktop() {
         />
       </div>
 
-      <div className="text-white h-full h-[94vh]">
+      <div className="h-[94vh] text-white">
         <div className="bg-grid fixed left-0 top-0 w-full h-full"></div>
         <Grid />
       </div>

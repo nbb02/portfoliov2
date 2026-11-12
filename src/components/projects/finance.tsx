@@ -5,8 +5,8 @@ export default function Finance() {
     <CaseStudy
       kicker="Personal finance · 2026"
       title="Finance PWA"
-      intro="A personal finance dashboard and installable PWA for accounts, transactions, budgets, bills, investments, notes, and AI-assisted analysis."
-      tags={["PWA", "Next.js", "Supabase", "AI", "Security"]}
+      intro="A personal finance PWA whose AI assistant can read and act on the same accounts, ledger, budgets, bills, and investments as the UI — with the security boundary kept on the server."
+      tags={["PWA", "Next.js", "Supabase", "AI", "MCP", "Security"]}
       meta={[
         { label: "Role", value: "Personal project" },
         { label: "Timeline", value: "2026" },
@@ -24,6 +24,18 @@ export default function Finance() {
             "Investments and venture groupings with capital, returns, and ROI.",
             "AI chat with tool access to accounts, transactions, budgets, bills, notes, and investments.",
             "Installable PWA with offline caching and a mobile-first bottom nav.",
+          ],
+        },
+        {
+          title: "AI assistant",
+          body: "The assistant is the part that makes the app more than a set of CRUD screens.",
+          bullets: [
+            "Streams answers with tool calls into accounts, transactions, budgets, bills, investments, and notes.",
+            "Surfaces its reasoning and the tool results it used instead of returning an opaque paragraph.",
+            "Sanitizes tool output before it reaches the model and keeps provider keys on the server.",
+            "Lets the user choose between a free Groq model and BYOK OpenRouter or Gemini providers.",
+            "Exposes the same capabilities through an MCP server, scoped to the user's existing rights.",
+            "Uses an in-process tool layer, so the browser never holds the provider key.",
           ],
         },
         {
@@ -48,6 +60,20 @@ export default function Finance() {
           ],
         },
       ]}
+      gallery={[
+        {
+          src: "/assets/projects/finance/ai-assistant.png",
+          alt: "Finance AI assistant analyzing the month's biggest expenses, flagging unusual spend, and showing its reasoning",
+        },
+        {
+          src: "/assets/projects/finance/investments.png",
+          alt: "Finance investments view with capital, returns, net profit, and ROI per venture",
+        },
+        {
+          src: "/assets/projects/finance/bills.png",
+          alt: "Finance bills view with paid, due-soon, and estimated recurring schedules",
+        },
+      ]}
       highlightsKicker="Capabilities"
       highlightsTitle="Skills"
       highlights={[
@@ -58,8 +84,8 @@ export default function Finance() {
         "Secure API-key storage and server boundaries",
         "TanStack Query cache-first navigation",
       ]}
-      nextHref="/projects/virtual-office"
-      nextLabel="Next: Virtual Office"
+      nextHref="/projects/huntxp"
+      nextLabel="Next: HuntXP"
     />
   )
 }
