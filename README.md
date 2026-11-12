@@ -33,7 +33,18 @@ npm run dev      # Vite dev server
 npm run build    # type-check + production build to dist/
 npm run preview  # preview the production build
 npm run lint     # ESLint
+npm run deploy   # build, then commit + push dist/ to nbb02.github.io
 ```
+
+## Deploy
+
+`dist/` is intentionally its own git repo pointing at
+`https://github.com/nbb02/nbb02.github.io.git`, because that is the user-site
+repo GitHub Pages serves at the domain root. The parent repo ignores `dist/`,
+so the source and deploy histories stay separate.
+
+`npm run deploy` builds the site, commits the output inside `dist/`, and pushes
+`main`. GitHub Pages then serves it at `https://nbb02.github.io/`.
 
 ## Notes
 
