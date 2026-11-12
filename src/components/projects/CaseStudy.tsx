@@ -154,11 +154,11 @@ export default function CaseStudy({
                 <TechText text={section.body} />
               </p>
               {section.bullets && (
-                <ul className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
+                <ul className="mt-4 columns-1 gap-x-8 sm:columns-2">
                   {section.bullets.map((bullet) => (
                     <li
                       key={bullet}
-                      className="flex gap-2 text-[15px] leading-relaxed text-slate-600"
+                      className="mb-2.5 flex break-inside-avoid gap-2 text-[15px] leading-relaxed text-slate-600"
                     >
                       <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-teal-600" />
                       <span>
@@ -179,11 +179,11 @@ export default function CaseStudy({
           <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
             {highlightsTitle}
           </h2>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          <ul className="mt-4 columns-1 gap-x-8 sm:columns-2">
             {highlights.map((highlight) => (
               <li
                 key={highlight}
-                className="flex gap-2.5 text-sm leading-relaxed text-slate-600"
+                className="mb-3 flex break-inside-avoid gap-2.5 text-sm leading-relaxed text-slate-600"
               >
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
                   <FiCheck size={11} aria-hidden="true" />
