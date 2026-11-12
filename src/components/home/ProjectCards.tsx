@@ -100,7 +100,7 @@ export function LoadBalancerCard({ className = "" }: { className?: string }) {
       className={`group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-slate-800 bg-[#11161D] p-5 text-white ${className}`}
     >
       <img
-        src="/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.png"
+        src="/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp"
         alt=""
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-[1.03]"
@@ -136,7 +136,7 @@ export function ViTechCard({ className = "" }: { className?: string }) {
       className={`group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-slate-800 bg-[#11161D] p-5 text-white ${className}`}
     >
       <img
-        src="/assets/projects/vitech/dashboard.png"
+        src="/assets/projects/vitech/dashboard.webp"
         alt=""
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover opacity-55 transition-transform duration-500 group-hover:scale-[1.03]"
@@ -258,7 +258,7 @@ export function FinanceCard({ className = "" }: { className?: string }) {
       </svg>
 
       <img
-        src="/assets/projects/finance/ai-assistant.png"
+        src="/assets/projects/finance/ai-assistant.webp"
         alt=""
         loading="lazy"
         aria-hidden="true"
@@ -304,7 +304,7 @@ export function HuntXPCard({ className = "" }: { className?: string }) {
         aria-hidden="true"
       />
       <img
-        src="/assets/projects/huntxp/homepage.png"
+        src="/assets/projects/huntxp/homepage.webp"
         alt=""
         loading="lazy"
         aria-hidden="true"
@@ -346,7 +346,7 @@ export function VirtualOfficeCard({ className = "" }: { className?: string }) {
       className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
       <img
-        src="/assets/projects/virtual-office/office.png"
+        src="/assets/projects/virtual-office/office.webp"
         alt=""
         loading="lazy"
         aria-hidden="true"

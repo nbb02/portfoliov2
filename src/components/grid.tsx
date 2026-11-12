@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, type ReactNode } from "react"
-import githubImg from "../assets/github.com_nbb02.png"
+import githubImg from "../assets/github.com_nbb02.webp"
 import Draggable from "react-draggable"
 import ViTech from "./desktop/vitech"
 import { FaGithub } from "react-icons/fa"

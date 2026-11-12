@@ -53,11 +53,11 @@ export default function VirtualOffice() {
       ]}
       gallery={[
         {
-          src: "/assets/projects/virtual-office/office.png",
+          src: "/assets/projects/virtual-office/office.webp",
           alt: "Virtual Office scene with desks, server rack, breakroom, and agent characters",
         },
         {
-          src: "/assets/projects/virtual-office/tools-wing.png",
+          src: "/assets/projects/virtual-office/tools-wing.webp",
           alt: "Virtual Office Tools Wing with Antigravity, Codex, and OpenCode consoles",
         },
       ]}

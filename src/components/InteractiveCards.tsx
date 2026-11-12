@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
-import dashboardImg from "../assets/cards/dashboard.png"
-import paintImg from "../assets/cards/paint.png"
-import vitechImg from "../assets/cards/ViTech.drawio.png"
+import dashboardImg from "../assets/cards/dashboard.webp"
+import paintImg from "../assets/cards/paint.webp"
+import vitechImg from "../assets/cards/ViTech.drawio.webp"
 
 type Card = {
   id: string

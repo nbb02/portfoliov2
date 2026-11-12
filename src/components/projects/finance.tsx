@@ -75,15 +75,15 @@ export default function Finance() {
       ]}
       gallery={[
         {
-          src: "/assets/projects/finance/ai-assistant.png",
+          src: "/assets/projects/finance/ai-assistant.webp",
           alt: "Finance AI assistant analyzing the month's biggest expenses, flagging unusual spend, and showing its reasoning",
         },
         {
-          src: "/assets/projects/finance/investments.png",
+          src: "/assets/projects/finance/investments.webp",
           alt: "Finance investments view with capital, returns, net profit, and ROI per venture",
         },
         {
-          src: "/assets/projects/finance/bills.png",
+          src: "/assets/projects/finance/bills.webp",
           alt: "Finance bills view with paid, due-soon, and estimated recurring schedules",
         },
       ]}

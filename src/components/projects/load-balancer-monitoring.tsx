@@ -62,27 +62,27 @@ export default function LoadBalancerMonitoring() {
       ]}
       gallery={[
         {
-          src: "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.png",
+          src: "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp",
           alt: "Load balancer distribution",
         },
         {
-          src: "/assets/projects/load-balancer-monitoring/HTTP Monitoring.png",
+          src: "/assets/projects/load-balancer-monitoring/HTTP Monitoring.webp",
           alt: "HTTP monitoring dashboard",
         },
         {
-          src: "/assets/projects/load-balancer-monitoring/Docker Monitoring.png",
+          src: "/assets/projects/load-balancer-monitoring/Docker Monitoring.webp",
           alt: "Docker monitoring",
         },
         {
-          src: "/assets/projects/load-balancer-monitoring/Postgresql Exporter.png",
+          src: "/assets/projects/load-balancer-monitoring/Postgresql Exporter.webp",
           alt: "PostgreSQL metrics",
         },
         {
-          src: "/assets/projects/load-balancer-monitoring/Redis Exporter.png",
+          src: "/assets/projects/load-balancer-monitoring/Redis Exporter.webp",
           alt: "Redis metrics",
         },
         {
-          src: "/assets/projects/load-balancer-monitoring/Node Exporter.png",
+          src: "/assets/projects/load-balancer-monitoring/Node Exporter.webp",
           alt: "Node metrics",
         },
       ]}

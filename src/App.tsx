@@ -10,6 +10,7 @@ const Desktop = lazy(() => import("./pages/Desktop"))
 const Projects = lazy(() => import("./pages/Projects"))
 const Overview = lazy(() => import("./pages/Overview"))
 const References = lazy(() => import("./pages/References"))
+const NotFound = lazy(() => import("./pages/NotFound"))
 const Stats = import.meta.env.DEV
   ? lazy(() => import("./pages/Stats"))
   : null
@@ -64,6 +65,7 @@ export default function App() {
           {import.meta.env.DEV && Stats && (
             <Route path="/stats" element={<Stats />} />
           )}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </>

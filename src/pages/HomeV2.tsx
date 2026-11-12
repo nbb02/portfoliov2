@@ -65,7 +65,7 @@ export default function HomeV2() {
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
             <div>
               <p className="text-xs font-semibold text-teal-700">
-                Software Engineer · Fullstack & Realtime
+                Software Developer · Fullstack & Realtime
               </p>
 
               <h1 className="mt-5 max-w-[620px] text-[2.35rem] font-semibold leading-[1] tracking-[-0.045em] md:text-[2.85rem]">

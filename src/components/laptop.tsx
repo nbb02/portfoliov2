@@ -13,7 +13,7 @@ import { Suspense, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../assets/laptop/mac-draco.glb"
-import laptopScreenImage from "../assets/github.com_nbb02_4_35.png"
+import laptopScreenImage from "../assets/github.com_nbb02_4_35.webp"
 import { TbHandClick } from "react-icons/tb"
 
 type LaptopGLTF = GLTF & {

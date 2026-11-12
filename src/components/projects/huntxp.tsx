@@ -65,27 +65,27 @@ export default function HuntXP() {
       ]}
       gallery={[
         {
-          src: "/assets/projects/huntxp/homepage.png",
+          src: "/assets/projects/huntxp/homepage.webp",
           alt: "HuntXP landing page with the momentum engine and feature overview",
         },
         {
-          src: "/assets/projects/huntxp/pipeline.png",
+          src: "/assets/projects/huntxp/pipeline.webp",
           alt: "HuntXP application pipeline grouped by status with XP per card",
         },
         {
-          src: "/assets/projects/huntxp/job-ai.png",
+          src: "/assets/projects/huntxp/job-ai.webp",
           alt: "HuntXP Job AI workbench showing a strengths and gaps analysis for a role",
         },
         {
-          src: "/assets/projects/huntxp/resume-ai.png",
+          src: "/assets/projects/huntxp/resume-ai.webp",
           alt: "HuntXP Resume AI parsing a resume into a structured profile",
         },
         {
-          src: "/assets/projects/huntxp/leaderboard.png",
+          src: "/assets/projects/huntxp/leaderboard.webp",
           alt: "HuntXP leaderboard ranking demo hunters by momentum XP",
         },
         {
-          src: "/assets/projects/huntxp/profile.png",
+          src: "/assets/projects/huntxp/profile.webp",
           alt: "HuntXP profile customization with skills, HTML/CSS, and a live preview",
         },
       ]}

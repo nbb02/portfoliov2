@@ -60,27 +60,27 @@ export default function ViTech() {
       ]}
       gallery={[
         {
-          src: "/assets/projects/vitech/dashboard.png",
+          src: "/assets/projects/vitech/dashboard.webp",
           alt: "ViTech dashboard overview",
         },
         {
-          src: "/assets/projects/vitech/dashboard-full.png",
+          src: "/assets/projects/vitech/dashboard-full.webp",
           alt: "ViTech full dashboard",
         },
         {
-          src: "/assets/projects/vitech/exploration-full.png",
+          src: "/assets/projects/vitech/exploration-full.webp",
           alt: "ViTech map exploration",
         },
         {
-          src: "/assets/projects/vitech/members-list.png",
+          src: "/assets/projects/vitech/members-list.webp",
           alt: "ViTech member management",
         },
         {
-          src: "/assets/projects/vitech/member-qr.png",
+          src: "/assets/projects/vitech/member-qr.webp",
           alt: "ViTech QR check-in",
         },
         {
-          src: "/assets/projects/vitech/settings-sectors.png",
+          src: "/assets/projects/vitech/settings-sectors.webp",
           alt: "ViTech sector settings",
         },
       ]}
