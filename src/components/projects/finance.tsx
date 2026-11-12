@@ -17,6 +17,7 @@ export default function Finance() {
         "TanStack Query",
         "Vercel AI SDK",
         "Tailwind",
+        "Vercel",
       ]}
       tags={["PWA", "AI", "MCP", "Security"]}
       meta={[
@@ -48,17 +49,6 @@ export default function Finance() {
             "Lets the user choose between a free Groq model and BYOK OpenRouter or Gemini providers.",
             "Exposes the same capabilities through an MCP server, scoped to the user's existing rights.",
             "Uses an in-process tool layer, so the browser never holds the provider key.",
-          ],
-        },
-        {
-          title: "Stack",
-          body: "A Next.js App Router PWA with a server-side security boundary.",
-          bullets: [
-            "Next.js 16, React 19, TypeScript, Tailwind CSS, and Radix/shadcn UI.",
-            "Supabase Postgres, Auth, and Row Level Security with Drizzle ORM.",
-            "TanStack Query for cache-first client shells and background revalidation.",
-            "Vercel AI SDK with free-tier Groq and BYOK OpenRouter/Gemini keys.",
-            "MCP tool server, Serwist service worker, and Vercel deployment.",
           ],
         },
         {

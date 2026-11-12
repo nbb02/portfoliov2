@@ -16,6 +16,7 @@ export default function ViTech() {
         "Chart.js",
         "SCSS",
         "Docker",
+        "DigitalOcean",
       ]}
       tags={[
         "Capstone",
@@ -47,11 +48,9 @@ export default function ViTech() {
           ],
         },
         {
-          title: "Stack",
-          body: "A Laravel/React application with a component-driven dashboard and a containerized deployment path.",
+          title: "Deployment",
+          body: "A component-driven dashboard shipped through a containerized deployment path.",
           bullets: [
-            "Laravel and MySQL for the backend and data model.",
-            "React, Material UI, Chart.js, and SCSS for the frontend.",
             "Docker for reproducible local and team environments.",
             "Hostinger, DigitalOcean, and CloudPanel for deployment.",
           ],

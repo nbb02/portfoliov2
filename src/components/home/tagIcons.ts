@@ -36,6 +36,7 @@ import {
 import { FaAws } from "react-icons/fa"
 import {
   SiChartdotjs,
+  SiDigitalocean,
   SiDocker,
   SiDrizzle,
   SiExpress,
@@ -93,6 +94,8 @@ export const TAG_ICONS: Record<
   },
   WebSocket: { icon: FiWifi, color: "#0f766e" },
   "Vercel AI SDK": { icon: SiVercel, color: "#0f172a", darkColor: "#f8fafc" },
+  Vercel: { icon: SiVercel, color: "#0f172a", darkColor: "#f8fafc" },
+  DigitalOcean: { icon: SiDigitalocean, color: "#0080FF" },
   "Llama 3.2": { icon: FiCpu, color: "#0f766e" },
   Capstone: { icon: FiAward, color: "#B45309" },
   "Local lab": { icon: FiTool, color: "#0f766e" },
