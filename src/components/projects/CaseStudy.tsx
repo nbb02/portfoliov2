@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
 import { FiCheck, FiMaximize2, FiX } from "react-icons/fi"
 import TagPill from "../home/TagPill"
+import TechText from "../home/TechText"
 
 type Section = {
   title: string
@@ -29,12 +30,12 @@ function BulletText({ text }: { text: string }) {
         <span className="font-semibold text-slate-900">
           {text.slice(0, separator)}:
         </span>
-        {text.slice(separator + 1)}
+        <TechText text={text.slice(separator + 1)} />
       </>
     )
   }
 
-  return <>{text}</>
+  return <TechText text={text} />
 }
 
 export default function CaseStudy({
@@ -161,7 +162,7 @@ export default function CaseStudy({
 
             <div className="mt-3">
               <p className="max-w-3xl text-base leading-relaxed text-slate-700">
-                {section.body}
+                <TechText text={section.body} />
               </p>
               {section.bullets && (
                 <ul className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
@@ -198,7 +199,7 @@ export default function CaseStudy({
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
                   <FiCheck size={11} aria-hidden="true" />
                 </span>
-                {highlight}
+                <TechText text={highlight} />
               </li>
             ))}
           </ul>
