@@ -119,12 +119,12 @@ export default function CaseStudy({
             </div>
 
             {stack && stack.length > 0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="mr-1 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
-                  Stack
-                </span>
+              <div
+                className="mt-4 flex flex-wrap items-center gap-2"
+                aria-label="Tech stack"
+              >
                 {stack.map((tag) => (
-                  <TagPill key={tag} tag={tag} dark />
+                  <TagPill key={tag} tag={tag} dark size="md" />
                 ))}
               </div>
             )}
