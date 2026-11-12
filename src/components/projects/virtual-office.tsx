@@ -1,3 +1,4 @@
+import { FiBox } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 
 export default function VirtualOffice() {
@@ -6,6 +7,21 @@ export default function VirtualOffice() {
       kicker="3D environment · 2026 · In progress"
       title="Virtual Office"
       intro="A browser-based 3D developer office with animated agent characters, desks, server racks, and a local agent bridge. The 3D scene and agent/presence layer are in place; most real integrations are still being wired."
+      icon={FiBox}
+      stack={[
+        "React",
+        "TypeScript",
+        "React Three Fiber",
+        "Three.js",
+        "Vite",
+        "WebSocket",
+        "Node.js",
+      ]}
+      keyPoints={[
+        "Isometric 3D office scene",
+        "Animated agent states",
+        "Local task bridge over WebSocket",
+      ]}
       tags={["3D", "React Three Fiber", "Agents", "Local tools", "In progress"]}
       meta={[
         { label: "Role", value: "Personal project" },

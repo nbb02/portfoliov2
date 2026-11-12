@@ -1,13 +1,17 @@
 import type { IconType } from "react-icons"
 import { lazy, Suspense } from "react"
 import { FaAws, FaGithub, FaLinkedin } from "react-icons/fa"
+import { FiFileText } from "react-icons/fi"
 import {
   SiDocker,
+  SiGrafana,
   SiInertia,
   SiLaravel,
   SiMysql,
+  SiNginx,
   SiNodedotjs,
   SiPostgresql,
+  SiPrometheus,
   SiReact,
   SiReactquery,
   SiRedis,
@@ -42,6 +46,10 @@ const TECH: Tech[] = [
   { name: "Redis", icon: SiRedis, color: "#DC382D" },
   { name: "AWS", icon: FaAws, color: "#FF9900" },
   { name: "Docker", icon: SiDocker, color: "#2496ED" },
+  { name: "Grafana", icon: SiGrafana, color: "#F46800" },
+  { name: "Prometheus", icon: SiPrometheus, color: "#E6522C" },
+  { name: "Loki", icon: FiFileText, color: "#B45309" },
+  { name: "NGINX", icon: SiNginx, color: "#009639" },
   { name: "Inertia.js", icon: SiInertia, color: "#9553E9" },
   { name: "Tailwind", icon: SiTailwindcss, color: "#06B6D4" },
   { name: "TanStack", icon: SiReactquery, color: "#FF4154" },
@@ -169,7 +177,7 @@ export default function HomeV2() {
                 Scroll to explore ↓
               </span>
             </div>
-            <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-12">
+            <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
               {TECH.map((tech) => {
                 const Icon = tech.icon
                 return (

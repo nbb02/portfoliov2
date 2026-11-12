@@ -111,7 +111,7 @@ export function LoadBalancerCard({ className = "" }: { className?: string }) {
       </span>
       <div className="relative">
         <p className="text-[10px] font-semibold text-teal-300">
-          Distributed systems · 2026
+          Local infrastructure lab · 2026
         </p>
         <h2 className="mt-1 text-xl font-semibold">
           Load Balancer + Observability
@@ -120,7 +120,7 @@ export function LoadBalancerCard({ className = "" }: { className?: string }) {
           NGINX, Prometheus, Grafana, Loki
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {["Distributed systems", "Observability", "Docker"].map((tag) => (
+          {["Local lab", "Observability", "Docker"].map((tag) => (
             <TagPill key={tag} tag={tag} dark />
           ))}
         </div>
@@ -147,14 +147,14 @@ export function ViTechCard({ className = "" }: { className?: string }) {
       </span>
       <div className="relative">
         <p className="text-[10px] font-semibold text-teal-300">
-          Data platform · 2024
+          Capstone project · 2024
         </p>
         <h2 className="mt-1 text-xl font-semibold">ViTech Analytics</h2>
         <p className="mt-1 text-xs text-slate-300">
           Dashboards, QR check-in, role-based access
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {["Data visualization", "RBAC", "Dashboards"].map((tag) => (
+          {["Capstone", "RBAC", "Dashboards"].map((tag) => (
             <TagPill key={tag} tag={tag} dark />
           ))}
         </div>
@@ -257,6 +257,14 @@ export function FinanceCard({ className = "" }: { className?: string }) {
         />
       </svg>
 
+      <img
+        src="/assets/projects/finance/ai-assistant.png"
+        alt=""
+        loading="lazy"
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 top-4 hidden h-20 w-28 rounded-lg border border-slate-200 object-cover shadow-sm sm:block"
+      />
+
       <div className="relative">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-700">
           <FiTrendingUp size={18} aria-hidden="true" />
@@ -295,6 +303,13 @@ export function HuntXPCard({ className = "" }: { className?: string }) {
         className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-amber-400/15 blur-3xl"
         aria-hidden="true"
       />
+      <img
+        src="/assets/projects/huntxp/homepage.png"
+        alt=""
+        loading="lazy"
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 top-4 hidden h-20 w-28 rounded-lg border border-slate-200 object-cover shadow-sm sm:block"
+      />
 
       <div className="relative">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-700">
@@ -330,6 +345,13 @@ export function VirtualOfficeCard({ className = "" }: { className?: string }) {
       to="/projects/virtual-office"
       className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
+      <img
+        src="/assets/projects/virtual-office/office.png"
+        alt=""
+        loading="lazy"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
+      />
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={GRID_PATTERN}

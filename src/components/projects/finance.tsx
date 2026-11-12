@@ -1,3 +1,4 @@
+import { FiTrendingUp } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 
 export default function Finance() {
@@ -6,7 +7,23 @@ export default function Finance() {
       kicker="Personal finance · 2026"
       title="Finance PWA"
       intro="A personal finance PWA whose AI assistant can read and act on the same accounts, ledger, budgets, bills, and investments as the UI — with the security boundary kept on the server."
-      tags={["PWA", "Next.js", "Supabase", "AI", "MCP", "Security"]}
+      icon={FiTrendingUp}
+      stack={[
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Supabase",
+        "Drizzle",
+        "TanStack Query",
+        "Vercel AI SDK",
+        "Tailwind",
+      ]}
+      keyPoints={[
+        "AI with ledger-level tools",
+        "Server-side provider-key boundary",
+        "Installable PWA",
+      ]}
+      tags={["PWA", "AI", "MCP", "Security"]}
       meta={[
         { label: "Role", value: "Personal project" },
         { label: "Timeline", value: "2026" },

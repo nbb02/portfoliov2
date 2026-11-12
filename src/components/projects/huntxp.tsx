@@ -1,3 +1,4 @@
+import { FiAward } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 
 export default function HuntXP() {
@@ -6,6 +7,19 @@ export default function HuntXP() {
       kicker="Personal platform · 2026"
       title="HuntXP"
       intro="A gamified job-hunting workbench that turns applications into a pipeline, parses a resume into structured data, and runs AI coaching locally in the browser."
+      icon={FiAward}
+      stack={[
+        "Next.js",
+        "React",
+        "TypeScript",
+        "WebLLM",
+        "Llama 3.2",
+      ]}
+      keyPoints={[
+        "AI runs locally in the browser",
+        "XP and leaderboard loop",
+        "Resume parsed into structured data",
+      ]}
       tags={[
         "Local-first AI",
         "WebLLM",
@@ -58,14 +72,6 @@ export default function HuntXP() {
         {
           src: "/assets/projects/huntxp/homepage.png",
           alt: "HuntXP landing page with the momentum engine and feature overview",
-        },
-        {
-          src: "/assets/projects/huntxp/job-ai.png",
-          alt: "HuntXP job AI workbench with application pipeline and chat tabs",
-        },
-        {
-          src: "/assets/projects/huntxp/resume_ai.png",
-          alt: "HuntXP resume AI parsing a resume into a structured profile",
         },
         {
           src: "/assets/projects/huntxp/profile.png",

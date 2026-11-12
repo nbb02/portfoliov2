@@ -1,3 +1,4 @@
+import { FiUsers } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 
 export default function ClientPortal() {
@@ -6,6 +7,22 @@ export default function ClientPortal() {
       kicker="Enterprise platform · 2026–Present"
       title="Client Portal Platform"
       intro="A multi-tenant operations portal unifying CRM, project delivery, embedded forms, and document generation across a large modular add-on system."
+      icon={FiUsers}
+      stack={[
+        "React",
+        "TypeScript",
+        "Laravel",
+        "Inertia.js",
+        "Tailwind",
+        "Redis",
+        "MySQL",
+        "AWS",
+      ]}
+      keyPoints={[
+        "30+ modular add-ons",
+        "Tenant isolation and audit trails",
+        "Queued document generation",
+      ]}
       tags={[
         "Multi-tenancy",
         "Authorization",

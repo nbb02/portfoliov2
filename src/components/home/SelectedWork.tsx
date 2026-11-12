@@ -16,7 +16,7 @@ export default function SelectedWork() {
         <div>
           <p className="text-sm font-semibold text-teal-700">Selected work</p>
           <h2 className="mt-2 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">
-            Systems I&apos;ve shipped.
+            Systems I&apos;ve built.
           </h2>
         </div>
         <Link

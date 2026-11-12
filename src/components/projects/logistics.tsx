@@ -1,3 +1,4 @@
+import { FiTruck } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 
 export default function Logistics() {
@@ -6,6 +7,24 @@ export default function Logistics() {
       kicker="Realtime platform · 2025–2026"
       title="Logistics & Realtime Booking"
       intro="A real-time logistics platform for dispatching, live tracking, and rider-customer bidding, serving roughly 50k registered users."
+      icon={FiTruck}
+      stack={[
+        "Node.js",
+        "Express",
+        "MySQL",
+        "Redis",
+        "AWS",
+        "WebSockets",
+        "Docker",
+        "Prometheus",
+        "Grafana",
+        "Loki",
+      ]}
+      keyPoints={[
+        "~50k registered users",
+        "Realtime dispatch and live tracking",
+        "AWS with Prometheus, Grafana, and Loki",
+      ]}
       tags={["Realtime", "WebSockets", "Redis", "AWS", "Observability"]}
       meta={[
         { label: "Role", value: "Software Engineer" },

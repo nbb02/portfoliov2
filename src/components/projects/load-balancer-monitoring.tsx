@@ -1,12 +1,31 @@
+import { FiServer } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 
 export default function LoadBalancerMonitoring() {
   return (
     <CaseStudy
-      kicker="Distributed systems · 2026"
+      kicker="Local infrastructure lab · 2026"
       title="Load Balancer + Observability"
-      intro="A containerized, multi-instance backend with NGINX load balancing, JWT-protected APIs, Socket.IO realtime messaging, and a full observability stack."
+      intro="A self-contained, containerized lab with NGINX load balancing, JWT-protected APIs, Socket.IO realtime messaging, and a full observability stack."
+      icon={FiServer}
+      stack={[
+        "NGINX",
+        "Node.js",
+        "Express",
+        "Docker",
+        "Prometheus",
+        "Grafana",
+        "Loki",
+        "PostgreSQL",
+        "Redis",
+      ]}
+      keyPoints={[
+        "Three Node replicas behind NGINX",
+        "Toggleable failure-mode testing",
+        "Prometheus, Grafana, and Loki",
+      ]}
       tags={[
+        "Local lab",
         "Distributed systems",
         "Observability",
         "Docker",
@@ -18,8 +37,8 @@ export default function LoadBalancerMonitoring() {
         { label: "Role", value: "Backend Engineer" },
         { label: "Timeline", value: "2026" },
         {
-          label: "Focus",
-          value: "Distributed systems, observability",
+          label: "Context",
+          value: "Local lab · self-directed",
         },
       ]}
       sections={[

@@ -1,12 +1,29 @@
+import { FiBarChart2 } from "react-icons/fi"
 import CaseStudy from "../projects/CaseStudy"
 
 export default function ViTech() {
   return (
     <CaseStudy
-      kicker="Data platform · 2024"
+      kicker="Capstone project · 2024"
       title="ViTech Analytics"
       intro="A population management and analytics platform built as a capstone project, with dashboards, QR check-in, role-based access, and exportable reports."
+      icon={FiBarChart2}
+      stack={[
+        "Laravel",
+        "MySQL",
+        "React",
+        "Material UI",
+        "Chart.js",
+        "SCSS",
+        "Docker",
+      ]}
+      keyPoints={[
+        "Capstone project",
+        "QR check-in and role-based access",
+        "Configurable analytics dashboards",
+      ]}
       tags={[
+        "Capstone",
         "Data visualization",
         "RBAC",
         "Dashboards",
