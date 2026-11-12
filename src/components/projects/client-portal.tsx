@@ -18,11 +18,6 @@ export default function ClientPortal() {
         "MySQL",
         "AWS",
       ]}
-      keyPoints={[
-        "30+ modular add-ons",
-        "Tenant isolation and audit trails",
-        "Queued document generation",
-      ]}
       tags={[
         "Multi-tenancy",
         "Authorization",

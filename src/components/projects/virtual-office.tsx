@@ -17,11 +17,6 @@ export default function VirtualOffice() {
         "WebSocket",
         "Node.js",
       ]}
-      keyPoints={[
-        "Isometric 3D office scene",
-        "Animated agent states",
-        "Local task bridge over WebSocket",
-      ]}
       tags={["3D", "React Three Fiber", "Agents", "Local tools", "In progress"]}
       meta={[
         { label: "Role", value: "Personal project" },

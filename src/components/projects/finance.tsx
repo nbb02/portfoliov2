@@ -18,11 +18,6 @@ export default function Finance() {
         "Vercel AI SDK",
         "Tailwind",
       ]}
-      keyPoints={[
-        "AI with ledger-level tools",
-        "Server-side provider-key boundary",
-        "Installable PWA",
-      ]}
       tags={["PWA", "AI", "MCP", "Security"]}
       meta={[
         { label: "Role", value: "Personal project" },

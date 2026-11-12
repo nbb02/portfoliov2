@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
-import { FiCheck, FiMaximize2, FiX, FiZap } from "react-icons/fi"
+import { FiCheck, FiMaximize2, FiX } from "react-icons/fi"
 import TagPill from "../home/TagPill"
 
 type Section = {
@@ -43,7 +43,6 @@ export default function CaseStudy({
   intro,
   tags,
   stack,
-  keyPoints,
   icon: Icon,
   meta,
   sections,
@@ -59,7 +58,6 @@ export default function CaseStudy({
   intro: string
   tags: string[]
   stack?: string[]
-  keyPoints?: string[]
   icon?: IconType
   meta: Meta[]
   sections: Section[]
@@ -146,24 +144,6 @@ export default function CaseStudy({
           </div>
         </section>
 
-        {keyPoints && keyPoints.length > 0 && (
-          <section className="grid gap-3 sm:grid-cols-3">
-            {keyPoints.map((point) => (
-              <div
-                key={point}
-                className="rounded-2xl border border-slate-300 bg-white/60 p-4"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                  <FiZap size={14} aria-hidden="true" />
-                </span>
-                <p className="mt-3 text-sm font-semibold leading-relaxed text-slate-900">
-                  {point}
-                </p>
-              </div>
-            ))}
-          </section>
-        )}
-
         {sections.map((section) => (
           <section
             key={section.title}
@@ -202,6 +182,28 @@ export default function CaseStudy({
           </section>
         ))}
 
+        <section className="rounded-2xl border border-slate-200 bg-white/70 p-6">
+          <p className="text-sm font-semibold text-teal-700">
+            {highlightsKicker}
+          </p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+            {highlightsTitle}
+          </h2>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {highlights.map((highlight) => (
+              <li
+                key={highlight}
+                className="flex gap-2.5 text-sm leading-relaxed text-slate-600"
+              >
+                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                  <FiCheck size={11} aria-hidden="true" />
+                </span>
+                {highlight}
+              </li>
+            ))}
+          </ul>
+        </section>
+
         {gallery && gallery.length > 0 && (
           <section className="border-t border-slate-300 pt-6">
             <div className="flex items-center gap-3">
@@ -239,28 +241,6 @@ export default function CaseStudy({
             </div>
           </section>
         )}
-
-        <section className="rounded-2xl border border-slate-200 bg-white/70 p-6">
-          <p className="text-sm font-semibold text-teal-700">
-            {highlightsKicker}
-          </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-            {highlightsTitle}
-          </h2>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {highlights.map((highlight) => (
-              <li
-                key={highlight}
-                className="flex gap-2.5 text-sm leading-relaxed text-slate-600"
-              >
-                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                  <FiCheck size={11} aria-hidden="true" />
-                </span>
-                {highlight}
-              </li>
-            ))}
-          </ul>
-        </section>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-300 pt-6">
           <Link

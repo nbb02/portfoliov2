@@ -20,11 +20,6 @@ export default function Logistics() {
         "Grafana",
         "Loki",
       ]}
-      keyPoints={[
-        "~50k registered users",
-        "Realtime dispatch and live tracking",
-        "AWS with Prometheus, Grafana, and Loki",
-      ]}
       tags={["Realtime", "WebSockets", "Redis", "AWS", "Observability"]}
       meta={[
         { label: "Role", value: "Software Engineer" },

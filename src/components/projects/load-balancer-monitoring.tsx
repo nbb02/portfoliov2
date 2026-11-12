@@ -19,11 +19,6 @@ export default function LoadBalancerMonitoring() {
         "PostgreSQL",
         "Redis",
       ]}
-      keyPoints={[
-        "Three Node replicas behind NGINX",
-        "Toggleable failure-mode testing",
-        "Prometheus, Grafana, and Loki",
-      ]}
       tags={[
         "Local lab",
         "Distributed systems",

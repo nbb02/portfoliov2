@@ -15,11 +15,6 @@ export default function HuntXP() {
         "WebLLM",
         "Llama 3.2",
       ]}
-      keyPoints={[
-        "AI runs locally in the browser",
-        "XP and leaderboard loop",
-        "Resume parsed into structured data",
-      ]}
       tags={[
         "Local-first AI",
         "WebLLM",

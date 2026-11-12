@@ -17,11 +17,6 @@ export default function ViTech() {
         "SCSS",
         "Docker",
       ]}
-      keyPoints={[
-        "Capstone project",
-        "QR check-in and role-based access",
-        "Configurable analytics dashboards",
-      ]}
       tags={[
         "Capstone",
         "Data visualization",
