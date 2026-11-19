@@ -172,6 +172,16 @@ function buildSceneStyles(progress: number): SceneStyles {
         [241, 245, 249],
         textProgress,
       ),
+      "--experience-role-index": mixColor(
+        [180, 83, 9],
+        [251, 191, 36],
+        textProgress,
+      ),
+      "--experience-dot-bg": mixColor(
+        [250, 247, 240],
+        [8, 17, 36],
+        textProgress,
+      ),
       "--experience-card-bg": mixRgba(
         [255, 255, 255],
         [255, 255, 255],
@@ -422,15 +432,41 @@ export default function ProfessionalExperience({
       renderScene()
 
       const isDesktop = window.matchMedia("(min-width: 769px)").matches
-      if (!isDesktop) {
-        return
-      }
-
       const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches
       let currentState = 0
       let hintVisible = true
+
+      const setScene = (nextState: number) => {
+        if (nextState === currentState) return
+
+        currentState = nextState
+        setIsNight(nextState === 1)
+
+        gsap.killTweensOf(state)
+        gsap.to(state, {
+          progress: nextState,
+          duration: prefersReducedMotion ? 0.01 : 1.6,
+          ease: "power2.inOut",
+          onUpdate: renderScene,
+        })
+      }
+
+      if (!isDesktop) {
+        const mobileTrigger = ScrollTrigger.create({
+          trigger: panel,
+          start: "top 45%",
+          end: "bottom 40%",
+          onEnter: () => setScene(1),
+          onLeaveBack: () => setScene(0),
+        })
+
+        return () => {
+          mobileTrigger.kill()
+          gsap.killTweensOf(state)
+        }
+      }
 
       const trigger = ScrollTrigger.create({
         trigger: shell,
@@ -443,19 +479,7 @@ export default function ProfessionalExperience({
             setShowHint(shouldShowHint)
           }
 
-          const nextState = self.progress >= 0.25 ? 1 : 0
-          if (nextState === currentState) return
-
-          currentState = nextState
-          setIsNight(nextState === 1)
-
-          gsap.killTweensOf(state)
-          gsap.to(state, {
-            progress: nextState,
-            duration: prefersReducedMotion ? 0.01 : 1.6,
-            ease: "power2.inOut",
-            onUpdate: renderScene,
-          })
+          setScene(self.progress >= 0.25 ? 1 : 0)
         },
       })
 
@@ -551,29 +575,55 @@ export default function ProfessionalExperience({
           <p className="section-kicker professional-kicker">{kicker}</p>
           <h2 className="section-title professional-title">{title}</h2>
 
-          <div className="mt-6 space-y-4">
-            {roles.map((role) => (
-              <article
-                key={`${role.title}-${role.company}`}
-                className="professional-role"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="professional-role-title">{role.title}</h3>
-                  {role.current && (
-                    <span className="professional-current">Current</span>
-                  )}
-                </div>
-                <p className="professional-role-meta">
-                  {role.company} <span aria-hidden="true">|</span> {role.range}
-                </p>
-                <ul className="professional-role-list">
-                  {role.highlights.map((point) => (
-                    <li key={point}>- {point}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
+          {atmosphere ? (
+            <div className="journey-list">
+              {roles.map((role) => (
+                <article
+                  key={`${role.title}-${role.company}`}
+                  className="journey-entry"
+                >
+                  <div className="journey-entry-head">
+                    <h3 className="professional-role-title">{role.title}</h3>
+                    {role.current && (
+                      <span className="professional-current">Current</span>
+                    )}
+                    <span className="journey-entry-date">{role.range}</span>
+                  </div>
+                  <p className="professional-role-meta">{role.company}</p>
+                  <ul className="professional-role-list">
+                    {role.highlights.map((point) => (
+                      <li key={point}>- {point}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-6 space-y-4">
+              {roles.map((role) => (
+                <article
+                  key={`${role.title}-${role.company}`}
+                  className="professional-role"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="professional-role-title">{role.title}</h3>
+                    {role.current && (
+                      <span className="professional-current">Current</span>
+                    )}
+                  </div>
+                  <p className="professional-role-meta">
+                    {role.company} <span aria-hidden="true">|</span>{" "}
+                    {role.range}
+                  </p>
+                  <ul className="professional-role-list">
+                    {role.highlights.map((point) => (
+                      <li key={point}>- {point}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
 
         {atmosphere && (

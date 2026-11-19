@@ -601,6 +601,117 @@ h4 {
   font-size: 0.95rem;
 }
 
+.journey-list {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.35rem;
+}
+
+.journey-entry {
+  position: relative;
+  padding: 0.55rem 0.95rem 0.6rem 2rem;
+  border: 1px solid var(--experience-card-border, rgba(15, 23, 42, 0.1));
+  border-radius: 0.85rem;
+  background: var(--experience-card-bg, rgba(255, 255, 255, 0.6));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.journey-entry:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 1.17rem;
+  bottom: -0.56rem;
+  width: 1px;
+  height: 0.56rem;
+  background: var(--experience-card-border, rgba(15, 23, 42, 0.16));
+}
+
+.journey-entry::before {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  top: 0.95rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 2px solid var(--experience-role-index, #b45309);
+  background: var(--experience-dot-bg, #f4f0e8);
+}
+
+.journey-entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.journey-entry-date {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--experience-role-meta, #334155);
+  white-space: nowrap;
+}
+
+.journey-v2 .journey-entry .professional-role-title {
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+}
+
+.journey-v2 .journey-entry .professional-role-meta {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+}
+
+.journey-v2 .journey-entry .professional-role-list {
+  margin-top: 0.3rem;
+  padding-left: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 1.5rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.journey-v2 .journey-entry .professional-role-list li {
+  margin-bottom: 0.2rem;
+  break-inside: avoid;
+}
+
+@media (max-width: 640px) {
+  .journey-list {
+    margin-top: 1rem;
+    gap: 0.45rem;
+  }
+
+  .journey-entry {
+    padding: 0.5rem 0.8rem 0.55rem 1.75rem;
+  }
+
+  .journey-entry::before {
+    left: 0.65rem;
+    top: 0.8rem;
+  }
+
+  .journey-entry:not(:last-child)::after {
+    left: 1.02rem;
+    bottom: -0.46rem;
+    height: 0.46rem;
+  }
+
+  .journey-entry-date {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .journey-v2 .journey-entry .professional-role-list {
+    columns: 1;
+  }
+}
+
 @media (min-width: 640px) {
   .professional-content {
     padding: 8rem 1.75rem 2.5rem;
@@ -942,10 +1053,7 @@ h4 {
 }
 
 @media (max-width: 768px) {
-  .journey-v2 .professional-stars,
-  .journey-v2 .professional-clouds,
-  .journey-v2 .professional-rays,
-  .journey-v2 .professional-birds {
+  .journey-v2 .professional-sky {
     display: none;
   }
 }
