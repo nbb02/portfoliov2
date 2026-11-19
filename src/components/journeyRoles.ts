@@ -13,7 +13,7 @@ export const JOURNEY_ROLES: RoleItem[] = [
     range: "May 2026 – Present",
     current: true,
     highlights: [
-      "Building a multi-tenant portal for CRM, project delivery, and document workflows.",
+      "Contributing to an existing multi-tenant portal covering CRM, project delivery, and modular add-ons.",
       "Working on tenant isolation, authorization boundaries, audit trails, and secure integrations.",
     ],
   },
@@ -22,7 +22,7 @@ export const JOURNEY_ROLES: RoleItem[] = [
     company: "Logistics and Technology Company*",
     range: "Sep 2025 – Mar 2026",
     highlights: [
-      "Built a logistics platform competing with Lalamove and Grab, reaching ~50k registered users.",
+      "Built a logistics platform for dispatching, live tracking, and rider-customer bidding.",
       "Deployed AWS infrastructure with a Dockerized Prometheus, Grafana, and Loki stack.",
     ],
   },

@@ -5,6 +5,7 @@ import {
   HuntXPCard,
   LoadBalancerCard,
   LogisticsCard,
+  RecyclingPlatformCard,
   ViTechCard,
   VirtualOfficeCard,
 } from "./ProjectCards"
@@ -35,8 +36,9 @@ export default function SelectedWork() {
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <LogisticsCard />
+        <RecyclingPlatformCard />
       </div>
 
       <div className="mt-10 border-t border-slate-300 pt-8">

@@ -1,4 +1,5 @@
 import { FiTruck } from "react-icons/fi"
+import { LogisticsArt } from "../home/ProjectArt"
 import CaseStudy from "./CaseStudy"
 
 export default function Logistics() {
@@ -6,8 +7,9 @@ export default function Logistics() {
     <CaseStudy
       kicker="Realtime platform · 2025–2026"
       title="Logistics & Realtime Booking"
-      intro="A real-time logistics platform for dispatching, live tracking, and rider-customer bidding, serving roughly 50k registered users."
+      intro="A real-time logistics platform for dispatching, live tracking, and rider-customer bidding."
       icon={FiTruck}
+      art={<LogisticsArt className="h-52 w-full" />}
       stack={[
         "Node.js",
         "Express",
@@ -20,7 +22,7 @@ export default function Logistics() {
         "Grafana",
         "Loki",
       ]}
-      tags={["Realtime", "WebSockets", "Redis", "AWS", "Observability"]}
+      tags={["Realtime", "WebSockets", "Redis", "AWS", "Monitoring"]}
       meta={[
         { label: "Role", value: "Software Engineer" },
         { label: "Timeline", value: "Sep 2025 – Mar 2026" },
@@ -59,7 +61,7 @@ export default function Logistics() {
         "Realtime architecture and WebSocket state",
         "Redis caching and queue design",
         "AWS deployment and infrastructure operations",
-        "Observability, alerting, and production troubleshooting",
+        "Monitoring, alerting, and production troubleshooting",
         "Failure handling and resilience testing",
       ]}
       nextHref="/projects/load-balancer-monitoring"

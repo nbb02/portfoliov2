@@ -1,15 +1,17 @@
 import { FiHeart } from "react-icons/fi"
+import { RecyclingArt } from "../home/ProjectArt"
 import CaseStudy from "./CaseStudy"
 
-export default function CleanBaliwag() {
+export default function RecyclingPlatform() {
   return (
     <CaseStudy
       kicker="Social & blockchain · 2024–2025"
-      title="Clean Baliwag"
+      title="Recycling Platform"
       intro="A community recycling platform where verified collections earn points, unlock tiers, and redeem at partner stores — with a blockchain-backed transaction ledger."
       icon={FiHeart}
+      art={<RecyclingArt className="h-52 w-full" />}
       stack={["Laravel", "PHP", "MySQL", "Sanctum", "Tailwind", "Vite", "Docker"]}
-      tags={["Social", "Blockchain", "Civic tech", "Rewards", "QR verification"]}
+      tags={["Social", "Blockchain", "Community", "Rewards", "QR verification"]}
       meta={[
         { label: "Role", value: "Full Stack Developer" },
         { label: "Timeline", value: "2024–2025" },
@@ -18,7 +20,7 @@ export default function CleanBaliwag() {
       sections={[
         {
           title: "Features",
-          body: "A three-sided platform for residents, partner stores, and administrators.",
+          body: "One platform for residents, partner stores, and administrators.",
           bullets: [
             "Role-based access for residents, partner stores, and admins with Sanctum tokens and middleware.",
             "Recyclables catalog with per-type point values and collection logging.",
@@ -31,7 +33,7 @@ export default function CleanBaliwag() {
         },
         {
           title: "Blockchain verification",
-          body: "The chain is used as an audit layer for rewards, not as a wallet UI.",
+          body: "The blockchain keeps a public record of rewards, not a wallet.",
           bullets: [
             "Recycles, exchanges, reimbursements, and tier rewards store a transaction hash.",
             "A verification endpoint checks the expected payload against the blockchain node.",
@@ -41,7 +43,7 @@ export default function CleanBaliwag() {
         },
         {
           title: "Architecture",
-          body: "An API-first Laravel backend with separate static frontends for each role.",
+          body: "A Laravel backend with a separate frontend for each role.",
           bullets: [
             "Laravel 12 and PHP 8.2 with Sanctum authentication and role middleware.",
             "MySQL models for users, collections, transactions, rewards, tiers, events, and reimbursements.",

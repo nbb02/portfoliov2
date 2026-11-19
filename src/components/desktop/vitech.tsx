@@ -21,7 +21,7 @@ export default function ViTech() {
       tags={[
         "Capstone",
         "Data visualization",
-        "RBAC",
+        "Roles & permissions",
         "Dashboards",
         "QR check-in",
         "Exports",
@@ -58,6 +58,10 @@ export default function ViTech() {
           ],
         },
       ]}
+      preview={{
+        src: "/assets/projects/vitech/dashboard.webp",
+        alt: "ViTech analytics dashboard",
+      }}
       gallery={[
         {
           src: "/assets/projects/vitech/dashboard.webp",

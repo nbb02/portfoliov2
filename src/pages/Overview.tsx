@@ -1,14 +1,15 @@
 import {
-  CleanBaliwagCard,
   ClientPortalCard,
   EcommerceCard,
   FinanceCard,
   HuntXPCard,
   LoadBalancerCard,
   LogisticsCard,
+  RecyclingPlatformCard,
   ViTechCard,
   VirtualOfficeCard,
 } from "../components/home/ProjectCards"
+import MoreWork from "../components/home/MoreWork"
 
 export default function Overview() {
   return (
@@ -35,7 +36,7 @@ export default function Overview() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <LogisticsCard />
         <EcommerceCard />
-        <CleanBaliwagCard />
+        <RecyclingPlatformCard />
       </div>
 
       <div className="space-y-4 border-t border-slate-300 pt-8">
@@ -53,6 +54,8 @@ export default function Overview() {
           <VirtualOfficeCard />
         </div>
       </div>
+
+      <MoreWork />
     </div>
   )
 }

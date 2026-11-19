@@ -1,4 +1,5 @@
 import { FiUsers } from "react-icons/fi"
+import { PortalArt } from "../home/ProjectArt"
 import CaseStudy from "./CaseStudy"
 
 export default function ClientPortal() {
@@ -6,8 +7,9 @@ export default function ClientPortal() {
     <CaseStudy
       kicker="Enterprise platform · 2026–Present"
       title="Client Portal Platform"
-      intro="A multi-tenant operations portal unifying CRM, project delivery, embedded forms, and document generation across a large modular add-on system."
+      intro="An existing multi-tenant operations portal covering CRM, project delivery, and a large modular add-on system. I contribute across tenancy, authorization, and delivery workflows."
       icon={FiUsers}
+      art={<PortalArt className="h-52 w-full" />}
       stack={[
         "React",
         "TypeScript",
@@ -18,13 +20,7 @@ export default function ClientPortal() {
         "MySQL",
         "AWS",
       ]}
-      tags={[
-        "Multi-tenancy",
-        "Authorization",
-        "Modular architecture",
-        "Embedded forms",
-        "Document pipelines",
-      ]}
+      tags={["Multiple clients", "Authorization", "Add-on modules"]}
       meta={[
         { label: "Role", value: "Software Developer" },
         { label: "Timeline", value: "May 2026 – Present" },
@@ -40,8 +36,6 @@ export default function ClientPortal() {
           bullets: [
             "CRM and delivery workflows: pipelines, deals, contacts, tasks, approvals, and audit trails.",
             "Modular add-ons: extension points, isolated routes, and versioned modules that ship without modifying core code.",
-            "Embedded forms: drag-and-drop authoring, conditional logic, multi-page flows, and cross-domain embedding.",
-            "Document generation: template-driven PDFs, queued rendering, image processing, and merged documents.",
             "Integrations: accounting, e-commerce webhooks, calendar sync, email, and messaging behind permission checks.",
             "Shared practices: additive migrations, deployment verification, and test coverage for tenant boundaries.",
           ],
@@ -63,9 +57,8 @@ export default function ClientPortal() {
       highlights={[
         "Tenant isolation and boundary testing",
         "Policy-based authorization and audit trails",
-        "Modular architecture and extension points",
+        "Add-on modules and extension points",
         "Secure integrations and idempotent retries",
-        "Queued document workflows and failure handling",
       ]}
       nextHref="/projects/logistics"
       nextLabel="Next: Logistics & Realtime Booking"

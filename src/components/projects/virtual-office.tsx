@@ -51,6 +51,10 @@ export default function VirtualOffice() {
           body: "The 3D environment and agent/presence layer are implemented. Real project, server, and tooling integrations are not connected yet; the next step is wiring those events into the scene.",
         },
       ]}
+      preview={{
+        src: "/assets/projects/virtual-office/office.webp",
+        alt: "Virtual office 3D scene",
+      }}
       gallery={[
         {
           src: "/assets/projects/virtual-office/office.webp",

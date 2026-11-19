@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState, type ReactNode } from "react"
 import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
 import { FiCheck, FiMaximize2 } from "react-icons/fi"
@@ -49,6 +49,8 @@ export default function CaseStudy({
   meta,
   sections,
   gallery,
+  preview,
+  art,
   highlights,
   highlightsKicker = "Highlights",
   highlightsTitle = "Highlights",
@@ -64,6 +66,8 @@ export default function CaseStudy({
   meta: Meta[]
   sections: Section[]
   gallery?: GalleryImage[]
+  preview?: GalleryImage
+  art?: ReactNode
   highlights: string[]
   highlightsKicker?: string
   highlightsTitle?: string
@@ -86,38 +90,62 @@ export default function CaseStudy({
             aria-hidden="true"
           />
           <div className="relative">
-            <div className="flex items-center gap-3">
-              {Icon && (
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-teal-300">
-                  <Icon size={20} aria-hidden="true" />
-                </span>
-              )}
-              <p className="text-sm font-semibold text-teal-300">{kicker}</p>
-            </div>
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  {Icon && (
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-teal-300">
+                      <Icon size={20} aria-hidden="true" />
+                    </span>
+                  )}
+                  <p className="text-sm font-semibold text-teal-300">{kicker}</p>
+                </div>
 
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
-              {title}
-            </h1>
-            <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-300">
-              {intro}
-            </p>
+                <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+                  {title}
+                </h1>
+                <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-300">
+                  {intro}
+                </p>
 
-            <div className="mt-6 flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <TagPill key={tag} tag={tag} dark />
-              ))}
-            </div>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <TagPill key={tag} tag={tag} dark />
+                  ))}
+                </div>
 
-            {stack && stack.length > 0 && (
-              <div
-                className="mt-4 flex flex-wrap items-center gap-2"
-                aria-label="Tech stack"
-              >
-                {stack.map((tag) => (
-                  <TagPill key={tag} tag={tag} dark size="md" />
-                ))}
+                {stack && stack.length > 0 && (
+                  <div
+                    className="mt-4 flex flex-wrap items-center gap-2"
+                    aria-label="Tech stack"
+                  >
+                    {stack.map((tag) => (
+                      <TagPill key={tag} tag={tag} dark size="md" />
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+
+              {preview && (
+                <div className="shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] shadow-2xl lg:w-[40%] lg:max-w-md">
+                  <img
+                    src={preview.src}
+                    alt={preview.alt}
+                    loading="lazy"
+                    className="aspect-[16/11] w-full object-cover object-top"
+                  />
+                </div>
+              )}
+
+              {!preview && art && (
+                <div
+                  className="hidden shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] p-6 text-teal-300/50 lg:flex lg:w-[40%] lg:max-w-md lg:self-center"
+                  aria-hidden="true"
+                >
+                  {art}
+                </div>
+              )}
+            </div>
 
             <div className="mt-8 grid grid-cols-1 gap-4 border-t border-white/10 pt-5 sm:grid-cols-3">
               {meta.map((item) => (
@@ -215,12 +243,19 @@ export default function CaseStudy({
                   aria-label={`Open image: ${image.alt}`}
                   className="group relative block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-left transition-colors hover:border-slate-300"
                 >
-                  <div className="aspect-[16/10] w-full overflow-hidden">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+                    <img
+                      src={image.src}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
+                    />
                     <img
                       src={image.src}
                       alt={image.alt}
                       loading="lazy"
-                      className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-[1.01]"
+                      className="relative z-10 h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-[1.01]"
                     />
                   </div>
                   <span className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-slate-950/70 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">

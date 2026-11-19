@@ -9,12 +9,8 @@ export default function HomeNav({
 }) {
   const location = useLocation()
   const isWork = location.pathname.startsWith("/projects")
-
-  const handleWorkClick = () => {
-    if (isWork) {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    }
-  }
+  const primaryHref = isWork ? "/" : "/projects"
+  const primaryLabel = isWork ? "Home" : "Projects"
 
   return (
     <header className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-5 sm:px-8">
@@ -29,14 +25,10 @@ export default function HomeNav({
 
       <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
         <Link
-          to="/projects"
-          onClick={handleWorkClick}
-          aria-current={isWork ? "page" : undefined}
-          className={`transition-colors ${
-            isWork ? "font-semibold text-slate-950" : "hover:text-slate-950"
-          }`}
+          to={primaryHref}
+          className="transition-colors hover:text-slate-950"
         >
-          Work
+          {primaryLabel}
         </Link>
         {showExperience && (
           <ScrollLink
@@ -50,16 +42,10 @@ export default function HomeNav({
 
       <div className="flex items-center gap-2">
         <Link
-          to="/projects"
-          onClick={handleWorkClick}
-          aria-current={isWork ? "page" : undefined}
-          className={`text-sm font-semibold transition-colors md:hidden ${
-            isWork
-              ? "text-slate-950"
-              : "text-slate-600 hover:text-slate-950"
-          }`}
+          to={primaryHref}
+          className="text-sm font-semibold text-slate-600 transition-colors hover:text-slate-950 md:hidden"
         >
-          Work
+          {primaryLabel}
         </Link>
         <Link
           to="/v1"

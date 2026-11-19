@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom"
+import { Link, NavLink, Outlet } from "react-router-dom"
 import HomeNav from "../components/home/HomeNav"
 
 const TABS = [
@@ -12,7 +12,7 @@ const TABS = [
   },
   { to: "/projects/finance", label: "Finance" },
   { to: "/projects/huntxp", label: "HuntXP" },
-  { to: "/projects/clean-baliwag", label: "Clean Baliwag" },
+  { to: "/projects/recycling-platform", label: "Recycling Platform" },
   { to: "/projects/virtual-office", label: "Virtual Office" },
 ]
 
@@ -23,7 +23,12 @@ export default function Projects() {
 
       <main className="mx-auto max-w-[1240px] px-5 pb-16 pt-8 sm:px-8">
         <div className="flex flex-col gap-3 border-b border-slate-300 pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-teal-700">Projects</p>
+          <Link
+            to="/projects"
+            className="text-sm font-semibold text-teal-700 transition-colors hover:text-teal-900"
+          >
+            Projects
+          </Link>
           <nav className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
             {TABS.map((tab) => (
               <NavLink

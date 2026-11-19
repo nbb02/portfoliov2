@@ -8,6 +8,12 @@ import {
   FiTrendingUp,
 } from "react-icons/fi"
 import TagPill from "./TagPill"
+import {
+  CommerceArt,
+  LogisticsArt,
+  PortalArt,
+  RecyclingArt,
+} from "./ProjectArt"
 
 const GRID_PATTERN = {
   backgroundImage:
@@ -29,14 +35,6 @@ function Arrow() {
   )
 }
 
-function LightArrow() {
-  return (
-    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-      <FiArrowUpRight size={16} aria-hidden="true" />
-    </span>
-  )
-}
-
 export function ClientPortalCard({ className = "" }: { className?: string }) {
   return (
     <Link
@@ -52,6 +50,7 @@ export function ClientPortalCard({ className = "" }: { className?: string }) {
         className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/15 blur-3xl"
         aria-hidden="true"
       />
+      <PortalArt className="absolute bottom-24 right-1 h-40 w-[56%] text-teal-300/35" />
       <div className="absolute right-6 top-6 hidden gap-2 lg:flex">
         {["tenant", "policy", "audit"].map((label) => (
           <span
@@ -71,14 +70,14 @@ export function ClientPortalCard({ className = "" }: { className?: string }) {
           Client Portal Platform
         </h2>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-300">
-          A multi-tenant operations portal unifying CRM, project delivery,
-          embedded forms, and document generation.
+          A multi-tenant operations portal covering CRM, project delivery, and
+          modular add-ons.
         </p>
       </div>
 
       <div className="relative mt-6">
         <div className="flex flex-wrap gap-1.5">
-          {["Multi-tenancy", "Authorization", "Modular architecture"].map(
+          {["Multiple clients", "Authorization", "Add-on modules"].map(
             (tag) => (
               <TagPill key={tag} tag={tag} dark />
             ),
@@ -120,7 +119,7 @@ export function LoadBalancerCard({ className = "" }: { className?: string }) {
           NGINX, Prometheus, Grafana, Loki
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {["Local lab", "Observability", "Docker"].map((tag) => (
+          {["Local lab", "Monitoring", "Docker"].map((tag) => (
             <TagPill key={tag} tag={tag} dark />
           ))}
         </div>
@@ -154,7 +153,7 @@ export function ViTechCard({ className = "" }: { className?: string }) {
           Dashboards, QR check-in, role-based access
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {["Capstone", "RBAC", "Dashboards"].map((tag) => (
+          {["Capstone", "Roles & permissions", "Dashboards"].map((tag) => (
             <TagPill key={tag} tag={tag} dark />
           ))}
         </div>
@@ -178,6 +177,7 @@ export function LogisticsCard({ className = "" }: { className?: string }) {
         <span className="h-1.5 w-1.5 rounded-full bg-teal-300" />
         live dispatch
       </div>
+      <LogisticsArt className="absolute bottom-20 right-0 h-32 w-[58%] text-teal-200/40" />
       <div className="relative max-w-2xl">
         <p className="text-[10px] font-semibold text-teal-300">
           Realtime platform · 2025–2026
@@ -186,7 +186,7 @@ export function LogisticsCard({ className = "" }: { className?: string }) {
           Logistics &amp; Realtime Booking
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-300">
-          Dispatch, live tracking, and rider-customer bidding for ~50k users.
+          Dispatch, live tracking, and rider-customer bidding.
         </p>
       </div>
       <div className="relative mt-6 flex items-end justify-between gap-3">
@@ -204,9 +204,10 @@ export function LogisticsCard({ className = "" }: { className?: string }) {
 export function EcommerceCard({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`flex min-h-[250px] flex-col justify-between rounded-2xl border border-slate-300 bg-white/60 p-5 ${className}`}
+      className={`relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-300 bg-white/60 p-5 ${className}`}
     >
-      <div>
+      <CommerceArt className="absolute bottom-16 right-1 h-28 w-[56%] text-teal-700/20" />
+      <div className="relative">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-700">
           <FiShoppingBag size={18} aria-hidden="true" />
         </div>
@@ -221,14 +222,11 @@ export function EcommerceCard({ className = "" }: { className?: string }) {
           workflows.
         </p>
       </div>
-      <div className="mt-5 flex flex-wrap gap-1.5">
+      <div className="relative mt-5 flex flex-wrap gap-1.5">
         {["E-commerce", "Payments", "Admin"].map((tag) => (
           <TagPill key={tag} tag={tag} />
         ))}
       </div>
-      <p className="mt-4 text-xs font-semibold text-slate-400">
-        Case study on request
-      </p>
     </div>
   )
 }
@@ -237,45 +235,32 @@ export function FinanceCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/finance"
-      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-300 bg-white/60 p-5 ${className}`}
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
-      <svg
-        className="pointer-events-none absolute -bottom-2 right-0 h-28 w-64 text-teal-600/15"
-        viewBox="0 0 240 100"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M0 82 L30 66 L58 72 L88 42 L118 52 L148 24 L178 34 L210 10 L240 18"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-        <path
-          d="M0 82 L30 66 L58 72 L88 42 L118 52 L148 24 L178 34 L210 10 L240 18 V100 H0 Z"
-          fill="currentColor"
-          opacity="0.12"
-        />
-      </svg>
-
       <img
         src="/assets/projects/finance/ai-assistant.webp"
         alt=""
         loading="lazy"
         aria-hidden="true"
-        className="pointer-events-none absolute right-4 top-4 hidden h-20 w-28 rounded-lg border border-slate-200 object-cover shadow-sm sm:block"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-20"
+        style={GRID_PATTERN}
+        aria-hidden="true"
       />
 
       <div className="relative">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-teal-300">
           <FiTrendingUp size={18} aria-hidden="true" />
         </div>
-        <p className="mt-4 text-[10px] font-semibold text-slate-500">
+        <p className="mt-4 text-[10px] font-semibold text-slate-400">
           Personal finance · 2026
         </p>
         <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
           Finance PWA
         </h2>
-        <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-300">
           Accounts, transactions, budgets, bills, investments, and AI-assisted
           analysis in one installable app.
         </p>
@@ -284,10 +269,10 @@ export function FinanceCard({ className = "" }: { className?: string }) {
       <div className="relative mt-5 flex items-end justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
           {["PWA", "Next.js", "AI", "Security"].map((tag) => (
-            <TagPill key={tag} tag={tag} />
+            <TagPill key={tag} tag={tag} dark />
           ))}
         </div>
-        <LightArrow />
+        <Arrow />
       </div>
     </Link>
   )
@@ -297,31 +282,32 @@ export function HuntXPCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/huntxp"
-      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-300 bg-white/60 p-5 ${className}`}
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
-      <div
-        className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-amber-400/15 blur-3xl"
-        aria-hidden="true"
-      />
       <img
         src="/assets/projects/huntxp/homepage.webp"
         alt=""
         loading="lazy"
         aria-hidden="true"
-        className="pointer-events-none absolute right-4 top-4 hidden h-20 w-28 rounded-lg border border-slate-200 object-cover shadow-sm sm:block"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-20"
+        style={GRID_PATTERN}
+        aria-hidden="true"
       />
 
       <div className="relative">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-700">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-amber-300">
           <FiAward size={18} aria-hidden="true" />
         </div>
-        <p className="mt-4 text-[10px] font-semibold text-slate-500">
+        <p className="mt-4 text-[10px] font-semibold text-slate-400">
           Job-hunting platform · 2026
         </p>
         <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
           HuntXP
         </h2>
-        <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-300">
           A gamified application pipeline with XP, a leaderboard, resume
           parsing, and AI coaching that runs locally in the browser.
         </p>
@@ -329,11 +315,11 @@ export function HuntXPCard({ className = "" }: { className?: string }) {
 
       <div className="relative mt-5 flex items-end justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
-          {["Local-first AI", "WebLLM", "Gamification"].map((tag) => (
-            <TagPill key={tag} tag={tag} />
+          {["AI in the browser", "WebLLM", "Points & levels"].map((tag) => (
+            <TagPill key={tag} tag={tag} dark />
           ))}
         </div>
-        <LightArrow />
+        <Arrow />
       </div>
     </Link>
   )
@@ -390,10 +376,14 @@ export function VirtualOfficeCard({ className = "" }: { className?: string }) {
   )
 }
 
-export function CleanBaliwagCard({ className = "" }: { className?: string }) {
+export function RecyclingPlatformCard({
+  className = "",
+}: {
+  className?: string
+}) {
   return (
     <Link
-      to="/projects/clean-baliwag"
+      to="/projects/recycling-platform"
       className={`group relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
       <div
@@ -401,6 +391,7 @@ export function CleanBaliwagCard({ className = "" }: { className?: string }) {
         style={DOT_PATTERN}
         aria-hidden="true"
       />
+      <RecyclingArt className="absolute bottom-16 right-2 h-32 w-[50%] text-teal-300/40" />
 
       <div className="relative">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-teal-300">
@@ -410,7 +401,7 @@ export function CleanBaliwagCard({ className = "" }: { className?: string }) {
           Social &amp; blockchain · 2024–2025
         </p>
         <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
-          Clean Baliwag
+          Recycling Platform
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-300">
           A community recycling platform with verified collections, points,
@@ -420,7 +411,7 @@ export function CleanBaliwagCard({ className = "" }: { className?: string }) {
 
       <div className="relative mt-5 flex items-end justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
-          {["Social", "Blockchain", "Civic tech"].map((tag) => (
+          {["Social", "Blockchain", "Community"].map((tag) => (
             <TagPill key={tag} tag={tag} dark />
           ))}
         </div>

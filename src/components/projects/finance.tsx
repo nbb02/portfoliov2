@@ -73,6 +73,10 @@ export default function Finance() {
           ],
         },
       ]}
+      preview={{
+        src: "/assets/projects/finance/ai-assistant.webp",
+        alt: "Finance PWA AI assistant screen",
+      }}
       gallery={[
         {
           src: "/assets/projects/finance/ai-assistant.webp",

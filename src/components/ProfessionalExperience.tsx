@@ -54,7 +54,7 @@ const ROLES: RoleItem[] = [
     company: "Logistics and Technology Company*",
     range: "September 2025 - March 2026",
     highlights: [
-      "Built and launched a logistics platform competing with Lalamove and Grab, reaching ~50k registered users.",
+      "Built and launched a logistics platform for dispatching, live tracking, and rider-customer bidding.",
       "Designed backend services using Node.js, Express.js, and MySQL; implemented drop-off PIN verification and rider-customer bidding features.",
       "Deployed and managed AWS infrastructure (EC2, RDS, ElastiCache, S3, CloudFront, Lightsail) with monitoring via CloudWatch and a React-based frontend.",
       "Implemented a Dockerized observability stack with Redis Exporter, Node Exporter, Prometheus, Grafana, Loki, and HTTP statistics monitoring for infrastructure and application visibility.",
@@ -190,14 +190,24 @@ function buildSceneStyles(progress: number): SceneStyles {
         textProgress,
         0.08 + textProgress * 0.37,
       ),
-      "--stars-opacity": String(clamp((sceneProgress - 0.55) / 0.35)),
-      "--clouds-opacity": String(1 - clamp((sceneProgress - 0.4) / 0.35)),
+      "--stars-opacity": String(clamp((sceneProgress - 0.45) / 0.35)),
+      "--clouds-opacity": String(
+        1 - clamp((sceneProgress - 0.4) / 0.35) * 0.5,
+      ),
+      "--cloud-color": mixRgba(
+        [148, 163, 184],
+        [226, 232, 240],
+        sceneProgress,
+        0.28,
+      ),
       "--clouds-shift": `${-6 + sceneProgress * 12}%`,
+      "--rays-opacity": String(clamp(1 - sceneProgress * 1.7)),
+      "--birds-opacity": String(clamp(1 - sceneProgress * 2.2)),
     },
-    sunLeft: toPercent(33, 108, sunMotion),
-    moonLeft: toPercent(24, 68, moonMotion),
-    sunTop: arcPercent(25, 9, 23, sunMotion),
-    moonTop: arcPercent(29, 11, 21, moonMotion),
+    sunLeft: toPercent(64, 108, sunMotion),
+    moonLeft: toPercent(58, 88, moonMotion),
+    sunTop: arcPercent(13, 7, 18, sunMotion),
+    moonTop: arcPercent(16, 8, 17, moonMotion),
     sunOpacity: 1 - moonlightProgress,
     moonOpacity: sceneProgress > 0.5 ? moonlightProgress : 0,
   }
@@ -442,7 +452,7 @@ export default function ProfessionalExperience({
           gsap.killTweensOf(state)
           gsap.to(state, {
             progress: nextState,
-            duration: prefersReducedMotion ? 0.01 : 1.1,
+            duration: prefersReducedMotion ? 0.01 : 1.6,
             ease: "power2.inOut",
             onUpdate: renderScene,
           })
@@ -486,7 +496,26 @@ export default function ProfessionalExperience({
       >
         {atmosphere && (
           <>
-            <div className="professional-stars" aria-hidden="true" />
+            <div className="professional-rays" aria-hidden="true" />
+            <div className="professional-birds" aria-hidden="true">
+              <svg
+                viewBox="0 0 132 44"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              >
+                <path d="M4 24c4-5 8-5 12 0 4-5 8-5 12 0" />
+                <path d="M58 12c3-4 6-4 9 0 3-4 6-4 9 0" />
+                <path d="M94 30c2.5-3.2 5.2-3.2 7.7 0 2.5-3.2 5.2-3.2 7.7 0" />
+              </svg>
+            </div>
+            <div className="professional-stars" aria-hidden="true">
+              <span className="stars-layer stars-a" />
+              <span className="stars-layer stars-b" />
+              <span className="stars-layer stars-c" />
+              <span className="professional-shooting-star" />
+            </div>
             <div className="professional-clouds" aria-hidden="true">
               <span className="cloud cloud-1" />
               <span className="cloud cloud-2" />

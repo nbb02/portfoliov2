@@ -132,7 +132,7 @@ export default function HomeV2() {
                     Primary stack
                   </p>
                   <p className="mt-1.5 text-sm font-semibold text-slate-900">
-                    React, Node, MySQL, AWS
+                    React, Laravel, Node, MySQL, AWS
                   </p>
                 </div>
               </div>
@@ -140,6 +140,58 @@ export default function HomeV2() {
 
             <div className="relative pb-6">
               <div className="relative h-[420px] overflow-hidden rounded-[30px] bg-[#0D1117] shadow-[0_30px_80px_rgba(15,23,42,0.24)] sm:h-[540px]">
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  aria-hidden="true"
+                >
+                  <div
+                    className="absolute inset-0 opacity-[0.35]"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to right, rgba(148,163,184,0.22) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.22) 1px, transparent 1px)",
+                      backgroundSize: "44px 44px",
+                      maskImage:
+                        "radial-gradient(ellipse at 50% 45%, black, transparent 72%)",
+                      WebkitMaskImage:
+                        "radial-gradient(ellipse at 50% 45%, black, transparent 72%)",
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(45,212,191,0.16),transparent_62%)]" />
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(13,148,136,0.22),transparent_68%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_38%,rgba(2,6,12,0.72)_100%)]" />
+                  <span
+                    className="hero-laser w-[58%]"
+                    style={{
+                      top: "18%",
+                      animationDelay: "-1s",
+                      animationDuration: "7.5s",
+                    }}
+                  />
+                  <span
+                    className="hero-laser hero-laser--b w-[46%]"
+                    style={{
+                      top: "44%",
+                      animationDelay: "-4s",
+                      animationDuration: "9s",
+                    }}
+                  />
+                  <span
+                    className="hero-laser hero-laser--c w-[64%]"
+                    style={{
+                      top: "70%",
+                      animationDelay: "-6s",
+                      animationDuration: "8s",
+                    }}
+                  />
+                  <span
+                    className="hero-laser hero-laser--b w-[34%]"
+                    style={{
+                      top: "31%",
+                      animationDelay: "-2.5s",
+                      animationDuration: "10s",
+                    }}
+                  />
+                </div>
                 <Suspense
                   fallback={
                     <div

@@ -16,10 +16,10 @@ export default function HuntXP() {
         "Llama 3.2",
       ]}
       tags={[
-        "Local-first AI",
+        "AI in the browser",
         "WebLLM",
         "Resume parsing",
-        "Gamification",
+        "Points & levels",
         "Pipeline",
       ]}
       meta={[
@@ -41,7 +41,7 @@ export default function HuntXP() {
           ],
         },
         {
-          title: "Local-first AI",
+          title: "AI in the browser",
           body: "The personal-data features are designed to keep sensitive input on the device.",
           bullets: [
             "In-browser inference through WebLLM/MLC, with a locally downloaded Llama 3.2 3B instruction model.",
@@ -58,11 +58,15 @@ export default function HuntXP() {
             "A single React/TypeScript front end with a persistent application pipeline and profile store.",
             "An in-browser model runtime, loaded on demand so the rest of the app stays usable while it warms up.",
             "Structured resume parsing with guided and raw JSON views for verification.",
-            "Gamification state (XP, level, leaderboard position) derived from application activity.",
+            "XP, level, and leaderboard position derived from application activity.",
             "Server routes for profile and pipeline persistence, with the AI path kept local.",
           ],
         },
       ]}
+      preview={{
+        src: "/assets/projects/huntxp/homepage.webp",
+        alt: "HuntXP homepage with the application pipeline",
+      }}
       gallery={[
         {
           src: "/assets/projects/huntxp/homepage.webp",
@@ -94,13 +98,13 @@ export default function HuntXP() {
       highlights={[
         "Local-first AI with in-browser model inference",
         "Structured document parsing and validation",
-        "Gamification systems: XP, levels, and leaderboards",
+        "Points, levels, and leaderboards",
         "Stateful pipeline and kanban-style interfaces",
         "Privacy-aware handling of personal documents",
         "AI tool UX: context, suggestions, and reasoning views",
       ]}
-      nextHref="/projects/clean-baliwag"
-      nextLabel="Next: Clean Baliwag"
+      nextHref="/projects/recycling-platform"
+      nextLabel="Next: Recycling Platform"
     />
   )
 }

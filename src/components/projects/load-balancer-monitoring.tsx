@@ -21,8 +21,8 @@ export default function LoadBalancerMonitoring() {
       ]}
       tags={[
         "Local lab",
-        "Distributed systems",
-        "Observability",
+        "Multiple servers",
+        "Monitoring",
         "Docker",
         "NGINX",
         "Socket.IO",
@@ -60,6 +60,10 @@ export default function LoadBalancerMonitoring() {
           ],
         },
       ]}
+      preview={{
+        src: "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp",
+        alt: "Load balancer visualizer showing traffic across backend instances",
+      }}
       gallery={[
         {
           src: "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp",
@@ -92,7 +96,7 @@ export default function LoadBalancerMonitoring() {
         "Distributed architecture and horizontal scaling",
         "NGINX load balancing and reverse proxying",
         "Socket.IO realtime state across replicas",
-        "Observability with Prometheus, Grafana, and Loki",
+        "Monitoring with Prometheus, Grafana, and Loki",
         "Dockerized environments and resilience testing",
       ]}
       nextHref="/projects/finance"
