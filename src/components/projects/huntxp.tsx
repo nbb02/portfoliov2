@@ -66,6 +66,8 @@ export default function HuntXP() {
       preview={{
         src: "/assets/projects/huntxp/homepage.webp",
         alt: "HuntXP homepage with the application pipeline",
+        width: 1800,
+        height: 974,
       }}
       gallery={[
         {

@@ -63,6 +63,8 @@ export default function LoadBalancerMonitoring() {
       preview={{
         src: "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp",
         alt: "Load balancer visualizer showing traffic across backend instances",
+        width: 1800,
+        height: 1020,
       }}
       gallery={[
         {

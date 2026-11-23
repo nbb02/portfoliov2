@@ -61,6 +61,8 @@ export default function ViTech() {
       preview={{
         src: "/assets/projects/vitech/dashboard.webp",
         alt: "ViTech analytics dashboard",
+        width: 1800,
+        height: 931,
       }}
       gallery={[
         {

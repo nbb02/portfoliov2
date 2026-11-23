@@ -54,6 +54,8 @@ export default function VirtualOffice() {
       preview={{
         src: "/assets/projects/virtual-office/office.webp",
         alt: "Virtual office 3D scene",
+        width: 1440,
+        height: 900,
       }}
       gallery={[
         {

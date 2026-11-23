@@ -1,7 +1,7 @@
 import "./index.css"
 import { lazy, Suspense, useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigationType } from "react-router-dom"
 import HomeV2 from "./pages/HomeV2"
 import { trackPageVisit } from "./lib/visitorTracker"
 
@@ -27,6 +27,28 @@ const RecyclingPlatform = lazy(
 )
 const VirtualOffice = lazy(() => import("./components/projects/virtual-office"))
 
+function ScrollToTop() {
+  const location = useLocation()
+  const navigationType = useNavigationType()
+
+  useEffect(() => {
+    // Back/forward keeps the browser's restored position instead of
+    // snapping to the top of the page the user is returning to.
+    if (navigationType === "POP") return
+
+    const target = location.hash
+      ? document.getElementById(location.hash.slice(1))
+      : null
+    if (target) {
+      target.scrollIntoView()
+      return
+    }
+    window.scrollTo(0, 0)
+  }, [location.pathname, location.hash, navigationType])
+
+  return null
+}
+
 function VisitorTracking() {
   const location = useLocation()
 
@@ -41,6 +63,7 @@ function VisitorTracking() {
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <VisitorTracking />
       <Suspense
         fallback={<div className="route-fallback" aria-hidden="true" />}

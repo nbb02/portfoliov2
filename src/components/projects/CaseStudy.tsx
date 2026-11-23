@@ -22,6 +22,11 @@ type GalleryImage = {
   alt: string
 }
 
+type PreviewImage = GalleryImage & {
+  width?: number
+  height?: number
+}
+
 function BulletText({ text }: { text: string }) {
   const separator = text.indexOf(":")
 
@@ -66,7 +71,7 @@ export default function CaseStudy({
   meta: Meta[]
   sections: Section[]
   gallery?: GalleryImage[]
-  preview?: GalleryImage
+  preview?: PreviewImage
   art?: ReactNode
   highlights: string[]
   highlightsKicker?: string
@@ -131,8 +136,10 @@ export default function CaseStudy({
                   <img
                     src={preview.src}
                     alt={preview.alt}
+                    width={preview.width}
+                    height={preview.height}
                     loading="lazy"
-                    className="aspect-[16/11] w-full object-cover object-top"
+                    className="block h-auto w-full"
                   />
                 </div>
               )}
