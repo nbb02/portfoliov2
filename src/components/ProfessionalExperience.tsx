@@ -82,6 +82,10 @@ const ROLES: RoleItem[] = [
 
 const MOTION_START = 0.18
 
+// Fraction of the sticky journey scroll the day-to-night palette spans, so
+// night is fully reached with room left to read the last cards.
+const SCENE_SCROLL_SPAN = 0.78
+
 function lerp(start: number, end: number, t: number) {
   return Math.round(start + (end - start) * t)
 }
@@ -468,18 +472,26 @@ export default function ProfessionalExperience({
         }
       }
 
+      // Desktop drives the palette from scroll distance rather than a fixed
+      // duration, so a fast flick still lands on the right scene instead of
+      // outrunning a timed tween and never being seen.
       const trigger = ScrollTrigger.create({
         trigger: shell,
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
-          const shouldShowHint = self.progress < 0.8
+          const sceneTarget = clamp(self.progress / SCENE_SCROLL_SPAN)
+
+          state.progress = sceneTarget
+          renderScene()
+
+          const shouldShowHint = sceneTarget < 0.8
           if (shouldShowHint !== hintVisible) {
             hintVisible = shouldShowHint
             setShowHint(shouldShowHint)
           }
 
-          setScene(self.progress >= 0.25 ? 1 : 0)
+          setIsNight(sceneTarget >= 0.5)
         },
       })
 
