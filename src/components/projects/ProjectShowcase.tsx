@@ -210,7 +210,7 @@ export default function ProjectShowcase({
                         width={image.width}
                         height={image.height}
                         loading="lazy"
-                        className="block aspect-[800/1033] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                        className="block aspect-[1080/1394] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                       />
                       {image.label && (
                         <span className="absolute bottom-2 left-2 rounded-full bg-slate-950/70 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-white">

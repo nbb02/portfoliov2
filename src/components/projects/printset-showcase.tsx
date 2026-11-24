@@ -60,8 +60,8 @@ export default function PrintSetShowcase() {
                 className="site-shot"
                 src="/assets/projects/printset/editor-grid.webp"
                 alt="PrintSet editing a four-photo grid on Letter paper with rulers and guides visible"
-                width={1800}
-                height={1125}
+                width={2880}
+                height={1800}
               />
             </div>
             <figcaption className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
@@ -133,8 +133,8 @@ export default function PrintSetShowcase() {
                   className="site-shot"
                   src="/assets/projects/printset/collage.webp"
                   alt="A hand-placed collage with guide lines and spacing readouts on the canvas"
-                  width={1800}
-                  height={1125}
+                  width={2880}
+                  height={1800}
                 />
               </div>
             </div>
@@ -316,8 +316,8 @@ export default function PrintSetShowcase() {
                     className="site-shot"
                     src="/assets/projects/printset/ai-live.webp"
                     alt="PrintSet with the AI live indicator in the header"
-                    width={1800}
-                    height={1125}
+                    width={2880}
+                    height={1800}
                   />
                 </div>
                 <div className="mt-5 grid gap-4 font-mono text-[10px] uppercase tracking-[0.14em] text-[#8b9099] sm:grid-cols-3">
@@ -394,8 +394,8 @@ function Thing({
         <img
           src={image}
           alt={alt}
-          width={800}
-          height={1033}
+          width={1080}
+          height={1394}
           className="max-h-full w-auto max-w-full object-contain shadow-[0_16px_30px_-18px_rgba(16,19,24,0.5)] transition-transform duration-500 group-hover:scale-[1.02]"
         />
       </div>

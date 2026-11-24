@@ -20,8 +20,8 @@ const SHOWCASE: ShowcaseTab[] = [
       {
         src: "/assets/projects/printset/editor-grid.webp",
         alt: "PrintSet editing a four-photo grid on Letter paper with rulers, margins and spacing guides visible",
-        width: 1800,
-        height: 1125,
+        width: 2880,
+        height: 1800,
       },
     ],
   },
@@ -43,8 +43,8 @@ const SHOWCASE: ShowcaseTab[] = [
       {
         src: "/assets/projects/printset/collage.webp",
         alt: "A hand-placed PrintSet collage with guide lines and inch spacing readouts on the canvas",
-        width: 1800,
-        height: 1125,
+        width: 2880,
+        height: 1800,
       },
     ],
   },
@@ -66,22 +66,22 @@ const SHOWCASE: ShowcaseTab[] = [
       {
         src: "/assets/projects/printset/sheet-id.webp",
         alt: "Two ID-sized cards laid out on a sheet with cut guides",
-        width: 800,
-        height: 1033,
+        width: 1080,
+        height: 1394,
         label: "ID",
       },
       {
         src: "/assets/projects/printset/sheet-grid.webp",
         alt: "Four photos arranged in an equal grid on a sheet",
-        width: 800,
-        height: 1033,
+        width: 1080,
+        height: 1394,
         label: "Grid",
       },
       {
         src: "/assets/projects/printset/sheet-collage.webp",
         alt: "Hand-placed photo boxes forming a collage on a sheet",
-        width: 800,
-        height: 1033,
+        width: 1080,
+        height: 1394,
         label: "Collage",
       },
     ],
@@ -104,8 +104,8 @@ const SHOWCASE: ShowcaseTab[] = [
       {
         src: "/assets/projects/printset/ai-live.webp",
         alt: "PrintSet with the AI live indicator in the header and a photo grid on the canvas",
-        width: 1800,
-        height: 1125,
+        width: 2880,
+        height: 1800,
       },
     ],
   },
@@ -185,8 +185,8 @@ export default function PrintSet() {
       preview={{
         src: "/assets/projects/printset/editor-grid.webp",
         alt: "PrintSet editor with a four-photo grid on Letter paper",
-        width: 1800,
-        height: 1125,
+        width: 2880,
+        height: 1800,
       }}
       showcase={
         <ProjectShowcase
