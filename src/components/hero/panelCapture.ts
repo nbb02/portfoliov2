@@ -2,16 +2,43 @@ import { toCanvas } from "html-to-image"
 import * as THREE from "three"
 
 /**
- * The panel's width for the laptop screen: twice the ~330 px the screen is
- * drawn at. At that width the panel lays out in its stacked form, so its type
- * is twice the size relative to the screen than a full desktop page would be,
- * and the capture only has to be minified 2× — a 1300 px page pushed into 330
- * turns twelve-pixel text into four-pixel mush.
+ * The full-panel width used as the dolly's stand-in and fallback: twice the
+ * ~330 px its laptop screen is drawn at. At that width the panel lays out in its
+ * stacked form, so its type is twice the size relative to the screen than a full
+ * desktop page would be, and the capture only has to be minified 2× — a 1300 px
+ * page pushed into 330 turns twelve-pixel text into four-pixel mush.
  */
 export const SCREEN_PANEL_WIDTH = 660
 
-const pending = new Map<number, Promise<HTMLCanvasElement>>()
-const textures = new Map<number, THREE.Texture>()
+/**
+ * The hero's desktop capture is a closer view than the dolly's stand-in: 660 px
+ * of page squeezed into the lid still reads as a miniature once it is tilted.
+ * 480 px keeps the type large enough to read while minifying it only ~1.4×.
+ */
+export const HERO_PANEL_WIDTH = 480
+export const HERO_PANEL_KEY = "hero-desktop"
+
+/**
+ * The same idea for a phone, where the screen is drawn around 180 px wide: 660
+ * is squeezed more than three times there and the page turns to grey lines.
+ * Half the width keeps the type at the same size relative to the screen as the
+ * desktop card, and it is still minified only 2×.
+ */
+export const PHONE_PANEL_WIDTH = 360
+
+/**
+ * The phone capture is its own layout, not a viewport width, so it gets a key
+ * of its own — otherwise a 360 px viewport would hand its texture to the dolly.
+ */
+export const PHONE_PANEL_KEY = "hero-phone"
+
+export type PanelKey = number | string
+
+const keyOf = (value: PanelKey) =>
+  typeof value === "number" ? `w${Math.round(value)}` : value
+
+const pending = new Map<string, Promise<HTMLCanvasElement>>()
+const textures = new Map<string, THREE.Texture>()
 
 /**
  * The laptop used to wear a screenshot of the profile, which went stale every
@@ -24,9 +51,10 @@ const textures = new Map<number, THREE.Texture>()
 export function capturePanel(
   node: HTMLElement,
   width = SCREEN_PANEL_WIDTH,
-  options: { height?: number; pixelRatio?: number } = {},
+  options: { height?: number; pixelRatio?: number; key?: PanelKey } = {},
 ) {
-  const key = Math.round(width)
+  const widthPx = Math.round(width)
+  const key = keyOf(options.key ?? widthPx)
   const inFlight = pending.get(key)
   if (inFlight) return inFlight
 
@@ -37,7 +65,7 @@ export function capturePanel(
     )
 
     return toCanvas(node, {
-      width: key,
+      width: widthPx,
       height: options.height,
       pixelRatio: options.pixelRatio ?? 1,
       backgroundColor: "#0D1117",
@@ -84,9 +112,12 @@ export function sliceScreen(canvas: HTMLCanvasElement, aspect: number) {
   return slice
 }
 
-export function screenTexture(canvas: HTMLCanvasElement, width = SCREEN_PANEL_WIDTH) {
-  const key = Math.round(width)
-  const existing = textures.get(key)
+export function screenTexture(
+  canvas: HTMLCanvasElement,
+  key: PanelKey = SCREEN_PANEL_WIDTH,
+) {
+  const cacheKey = keyOf(key)
+  const existing = textures.get(cacheKey)
   if (existing) return existing
 
   const texture = new THREE.CanvasTexture(canvas)
@@ -99,17 +130,17 @@ export function screenTexture(canvas: HTMLCanvasElement, width = SCREEN_PANEL_WI
   texture.generateMipmaps = true
   texture.needsUpdate = true
 
-  textures.set(key, texture)
+  textures.set(cacheKey, texture)
   return texture
 }
 
-export function cachedScreenTexture(width = SCREEN_PANEL_WIDTH) {
-  return textures.get(Math.round(width)) ?? null
+export function cachedScreenTexture(key: PanelKey = SCREEN_PANEL_WIDTH) {
+  return textures.get(keyOf(key)) ?? null
 }
 
-/** Frees captures for widths the page no longer draws. */
-export function releaseScreenTexturesExcept(keep: number[]) {
-  const kept = new Set(keep.map((width) => Math.round(width)))
+/** Frees captures for keys the page no longer draws. */
+export function releaseScreenTexturesExcept(keep: PanelKey[]) {
+  const kept = new Set(keep.map(keyOf))
   for (const [key, texture] of textures) {
     if (kept.has(key)) continue
     texture.dispose()
@@ -132,6 +163,7 @@ export function fitScreenMap(
   map: THREE.Texture,
   screenAspect: number,
   maxAnisotropy: number,
+  minFilter: THREE.MinificationTextureFilter = THREE.LinearMipmapLinearFilter,
 ) {
   const image = map.image as { width?: number; height?: number } | undefined
   const imageWidth = image?.width ?? 0
@@ -145,7 +177,7 @@ export function fitScreenMap(
   map.colorSpace = THREE.SRGBColorSpace
   map.wrapS = THREE.ClampToEdgeWrapping
   map.wrapT = THREE.ClampToEdgeWrapping
-  map.minFilter = THREE.LinearMipmapLinearFilter
+  map.minFilter = minFilter
   map.magFilter = THREE.LinearFilter
   map.generateMipmaps = true
   map.anisotropy = Math.min(16, maxAnisotropy)

@@ -5,6 +5,8 @@ import { clamp01 } from "../hero/easing"
 import { useInView } from "../useInView"
 import { SCREEN_ASPECT, PHONE_SCREEN_ASPECT } from "../hero/screenGeometry"
 import {
+  HERO_PANEL_KEY,
+  PHONE_PANEL_KEY,
   SCREEN_PANEL_WIDTH,
   cachedScreenTexture,
   capturePanel,
@@ -201,7 +203,12 @@ export default function GithubScene() {
   /* Drop captures for widths the page no longer draws. */
   useEffect(() => {
     if (!screen || !cachedScreenTexture(columnWidth)) return
-    releaseScreenTexturesExcept([SCREEN_PANEL_WIDTH, columnWidth])
+    releaseScreenTexturesExcept([
+      SCREEN_PANEL_WIDTH,
+      HERO_PANEL_KEY,
+      PHONE_PANEL_KEY,
+      columnWidth,
+    ])
   }, [screen, columnWidth])
 
   return (
