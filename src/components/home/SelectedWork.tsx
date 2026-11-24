@@ -8,7 +8,7 @@ import {
   PrintSetCard,
   RecyclingPlatformCard,
   ViTechCard,
-  VirtualOfficeCard,
+  VirtualSpacesCard,
 } from "./ProjectCards"
 
 export default function SelectedWork() {
@@ -55,7 +55,7 @@ export default function SelectedWork() {
           <PrintSetCard />
           <HuntXPCard />
           <FinanceCard />
-          <VirtualOfficeCard />
+          <VirtualSpacesCard />
         </div>
       </div>
     </section>

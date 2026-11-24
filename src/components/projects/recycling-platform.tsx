@@ -64,7 +64,7 @@ export default function RecyclingPlatform() {
         "Laravel/MySQL modeling and Docker deployment",
       ]}
       nextHref="/projects/virtual-office"
-      nextLabel="Next: Virtual Office"
+      nextLabel="Next: Virtual Spaces"
     />
   )
 }

@@ -8,7 +8,7 @@ import {
   PrintSetCard,
   RecyclingPlatformCard,
   ViTechCard,
-  VirtualOfficeCard,
+  VirtualSpacesCard,
 } from "../components/home/ProjectCards"
 import MoreWork from "../components/home/MoreWork"
 
@@ -53,7 +53,7 @@ export default function Overview() {
           <PrintSetCard />
           <HuntXPCard />
           <FinanceCard />
-          <VirtualOfficeCard />
+          <VirtualSpacesCard />
         </div>
       </div>
 

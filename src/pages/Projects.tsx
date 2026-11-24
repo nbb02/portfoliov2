@@ -14,7 +14,7 @@ const TABS = [
   { to: "/projects/finance", label: "Finance" },
   { to: "/projects/huntxp", label: "HuntXP" },
   { to: "/projects/recycling-platform", label: "Recycling Platform" },
-  { to: "/projects/virtual-office", label: "Virtual Office" },
+  { to: "/projects/virtual-office", label: "Virtual Spaces" },
   { to: "/projects/printset", label: "PrintSet", end: true },
 ]
 

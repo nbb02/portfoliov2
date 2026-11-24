@@ -25,8 +25,10 @@ const HuntXP = lazy(() => import("./components/projects/huntxp"))
 const RecyclingPlatform = lazy(
   () => import("./components/projects/recycling-platform"),
 )
-const VirtualOffice = lazy(() => import("./components/projects/virtual-office"))
 const PrintSet = lazy(() => import("./components/projects/printset"))
+const VirtualSpaces = lazy(
+  () => import("./components/projects/virtual-spaces"),
+)
 
 function ScrollToTop() {
   const location = useLocation()
@@ -80,7 +82,7 @@ export default function App() {
             <Route path="finance" element={<Finance />} />
             <Route path="huntxp" element={<HuntXP />} />
             <Route path="recycling-platform" element={<RecyclingPlatform />} />
-            <Route path="virtual-office" element={<VirtualOffice />} />
+            <Route path="virtual-office" element={<VirtualSpaces />} />
             <Route path="printset" element={<PrintSet />} />
             <Route path="vitech" element={<ViTech />} />
             <Route
