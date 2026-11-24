@@ -1,7 +1,17 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
+import type { Texture } from "three"
 import { useScrollOffset } from "../hero/useScrollOffset"
 import { clamp01 } from "../hero/easing"
 import { useInView } from "../useInView"
+import { SCREEN_ASPECT } from "../hero/screenGeometry"
+import {
+  SCREEN_PANEL_WIDTH,
+  cachedScreenTexture,
+  capturePanel,
+  releaseScreenTexturesExcept,
+  screenTexture,
+  sliceScreen,
+} from "../hero/panelCapture"
 import type { ScreenRect } from "../hero/LaptopScroll"
 
 const LaptopScroll = lazy(() => import("../hero/LaptopScroll"))
@@ -10,21 +20,17 @@ const GithubPanel = lazy(() => import("../hero/GithubPanel"))
 /** Scroll spent on the laptop dolly before the page is released. */
 const CINEMATIC_VH = 200
 
-/** The panel's design width; the page column is this, scaled. */
-const PANEL_WIDTH = 1306
-
 /**
- * The screen is anchored at the viewport top and runs past the bottom, so the page
- * column is the same width as the viewport and the panel is the same design, scaled.
- * That is what makes the last frame of the dolly and the top of the real page agree
- * without any settle at the release.
+ * The panel replaces the laptop screen at the same width and position it ends
+ * on, so the two agree without any settle at the release. The panel is laid out
+ * at the viewport's own width, so the screen fills the window and the extra
+ * width of a large monitor goes into the page's margins rather than scaling the
+ * type up with it.
  */
 const PANEL_REVEAL = 0.95
 const INTRO_END = 0.18
-/** Below this the scaled panel is unreadable; the section becomes a link instead. */
+/** Below this the panel is unreadable; the section becomes a link instead. */
 const MIN_CINEMATIC_WIDTH = 1024
-
-type Metrics = { columnWidth: number; scale: number }
 
 /**
  * The viewport without the vertical scrollbar. `window.innerWidth` includes it, and
@@ -32,13 +38,8 @@ type Metrics = { columnWidth: number; scale: number }
  * which is what put a horizontal scrollbar on the page.
  */
 function viewportWidth() {
+  if (typeof document === "undefined") return 1280
   return document.documentElement.clientWidth || window.innerWidth
-}
-
-function computeMetrics(): Metrics {
-  if (typeof window === "undefined") return { columnWidth: PANEL_WIDTH, scale: 1 }
-  const columnWidth = viewportWidth()
-  return { columnWidth, scale: columnWidth / PANEL_WIDTH }
 }
 
 function isNarrow() {
@@ -51,19 +52,23 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches
 }
 
+/** Left edge of the page's 1240 column, where the intro copy starts. */
+function columnLeft(width: number) {
+  return Math.max(32, (width - 1240) / 2 + 32)
+}
+
 export default function GithubScene() {
-  const [metrics, setMetrics] = useState<Metrics>(computeMetrics)
+  const [columnWidth, setColumnWidth] = useState(viewportWidth)
   const [panelHeight, setPanelHeight] = useState(0)
   const [narrow, setNarrow] = useState(isNarrow)
   const [reduced, setReduced] = useState(prefersReducedMotion)
-  const { columnWidth, scale } = metrics
+  const [screen, setScreen] = useState<Texture | null>(() =>
+    cachedScreenTexture(viewportWidth()),
+  )
 
   useEffect(() => {
     const update = () => {
-      const next = computeMetrics()
-      setMetrics((current) =>
-        current.columnWidth === next.columnWidth ? current : next,
-      )
+      setColumnWidth(viewportWidth())
       setNarrow(isNarrow())
       setReduced(prefersReducedMotion())
     }
@@ -86,21 +91,71 @@ export default function GithubScene() {
     }
   }, [])
 
-  /*
-   * The panel mounts inside Suspense, so a one-shot measurement runs before there is
-   * any content and leaves the wrapper at the unscaled height — the scaled page then
-   * overflows and gets clipped. Observe it instead.
-   */
   const panelRef = useRef<HTMLDivElement>(null)
+  const [panelNear, setPanelNear] = useState(false)
   useEffect(() => {
     const element = panelRef.current
     if (!element) return
-    const update = () => setPanelHeight(element.offsetHeight)
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
+
+    const measure = () => setPanelHeight(element.offsetHeight)
+    measure()
+    const resize = new ResizeObserver(measure)
+    resize.observe(element)
+
+    /*
+     * Rasterising a page at the viewport's width is not free, so hold it until
+     * the dolly is a screen or two away instead of doing it while the hero is
+     * still on screen.
+     */
+    const view = new IntersectionObserver(
+      (entries) => setPanelNear(Boolean(entries[0]?.isIntersecting)),
+      { rootMargin: "300% 0px" },
+    )
+    view.observe(element)
+
+    return () => {
+      resize.disconnect()
+      view.disconnect()
+    }
+  }, [narrow])
+
+  /*
+   * The dolly's screen is the panel itself, captured once per width. Because the
+   * capture is the same layout the page draws, the last frame of the dolly and
+   * the top of the real page are the same pixels — the handoff cannot flick.
+   */
+  const capturedWidth = useRef(0)
+  useEffect(() => {
+    if (narrow || reduced || !panelHeight || !panelNear) return
+    const node = panelRef.current
+    if (!node || capturedWidth.current === columnWidth) return
+
+    let cancelled = false
+    const run = async () => {
+      try {
+        const canvas = await capturePanel(node, columnWidth)
+        if (cancelled) return
+        capturedWidth.current = columnWidth
+        setScreen(screenTexture(sliceScreen(canvas, SCREEN_ASPECT), columnWidth))
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.warn("[github] screen capture failed", error)
+        }
+      }
+    }
+
+    const idle = window.requestIdleCallback(run, { timeout: 4000 })
+    return () => {
+      cancelled = true
+      window.cancelIdleCallback(idle)
+    }
+  }, [narrow, reduced, panelHeight, panelNear, columnWidth])
+
+  /* Drop captures for widths the page no longer draws. */
+  useEffect(() => {
+    if (!screen || !cachedScreenTexture(columnWidth)) return
+    releaseScreenTexturesExcept([SCREEN_PANEL_WIDTH, columnWidth])
+  }, [screen, columnWidth])
 
   if (narrow) {
     return (
@@ -130,7 +185,7 @@ export default function GithubScene() {
 
   return (
     <>
-      {!reduced && <Dolly />}
+      {!reduced && <Dolly screen={screen} columnWidth={columnWidth} />}
 
       <section
         id="github"
@@ -140,32 +195,23 @@ export default function GithubScene() {
             : "relative z-0 -mt-[100svh] bg-[#0D1117]"
         }
       >
-        <div
-          className="mx-auto overflow-hidden"
-          style={{
-            width: columnWidth,
-            height: panelHeight ? panelHeight * scale : undefined,
-          }}
-        >
-          <div
-            ref={panelRef}
-            style={{
-              width: PANEL_WIDTH,
-              transform: `scale(${scale})`,
-              transformOrigin: "0 0",
-            }}
-          >
-            <Suspense fallback={null}>
-              <GithubPanel />
-            </Suspense>
-          </div>
+        <div ref={panelRef} className="w-full">
+          <Suspense fallback={null}>
+            <GithubPanel />
+          </Suspense>
         </div>
       </section>
     </>
   )
 }
 
-function Dolly() {
+function Dolly({
+  screen,
+  columnWidth,
+}: {
+  screen: Texture | null
+  columnWidth: number
+}) {
   const frameRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
   const bridgeRef = useRef<HTMLDivElement>(null)
@@ -185,18 +231,12 @@ function Dolly() {
       cinemaRef.current = p
 
       const intro = introRef.current
-      if (intro) {
-        const out = clamp01(p / INTRO_END)
-        intro.style.opacity = `${1 - out}`
-        intro.style.transform = `translateY(${-12 * out}px)`
-      }
-
       const bridge = bridgeRef.current
       const canvas = canvasRef.current
       const quad = screenRect.current
 
       if (quad && quad.width > 1) {
-        const bridgeScale = quad.width / PANEL_WIDTH
+        const bridgeScale = quad.width / columnWidth
 
         if (bridge) {
           bridge.style.transform = `translate(${quad.left}px, ${quad.top}px) scale(${bridgeScale})`
@@ -211,6 +251,36 @@ function Dolly() {
          * second copy around the panel's edges.
          */
         if (canvas) canvas.style.opacity = p >= PANEL_REVEAL ? "0" : "1"
+
+        /*
+         * The composition is framed on the viewport height, so on a wide monitor
+         * the lid grows sideways into the copy's column. Keep the copy on the
+         * page's column — the same left edge as every section — and slide it
+         * only as far as needed to clear the lid, keeping the gap the bezel
+         * takes up. Both numbers are bucketed so the idle drift does not move
+         * the text every frame.
+         */
+        if (intro) {
+          const clearance = Math.max(24, quad.width * 0.08)
+          const available = quad.left - 24 - clearance
+
+          if (available < 200) {
+            intro.style.visibility = "hidden"
+          } else {
+            const width = Math.min(340, Math.floor(available / 8) * 8)
+            const limit = Math.floor((quad.left - clearance - width) / 8) * 8
+
+            intro.style.visibility = "visible"
+            intro.style.width = `${width}px`
+            intro.style.left = `${Math.max(24, Math.min(columnLeft(columnWidth), limit))}px`
+          }
+        }
+      }
+
+      if (intro) {
+        const out = clamp01(p / INTRO_END)
+        intro.style.opacity = `${1 - out}`
+        intro.style.transform = `translateY(${-12 * out}px)`
       }
 
       const released = p >= 1
@@ -227,7 +297,7 @@ function Dolly() {
         setRender3d(shouldRender)
       }
     },
-    [],
+    [columnWidth],
   )
 
   const handleScreenRect = useCallback(
@@ -275,7 +345,8 @@ function Dolly() {
 
         <div
           ref={introRef}
-          className="pointer-events-none absolute inset-x-0 top-[12svh] z-10 mx-auto max-w-[1240px] px-5 sm:px-8"
+          className="pointer-events-none absolute top-[12svh] z-10 w-[360px] max-w-[360px]"
+          style={{ left: columnLeft(columnWidth) }}
         >
           <h2 className="max-w-[340px] text-[1.6rem] font-semibold leading-tight text-[#F4F0E8] md:text-[2rem]">
             Scroll into my GitHub.
@@ -292,6 +363,7 @@ function Dolly() {
                 progressRef={cinemaRef}
                 onScreenRect={handleScreenRect}
                 render={render3d}
+                screen={screen}
               />
             </Suspense>
           )}
@@ -301,7 +373,7 @@ function Dolly() {
           ref={bridgeRef}
           aria-hidden="true"
           className="invisible absolute left-0 top-0 z-30 opacity-0"
-          style={{ width: PANEL_WIDTH, transformOrigin: "0 0" }}
+          style={{ width: columnWidth, transformOrigin: "0 0" }}
         >
           <Suspense fallback={null}>
             <GithubPanel />

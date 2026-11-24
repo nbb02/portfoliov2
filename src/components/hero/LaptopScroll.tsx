@@ -12,7 +12,6 @@ import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../../assets/laptop/mac-draco.glb"
 import laptopScreenImage from "../../assets/hero/screen-panel.jpg"
 import { clamp01, easeInOutCubic, lerp } from "./easing"
-import { SCREEN_FILL } from "./screenGeometry"
 
 type LaptopGLTF = GLTF & {
   nodes: {
@@ -80,9 +79,11 @@ const DRIFT_END = 0.4
 function Model({
   progressRef,
   screenRef,
+  screen,
 }: {
   progressRef: ProgressRef
   screenRef: RefObject<THREE.Mesh | null>
+  screen?: THREE.Texture | null
 }) {
   const group = useRef<THREE.Group>(null)
   const screenMaterialRef = useRef<THREE.MeshBasicMaterial>(null)
@@ -91,13 +92,24 @@ function Model({
   const maxAnisotropy = useThree((state) =>
     state.gl.capabilities.getMaxAnisotropy(),
   )
-  const screenTexture = useTexture(laptopScreenImage)
+  const fallbackScreen = useTexture(laptopScreenImage)
 
   useEffect(() => {
     const material = screenMaterialRef.current
     if (!material) return
 
-    const texture = screenTexture.clone()
+    /*
+     * The live capture of the real panel wins: it is already cropped to the
+     * screen's ratio, so it maps 1:1 and the release onto the page has no cut.
+     */
+    if (screen) {
+      material.map = screen
+      material.needsUpdate = true
+      return
+    }
+
+    /* Until the capture lands, the shipping screenshot keeps the screen lit. */
+    const texture = fallbackScreen.clone()
     texture.flipY = false
     texture.colorSpace = THREE.SRGBColorSpace
     texture.wrapS = THREE.ClampToEdgeWrapping
@@ -106,10 +118,6 @@ function Model({
     texture.minFilter = THREE.LinearFilter
     texture.magFilter = THREE.LinearFilter
     texture.anisotropy = Math.min(16, maxAnisotropy)
-    /**
-     * The capture is the panel rendered at the screen mesh's own 1.544 ratio, so it
-     * maps 1:1 and the crossfade to the DOM panel has no visible cut.
-     */
     texture.repeat.set(1, 1)
     texture.offset.set(0, 0)
     texture.needsUpdate = true
@@ -120,7 +128,7 @@ function Model({
     return () => {
       texture.dispose()
     }
-  }, [maxAnisotropy, screenTexture])
+  }, [maxAnisotropy, fallbackScreen, screen])
 
   useFrame((state) => {
     if (!group.current) return
@@ -292,16 +300,13 @@ function CameraRig({
     if (scratch.normal.dot(scratch.toHero) < 0) scratch.normal.negate()
 
     const tanY = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)
-    const aspect = size.width / Math.max(1, size.height)
     /*
-     * Cover, not fit: the screen has to swallow the whole viewport so the lid and
-     * keyboard are gone by the end, even though that crops a few percent of the
-     * panel's height.
+     * Fit the page's width: the screen has to land on the same column as the DOM
+     * panel that replaces it, or the release jumps. The panel is laid out at the
+     * viewport's own width, so the screen simply fills the viewport and the panel
+     * continues below the fold.
      */
-    const distance = Math.min(
-      halfWidth / (SCREEN_FILL * tanY * aspect),
-      halfHeight / (SCREEN_FILL * tanY),
-    )
+    const distance = (halfWidth * size.height) / (size.width * tanY)
 
     const blend = easeInOutCubic(
       (clamp01(progressRef.current) - DOLLY_START) / (DOLLY_END - DOLLY_START),
@@ -323,15 +328,15 @@ function CameraRig({
       .addScaledVector(scratch.offset, lerp(heroDistance, distance, blend))
 
     /*
-     * Covering the viewport crops the panel top and bottom equally, which clips the
-     * header. Anchor the screen's top edge to the viewport top instead and let the
-     * excess run past the bottom — a pure projection-window shift, so the plane stays
-     * square to the lens and the image keeps its exact size.
+     * The panel is anchored to the top of the page, so the projected screen has
+     * to be too: shift the projection by half the difference between its height
+     * and the viewport's, in either direction. Above the column's width cap the
+     * screen is shorter than the viewport, and without the upward shift its top
+     * edge would sit below the fold instead of on it.
      */
     const projectedHeight = (halfHeight * size.height) / (distance * tanY)
-    const overflow = Math.max(0, projectedHeight - size.height)
-    const shiftPx = (overflow / 2) * blend
-    if (shiftPx > 0.01) {
+    const shiftPx = ((projectedHeight - size.height) / 2) * blend
+    if (Math.abs(shiftPx) > 0.01) {
       camera.setViewOffset(
         size.width,
         size.height,
@@ -391,7 +396,6 @@ function CameraRig({
       ;(window as unknown as { __heroCamera: unknown }).__heroCamera = {
         blend,
         distance: +distance.toFixed(3),
-        overflow: +overflow.toFixed(2),
         shiftPx: +shiftPx.toFixed(2),
         heroDistance: +heroDistance.toFixed(3),
         position: camera.position.toArray().map((v) => +v.toFixed(3)),
@@ -413,11 +417,13 @@ export default function LaptopScroll({
   onScreenRect,
   heroFitRef,
   render,
+  screen,
 }: {
   progressRef: ProgressRef
   onScreenRect?: (rect: ScreenRect | null) => void
   heroFitRef?: RefObject<HeroFit>
   render: boolean
+  screen?: THREE.Texture | null
 }) {
   const screenRef = useRef<THREE.Mesh>(null)
 
@@ -445,7 +451,7 @@ export default function LaptopScroll({
         onScreenRect={onScreenRect}
       />
       <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
-        <Model progressRef={progressRef} screenRef={screenRef} />
+        <Model progressRef={progressRef} screenRef={screenRef} screen={screen} />
       </group>
       <Environment preset="city" />
     </Canvas>

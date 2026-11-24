@@ -1,6 +1,6 @@
 /**
- * Fraction of the viewport the laptop screen fills once the dolly settles in the
- * GitHub bonus section. The camera fit and the DOM panel that takes over are both
- * derived from the quad's projected corners, so this is the only shared number.
+ * Width ÷ height of the laptop's screen mesh. The dolly's capture is cropped to
+ * this ratio, so the texture maps 1:1 onto the screen and the page that replaces
+ * it starts on the same row.
  */
-export const SCREEN_FILL = 1
+export const SCREEN_ASPECT = 1.544

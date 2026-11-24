@@ -1,21 +1,27 @@
 import * as THREE from "three"
-import { Canvas, useFrame } from "@react-three/fiber"
-import { useThree } from "@react-three/fiber"
+import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import {
   Environment,
   useGLTF,
-  useTexture,
   ContactShadows,
   OrbitControls,
   Html,
 } from "@react-three/drei"
-import { Suspense, useEffect, useRef } from "react"
+import { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../assets/laptop/mac-draco.glb"
-import laptopScreenImage from "../assets/github.com_nbb02_4_35.webp"
+import fallbackScreenUrl from "../assets/hero/screen-panel.jpg"
 import { TbHandClick } from "react-icons/tb"
 import { useInView } from "./useInView"
+import GithubPanel from "./hero/GithubPanel"
+import {
+  SCREEN_PANEL_WIDTH,
+  cachedScreenTexture,
+  capturePanel,
+  fitScreenMap,
+  screenTexture,
+} from "./hero/panelCapture"
 
 type LaptopGLTF = GLTF & {
   nodes: {
@@ -36,84 +42,47 @@ type LaptopGLTF = GLTF & {
   }
 }
 
-const SCREEN_TEXTURE_FLIP_Y = false
-const SCREEN_VIEWPORT_MAX_REPEAT_Y = 0.56
-
-function getTextureOffsetY(scroll: number, maxOffset: number) {
-  return SCREEN_TEXTURE_FLIP_Y ? maxOffset - scroll : scroll
-}
-
-function Model({ onScreenClick }: { onScreenClick?: () => void }) {
+function Model({
+  onScreenClick,
+  screen,
+}: {
+  onScreenClick?: () => void
+  screen: THREE.Texture | null
+}) {
   const group = useRef<THREE.Group>(null)
   const screenScrollRef = useRef(0)
   const maxTextureOffsetRef = useRef(0)
   const isScreenHoveredRef = useRef(false)
-  const screenMapRef = useRef<THREE.Texture | null>(null)
   const screenMaterialRef = useRef<THREE.MeshBasicMaterial>(null)
 
   const { nodes, materials } = useGLTF(laptopModelUrl) as unknown as LaptopGLTF
   const maxAnisotropy = useThree((state) =>
     state.gl.capabilities.getMaxAnisotropy(),
   )
-  const screenTexture = useTexture(laptopScreenImage)
+
+  const screenAspect = useMemo(() => {
+    const geometry = nodes["Cube008_2"].geometry
+    geometry.computeBoundingBox()
+    const size = geometry.boundingBox?.getSize(new THREE.Vector3())
+    return size && size.z > 0 ? size.x / size.z : 1.6
+  }, [nodes])
 
   useEffect(() => {
     const material = screenMaterialRef.current
-    if (!material) {
+    if (!material || !screen) {
       return
     }
 
-    const texture = screenTexture.clone()
-    texture.flipY = SCREEN_TEXTURE_FLIP_Y
-    texture.colorSpace = THREE.SRGBColorSpace
-    texture.wrapS = THREE.ClampToEdgeWrapping
-    texture.wrapT = THREE.ClampToEdgeWrapping
-    texture.generateMipmaps = false
-    texture.minFilter = THREE.LinearFilter
-    texture.magFilter = THREE.LinearFilter
-    texture.anisotropy = Math.min(16, maxAnisotropy)
-    texture.needsUpdate = true
-
-    const image = texture.image as
-      | { width?: number; height?: number }
-      | undefined
-    const imageWidth = image?.width ?? 0
-    const imageHeight = image?.height ?? 0
-
-    if (!imageWidth || !imageHeight) {
+    const maxOffset = fitScreenMap(screen, screenAspect, maxAnisotropy)
+    if (maxOffset === null) {
       return
     }
 
-    // Approximate physical display ratio of the laptop screen mesh.
-    const screenAspect = 1.6
-    const imageAspect = imageWidth / imageHeight
-    // Keep a visible "window" smaller than the full image so wheel scrolling
-    // is always meaningful even for wide screenshots.
-    const repeatY = Math.min(
-      SCREEN_VIEWPORT_MAX_REPEAT_Y,
-      imageAspect / screenAspect,
-    )
-
-    texture.repeat.set(1, repeatY)
-    maxTextureOffsetRef.current = Math.max(0, 1 - repeatY)
-
-    // Start from the top of the screenshot.
+    // Start from the top of the page.
+    maxTextureOffsetRef.current = maxOffset
     screenScrollRef.current = 0
-    texture.offset.set(
-      0,
-      getTextureOffsetY(screenScrollRef.current, maxTextureOffsetRef.current),
-    )
-    material.map = texture
     material.needsUpdate = true
-    screenMapRef.current = texture
-
-    return () => {
-      if (screenMapRef.current === texture) {
-        screenMapRef.current = null
-      }
-      texture.dispose()
-    }
-  }, [maxAnisotropy, screenTexture])
+  }, [maxAnisotropy, screen, screenAspect])
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
@@ -127,22 +96,15 @@ function Model({ onScreenClick }: { onScreenClick?: () => void }) {
         return
       }
 
-      const nextScroll = THREE.MathUtils.clamp(
+      screenScrollRef.current = THREE.MathUtils.clamp(
         screenScrollRef.current + event.deltaY * 0.0006,
         0,
         maxTextureOffsetRef.current,
       )
 
-      screenScrollRef.current = nextScroll
-      const texture = screenMapRef.current
-      if (!texture) {
-        return
+      if (screen) {
+        screen.offset.y = screenScrollRef.current
       }
-
-      texture.offset.y = getTextureOffsetY(
-        nextScroll,
-        maxTextureOffsetRef.current,
-      )
     }
 
     window.addEventListener("wheel", onWheel, { passive: false })
@@ -150,7 +112,7 @@ function Model({ onScreenClick }: { onScreenClick?: () => void }) {
     return () => {
       window.removeEventListener("wheel", onWheel)
     }
-  }, [])
+  }, [screen])
 
   useFrame((state) => {
     if (!group.current) {
@@ -207,7 +169,12 @@ function Model({ onScreenClick }: { onScreenClick?: () => void }) {
               if (onScreenClick) onScreenClick()
             }}
           >
-            <meshBasicMaterial ref={screenMaterialRef} toneMapped={false} />
+            <meshBasicMaterial
+              ref={screenMaterialRef}
+              map={screen ?? undefined}
+              color={screen ? "#ffffff" : "#05070A"}
+              toneMapped={false}
+            />
           </mesh>
         </group>
       </group>
@@ -243,11 +210,11 @@ function Model({ onScreenClick }: { onScreenClick?: () => void }) {
       <group position={[0, -0.1, 3.39]}>
         <mesh
           material={materials.aluminium}
-          geometry={nodes["Cube002"].geometry}
+          geometry={nodes.Cube002.geometry}
         />
         <mesh
           material={materials.trackpad}
-          geometry={nodes["Cube002_1"].geometry}
+          geometry={nodes.Cube002_1.geometry}
         />
       </group>
       <mesh
@@ -265,10 +232,83 @@ export default function Laptop() {
   const navigate = useNavigate()
   const navigateToDesktop = () => navigate("/desktop")
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const hostRef = useRef<HTMLDivElement>(null)
   const inView = useInView(wrapperRef, "50% 0px")
+  const [screen, setScreen] = useState<THREE.Texture | null>(
+    cachedScreenTexture,
+  )
+  const [captureHost, setCaptureHost] = useState(!screen)
+
+  /*
+   * The panel is mounted out of sight only long enough to be rasterised. That
+   * keeps the screen in step with `githubProfile` without anyone having to
+   * retake a screenshot of the profile page.
+   */
+  useEffect(() => {
+    if (screen) {
+      setCaptureHost(false)
+      return
+    }
+
+    const node = hostRef.current
+    if (!node) {
+      return
+    }
+
+    let cancelled = false
+    const run = async () => {
+      try {
+        const canvas = await capturePanel(node)
+        if (!cancelled) {
+          setScreen(screenTexture(canvas))
+        }
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.warn("[laptop] screen capture failed", error)
+        }
+        // Better a still of the panel than a blank laptop.
+        if (!cancelled) {
+          setScreen(
+            new THREE.TextureLoader().load(fallbackScreenUrl, (texture) => {
+              texture.colorSpace = THREE.SRGBColorSpace
+              texture.needsUpdate = true
+            }),
+          )
+        }
+      } finally {
+        if (!cancelled) {
+          setCaptureHost(false)
+        }
+      }
+    }
+
+    const idle = window.requestIdleCallback(run, { timeout: 2000 })
+
+    return () => {
+      cancelled = true
+      window.cancelIdleCallback(idle)
+    }
+  }, [screen])
 
   return (
     <div ref={wrapperRef} className="h-full w-full">
+      {captureHost && (
+        <div
+          ref={hostRef}
+          aria-hidden="true"
+          inert
+          style={{
+            position: "fixed",
+            top: 0,
+            left: -SCREEN_PANEL_WIDTH - 2000,
+            width: SCREEN_PANEL_WIDTH,
+            zIndex: -1,
+            pointerEvents: "none",
+          }}
+        >
+          <GithubPanel />
+        </div>
+      )}
       <Canvas
         camera={{ position: [-5, 0, -15], fov: 55 }}
         dpr={[1, 2]}
@@ -277,7 +317,7 @@ export default function Laptop() {
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
           <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
-            <Model onScreenClick={() => navigateToDesktop()} />
+            <Model screen={screen} onScreenClick={() => navigateToDesktop()} />
           </group>
           <Environment preset="city" />
         </Suspense>
