@@ -151,7 +151,7 @@ const HIGHLIGHTS = [
 ]
 
 const VIEWS = [
-  { id: "case-study", label: "Case study", to: "/projects/printset" },
+  { id: "overview", label: "Overview", to: "/projects/printset" },
   {
     id: "showcase",
     label: "Full showcase",
@@ -194,7 +194,7 @@ function PrintSetTabs({ view }: { view: string }) {
 
 export default function PrintSet() {
   const [searchParams] = useSearchParams()
-  const view = searchParams.get("view") === "showcase" ? "showcase" : "case-study"
+  const view = searchParams.get("view") === "showcase" ? "showcase" : "overview"
   const isShowcase = view === "showcase"
   const tabsRef = useRef<HTMLDivElement>(null)
   const previousView = useRef(view)

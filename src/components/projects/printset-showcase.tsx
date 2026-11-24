@@ -33,7 +33,7 @@ export default function PrintSetShowcase() {
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link to="/projects/printset" className="site-btn site-btn-ink">
-                  Read the case study
+                  View overview
                   <Arrow />
                 </Link>
                 <a href="#craft" className="site-btn site-btn-ghost">
@@ -346,7 +346,7 @@ export default function PrintSetShowcase() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link to="/projects/printset" className="site-btn site-btn-ink">
-                Read the case study
+                Back to overview
                 <Arrow />
               </Link>
               <a
