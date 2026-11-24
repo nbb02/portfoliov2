@@ -1,7 +1,7 @@
 import { useCallback, useState, type ReactNode } from "react"
 import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
-import { FiCheck, FiMaximize2 } from "react-icons/fi"
+import { FiArrowUpRight, FiCheck, FiMaximize2 } from "react-icons/fi"
 import ImageLightbox from "../ImageLightbox"
 import TagPill from "../home/TagPill"
 import TechText from "../home/TechText"
@@ -15,6 +15,11 @@ type Section = {
 type Meta = {
   label: string
   value: string
+}
+
+type ProjectLink = {
+  label: string
+  href: string
 }
 
 type GalleryImage = {
@@ -56,6 +61,8 @@ export default function CaseStudy({
   gallery,
   preview,
   art,
+  showcase,
+  links,
   highlights,
   highlightsKicker = "Highlights",
   highlightsTitle = "Highlights",
@@ -73,6 +80,8 @@ export default function CaseStudy({
   gallery?: GalleryImage[]
   preview?: PreviewImage
   art?: ReactNode
+  showcase?: ReactNode
+  links?: ProjectLink[]
   highlights: string[]
   highlightsKicker?: string
   highlightsTitle?: string
@@ -126,6 +135,23 @@ export default function CaseStudy({
                   >
                     {stack.map((tag) => (
                       <TagPill key={tag} tag={tag} dark size="md" />
+                    ))}
+                  </div>
+                )}
+
+                {links && links.length > 0 && (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {links.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-2 text-xs font-semibold text-slate-200 transition-colors hover:border-teal-300/40 hover:text-white"
+                      >
+                        {link.label}
+                        <FiArrowUpRight size={12} aria-hidden="true" />
+                      </a>
                     ))}
                   </div>
                 )}
@@ -206,6 +232,8 @@ export default function CaseStudy({
             </div>
           </section>
         ))}
+
+        {showcase}
 
         <section className="rounded-2xl border border-slate-200 bg-white/70 p-6">
           <p className="text-sm font-semibold text-teal-700">

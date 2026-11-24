@@ -76,8 +76,8 @@ export default function VirtualOffice() {
         "Developer-tool integration and local tooling",
         "Performance-aware rendering and visibility control",
       ]}
-      nextHref="/projects/client-portal"
-      nextLabel="Next: Client Portal Platform"
+      nextHref="/projects/printset"
+      nextLabel="Next: PrintSet"
     />
   )
 }

@@ -5,6 +5,7 @@ import {
   HuntXPCard,
   LoadBalancerCard,
   LogisticsCard,
+  PrintSetCard,
   RecyclingPlatformCard,
   ViTechCard,
   VirtualOfficeCard,
@@ -50,7 +51,8 @@ export default function SelectedWork() {
             Side builds.
           </h3>
         </div>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <PrintSetCard />
           <HuntXPCard />
           <FinanceCard />
           <VirtualOfficeCard />

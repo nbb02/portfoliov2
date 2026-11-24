@@ -4,6 +4,7 @@ import {
   FiAward,
   FiBox,
   FiHeart,
+  FiPrinter,
   FiShoppingBag,
   FiTrendingUp,
 } from "react-icons/fi"
@@ -367,6 +368,53 @@ export function VirtualOfficeCard({ className = "" }: { className?: string }) {
       <div className="relative mt-5 flex items-end justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
           {["3D", "React Three Fiber", "Agents"].map((tag) => (
+            <TagPill key={tag} tag={tag} dark />
+          ))}
+        </div>
+        <Arrow />
+      </div>
+    </Link>
+  )
+}
+
+export function PrintSetCard({ className = "" }: { className?: string }) {
+  return (
+    <Link
+      to="/projects/printset"
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+    >
+      <img
+        src="/assets/projects/printset/editor-grid.webp"
+        alt=""
+        loading="lazy"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-20"
+        style={GRID_PATTERN}
+        aria-hidden="true"
+      />
+
+      <div className="relative">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-teal-300">
+          <FiPrinter size={18} aria-hidden="true" />
+        </div>
+        <p className="mt-4 text-[10px] font-semibold text-slate-400">
+          Print layout tool · 2026
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
+          PrintSet
+        </h2>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-300">
+          Image print layouts at real paper sizes, with exact inch positions and
+          a PDF that measures what it says.
+        </p>
+      </div>
+
+      <div className="relative mt-5 flex items-end justify-between gap-3">
+        <div className="flex flex-wrap gap-1.5">
+          {["Desktop + web", "Local-first", "Exact-size PDF"].map((tag) => (
             <TagPill key={tag} tag={tag} dark />
           ))}
         </div>

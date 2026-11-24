@@ -14,6 +14,7 @@ const TABS = [
   { to: "/projects/huntxp", label: "HuntXP" },
   { to: "/projects/recycling-platform", label: "Recycling Platform" },
   { to: "/projects/virtual-office", label: "Virtual Office" },
+  { to: "/projects/printset", label: "PrintSet" },
 ]
 
 export default function Projects() {

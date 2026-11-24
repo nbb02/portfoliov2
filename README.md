@@ -8,7 +8,8 @@ studies.
 
 - `/` — v2 home
 - `/projects` — project index + case studies (`client-portal`, `logistics`,
-  `vitech`, `load-balancer-monitoring`, `finance`, `huntxp`, `virtual-office`)
+  `vitech`, `load-balancer-monitoring`, `finance`, `huntxp`,
+  `recycling-platform`, `virtual-office`, `printset`)
 - `/references` — credits and asset licenses
 - `/v1` — preserved v1 portfolio
 - `/desktop` — 3D desktop easter egg
