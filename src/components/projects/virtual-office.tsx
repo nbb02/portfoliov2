@@ -1,9 +1,9 @@
 import { FiBox } from "react-icons/fi"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function VirtualOffice() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="3D environment · 2026 · In progress"
       title="Virtual Office"
       intro="A browser-based 3D developer office with animated agent characters, desks, server racks, and a local agent bridge. The 3D scene and agent/presence layer are in place; most real integrations are still being wired."
@@ -76,8 +76,8 @@ export default function VirtualOffice() {
         "Developer-tool integration and local tooling",
         "Performance-aware rendering and visibility control",
       ]}
-      nextHref="/projects/client-portal"
-      nextLabel="Next: Client Portal Platform"
+      nextHref="/projects/printset"
+      nextLabel="Next: PrintSet"
     />
   )
 }

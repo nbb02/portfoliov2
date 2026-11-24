@@ -5,6 +5,7 @@ import {
   HuntXPCard,
   LoadBalancerCard,
   LogisticsCard,
+  PrintSetCard,
   RecyclingPlatformCard,
   ViTechCard,
   VirtualOfficeCard,
@@ -48,7 +49,8 @@ export default function Overview() {
             Side builds.
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <PrintSetCard />
           <HuntXPCard />
           <FinanceCard />
           <VirtualOfficeCard />

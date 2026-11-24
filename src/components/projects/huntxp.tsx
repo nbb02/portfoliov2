@@ -1,9 +1,9 @@
 import { FiAward } from "react-icons/fi"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function HuntXP() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Personal platform · 2026"
       title="HuntXP"
       intro="A gamified job-hunting workbench that turns applications into a pipeline, parses a resume into structured data, and runs AI coaching locally in the browser."

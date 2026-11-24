@@ -1,10 +1,10 @@
 import { FiHeart } from "react-icons/fi"
 import { RecyclingArt } from "../home/ProjectArt"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function RecyclingPlatform() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Social & blockchain · 2024–2025"
       title="Recycling Platform"
       intro="A community recycling platform where verified collections earn points, unlock tiers, and redeem at partner stores — with a blockchain-backed transaction ledger."

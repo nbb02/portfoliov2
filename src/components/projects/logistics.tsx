@@ -1,10 +1,10 @@
 import { FiTruck } from "react-icons/fi"
 import { LogisticsArt } from "../home/ProjectArt"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function Logistics() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Realtime platform · 2025–2026"
       title="Logistics & Realtime Booking"
       intro="A real-time logistics platform for dispatching, live tracking, and rider-customer bidding."
