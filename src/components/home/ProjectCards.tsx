@@ -4,7 +4,6 @@ import {
   FiAward,
   FiBox,
   FiHeart,
-  FiPrinter,
   FiShoppingBag,
   FiTrendingUp,
 } from "react-icons/fi"
@@ -397,9 +396,13 @@ export function PrintSetCard({ className = "" }: { className?: string }) {
       />
 
       <div className="relative">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-teal-300">
-          <FiPrinter size={18} aria-hidden="true" />
-        </div>
+        <img
+          src="/assets/projects/printset/icon.webp"
+          alt=""
+          width={40}
+          height={40}
+          className="h-10 w-10 rounded-xl"
+        />
         <p className="mt-4 text-[10px] font-semibold text-slate-400">
           Print layout tool · 2026
         </p>

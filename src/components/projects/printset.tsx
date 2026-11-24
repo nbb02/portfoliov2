@@ -1,4 +1,3 @@
-import { FiPrinter } from "react-icons/fi"
 import CaseStudy from "./CaseStudy"
 import ProjectShowcase, { type ShowcaseTab } from "./ProjectShowcase"
 
@@ -118,7 +117,15 @@ export default function PrintSet() {
       kicker="Print layout tool · 2026"
       title="PrintSet"
       intro="Image print layouts at real paper sizes. Drop photos, place them at exact inch positions, then print or export a PDF that measures what it says. One codebase ships as a Windows desktop app and a static web build."
-      icon={FiPrinter}
+      iconNode={
+        <img
+          src="/assets/projects/printset/icon.webp"
+          alt=""
+          width={36}
+          height={36}
+          className="h-9 w-9 rounded-[10px]"
+        />
+      }
       stack={[
         "React",
         "TypeScript",
@@ -137,6 +144,11 @@ export default function PrintSet() {
         "MCP bridge",
       ]}
       links={[
+        {
+          label: "Full showcase",
+          href: "/projects/printset/showcase",
+          external: false,
+        },
         { label: "Source on GitHub", href: "https://github.com/nbb02/PrintSet" },
       ]}
       meta={[
@@ -181,6 +193,8 @@ export default function PrintSet() {
           title="Inside the app"
           intro="A short tour of the editor, the precision controls, the sheets it produces, and the optional AI bridge."
           tabs={SHOWCASE}
+          moreHref="/projects/printset/showcase"
+          moreLabel="Open the full showcase"
         />
       }
       highlightsKicker="Capabilities"

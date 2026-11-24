@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react"
+import { Link } from "react-router-dom"
 import { FiCheck, FiMaximize2 } from "react-icons/fi"
 import ImageLightbox from "../ImageLightbox"
 
@@ -38,11 +39,15 @@ export default function ProjectShowcase({
   title,
   intro,
   tabs,
+  moreHref,
+  moreLabel,
 }: {
   kicker?: string
   title: string
   intro?: string
   tabs: ShowcaseTab[]
+  moreHref?: string
+  moreLabel?: string
 }) {
   const [activeId, setActiveId] = useState(tabs[0]?.id ?? "")
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -253,9 +258,19 @@ export default function ProjectShowcase({
           </div>
         </div>
 
-        <p className="mt-2 text-[11px] text-slate-500">
-          Tap a frame to inspect it at full size.
-        </p>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-[11px] text-slate-500">
+            Tap a frame to inspect it at full size.
+          </p>
+          {moreHref && moreLabel && (
+            <Link
+              to={moreHref}
+              className="text-xs font-semibold text-teal-700 transition-colors hover:text-teal-900"
+            >
+              {moreLabel} →
+            </Link>
+          )}
+        </div>
       </section>
 
       <ImageLightbox
