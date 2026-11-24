@@ -12,6 +12,7 @@ import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../../assets/laptop/mac-draco.glb"
 import laptopScreenImage from "../../assets/hero/screen-panel.jpg"
 import { clamp01, easeInOutCubic, lerp } from "./easing"
+import PhoneModel from "./PhoneModel"
 
 type LaptopGLTF = GLTF & {
   nodes: {
@@ -75,6 +76,8 @@ const DOLLY_START = 0.0
 const DOLLY_END = 0.95
 /** Progress by which the idle drift has fully decayed. */
 const DRIFT_END = 0.4
+
+export type DollyDevice = "laptop" | "phone"
 
 function Model({
   progressRef,
@@ -193,11 +196,14 @@ function CameraRig({
   screenRef,
   heroFitRef,
   onScreenRect,
+  track,
 }: {
   progressRef: ProgressRef
   screenRef: RefObject<THREE.Mesh | null>
   heroFitRef?: RefObject<HeroFit>
   onScreenRect?: (rect: ScreenRect | null) => void
+  /** Keep the aim on the screen for the whole move instead of easing onto it. */
+  track?: boolean
 }) {
   const camera = useThree((state) => state.camera as THREE.PerspectiveCamera)
   const size = useThree((state) => state.size)
@@ -260,7 +266,19 @@ function CameraRig({
     if (extents[1] < extents[thin]) thin = 1
     if (extents[2] < extents[thin]) thin = 2
     const rest = [0, 1, 2].filter((axis) => axis !== thin)
-    const wide = extents[rest[0]] >= extents[rest[1]] ? rest[0] : rest[1]
+    /*
+     * Width is the in-plane axis that runs across the screen, not simply the
+     * longer one: a laptop's screen is landscape but a phone's is portrait, and
+     * fitting the taller extent to the viewport's width would shrink it to half.
+     */
+    const axisA = new THREE.Vector3()
+      .setComponent(rest[0], 1)
+      .applyQuaternion(scratch.meshQuat)
+    const axisB = new THREE.Vector3()
+      .setComponent(rest[1], 1)
+      .applyQuaternion(scratch.meshQuat)
+    const wide =
+      Math.abs(axisA.dot(UP)) <= Math.abs(axisB.dot(UP)) ? rest[0] : rest[1]
     const tall = wide === rest[0] ? rest[1] : rest[0]
     const halfWidth = extents[wide]
     const halfHeight = extents[tall]
@@ -355,7 +373,7 @@ function CameraRig({
     camera.quaternion.slerpQuaternions(
       scratch.startQuat,
       scratch.endQuat,
-      blend,
+      track ? 1 : blend,
     )
 
     /*
@@ -418,12 +436,14 @@ export default function LaptopScroll({
   heroFitRef,
   render,
   screen,
+  device = "laptop",
 }: {
   progressRef: ProgressRef
   onScreenRect?: (rect: ScreenRect | null) => void
   heroFitRef?: RefObject<HeroFit>
   render: boolean
   screen?: THREE.Texture | null
+  device?: DollyDevice
 }) {
   const screenRef = useRef<THREE.Mesh>(null)
 
@@ -449,10 +469,19 @@ export default function LaptopScroll({
         screenRef={screenRef}
         heroFitRef={heroFitRef}
         onScreenRect={onScreenRect}
+        track={device === "phone"}
       />
-      <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
-        <Model progressRef={progressRef} screenRef={screenRef} screen={screen} />
-      </group>
+      {device === "phone" ? (
+        <PhoneModel
+          progressRef={progressRef}
+          screenRef={screenRef}
+          screen={screen}
+        />
+      ) : (
+        <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
+          <Model progressRef={progressRef} screenRef={screenRef} screen={screen} />
+        </group>
+      )}
       <Environment preset="city" />
     </Canvas>
   )

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
 :root {
   --ink: #0f172a;
@@ -768,6 +769,9 @@ h4 {
 @media (max-width: 768px) {
   .journey-v2 {
     height: auto;
+    /* The clouds are painted past the edge and the panel stops clipping them
+       here, which otherwise gives the whole page a horizontal scrollbar. */
+    overflow-x: clip;
   }
 
   .journey-v2 .professional-section {

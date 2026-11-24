@@ -21,7 +21,11 @@ const textures = new Map<number, THREE.Texture>()
  * The width is part of the key: the hero captures the narrow layout, the dolly
  * captures the page at the viewport's own width.
  */
-export function capturePanel(node: HTMLElement, width = SCREEN_PANEL_WIDTH) {
+export function capturePanel(
+  node: HTMLElement,
+  width = SCREEN_PANEL_WIDTH,
+  options: { height?: number; pixelRatio?: number } = {},
+) {
   const key = Math.round(width)
   const inFlight = pending.get(key)
   if (inFlight) return inFlight
@@ -34,7 +38,8 @@ export function capturePanel(node: HTMLElement, width = SCREEN_PANEL_WIDTH) {
 
     return toCanvas(node, {
       width: key,
-      pixelRatio: 1,
+      height: options.height,
+      pixelRatio: options.pixelRatio ?? 1,
       backgroundColor: "#0D1117",
       cacheBust: true,
       // The host is parked offscreen so it never shows; the clone has to be

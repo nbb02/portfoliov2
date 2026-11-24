@@ -384,7 +384,8 @@ export default function ProfessionalExperience({
     const observer = new IntersectionObserver(
       (entries) => {
         inRange = entries.some((entry) => entry.isIntersecting)
-        if (inRange) observer.disconnect()
+        /* Keep observing: leaving range unmounts the sky's two contexts, which
+           is most of the page's WebGL budget. */
         sync()
       },
       { rootMargin: "700px 0px" },

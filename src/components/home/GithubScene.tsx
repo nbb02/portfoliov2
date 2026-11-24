@@ -3,7 +3,7 @@ import type { Texture } from "three"
 import { useScrollOffset } from "../hero/useScrollOffset"
 import { clamp01 } from "../hero/easing"
 import { useInView } from "../useInView"
-import { SCREEN_ASPECT } from "../hero/screenGeometry"
+import { SCREEN_ASPECT, PHONE_SCREEN_ASPECT } from "../hero/screenGeometry"
 import {
   SCREEN_PANEL_WIDTH,
   cachedScreenTexture,
@@ -21,16 +21,21 @@ const GithubPanel = lazy(() => import("../hero/GithubPanel"))
 const CINEMATIC_VH = 200
 
 /**
- * The panel replaces the laptop screen at the same width and position it ends
- * on, so the two agree without any settle at the release. The panel is laid out
- * at the viewport's own width, so the screen fills the window and the extra
- * width of a large monitor goes into the page's margins rather than scaling the
- * type up with it.
+ * How the wide layout hands over: the panel replaces the laptop screen at the
+ * same width and position it ends on, so the two agree without any settle at the
+ * release. The panel is laid out at the viewport's own width, so the screen fills
+ * the window and the extra width of a large monitor goes into the page's margins
+ * rather than scaling the type up with it.
  */
 const PANEL_REVEAL = 0.95
 const INTRO_END = 0.18
-/** Below this the panel is unreadable; the section becomes a link instead. */
-const MIN_CINEMATIC_WIDTH = 1024
+
+/**
+ * The width gate picks the device, not the choreography: a phone screen is the
+ * viewport's own ratio, so a narrow viewport hands over the same way a wide one
+ * does — only the thing holding the screen differs.
+ */
+const DESKTOP_MIN_WIDTH = 1024
 
 /**
  * The viewport without the vertical scrollbar. `window.innerWidth` includes it, and
@@ -42,9 +47,9 @@ function viewportWidth() {
   return document.documentElement.clientWidth || window.innerWidth
 }
 
-function isNarrow() {
-  if (typeof window === "undefined") return true
-  return viewportWidth() < MIN_CINEMATIC_WIDTH
+function isMobileViewport() {
+  if (typeof window === "undefined") return false
+  return viewportWidth() < DESKTOP_MIN_WIDTH
 }
 
 function prefersReducedMotion() {
@@ -60,16 +65,32 @@ function columnLeft(width: number) {
 export default function GithubScene() {
   const [columnWidth, setColumnWidth] = useState(viewportWidth)
   const [panelHeight, setPanelHeight] = useState(0)
-  const [narrow, setNarrow] = useState(isNarrow)
+  const [mobile, setMobile] = useState(isMobileViewport)
   const [reduced, setReduced] = useState(prefersReducedMotion)
-  const [screen, setScreen] = useState<Texture | null>(() =>
-    cachedScreenTexture(viewportWidth()),
+  /*
+   * The scroll maths are all in `innerHeight`, and the pinned frame has to cover
+   * exactly that much: `svh` is the window's, not what is on screen when the
+   * address bar is hidden or the page is zoomed, and anything it leaves uncovered
+   * shows the real page underneath.
+   */
+  const [viewportHeight, setViewportHeight] = useState(() =>
+    typeof window === "undefined" ? 900 : window.innerHeight,
+  )
+  const [screen, setScreen] = useState<Texture | null>(
+    () =>
+      /*
+       * The hero's capture is a stand-in until this viewport's own lands: it is
+       * the panel at the layout below the breakpoint, which reads as the same
+       * page on a phone, where the shipping screenshot would not.
+       */
+      cachedScreenTexture(viewportWidth()) ??
+      cachedScreenTexture(SCREEN_PANEL_WIDTH),
   )
 
   useEffect(() => {
     const update = () => {
       setColumnWidth(viewportWidth())
-      setNarrow(isNarrow())
+      setMobile(isMobileViewport())
       setReduced(prefersReducedMotion())
     }
 
@@ -88,6 +109,18 @@ export default function GithubScene() {
       window.removeEventListener("resize", update)
       observer.disconnect()
       query.removeEventListener("change", update)
+    }
+  }, [])
+
+  useEffect(() => {
+    const measure = () => setViewportHeight(window.innerHeight)
+
+    measure()
+    window.addEventListener("resize", measure)
+    window.visualViewport?.addEventListener("resize", measure)
+    return () => {
+      window.removeEventListener("resize", measure)
+      window.visualViewport?.removeEventListener("resize", measure)
     }
   }, [])
 
@@ -117,7 +150,7 @@ export default function GithubScene() {
       resize.disconnect()
       view.disconnect()
     }
-  }, [narrow])
+  }, [mobile])
 
   /*
    * The dolly's screen is the panel itself, captured once per width. Because the
@@ -126,17 +159,31 @@ export default function GithubScene() {
    */
   const capturedWidth = useRef(0)
   useEffect(() => {
-    if (narrow || reduced || !panelHeight || !panelNear) return
+    if (reduced || !panelHeight || !panelNear) return
     const node = panelRef.current
     if (!node || capturedWidth.current === columnWidth) return
 
     let cancelled = false
     const run = async () => {
       try {
-        const canvas = await capturePanel(node, columnWidth)
+        /*
+         * The phone's screen ends up as the whole viewport, so its capture is
+         * rasterised at twice the size — but only as far as the screen sees, so
+         * the taller canvas does not cost a full panel's worth of memory.
+         */
+        const aspect = mobile ? PHONE_SCREEN_ASPECT : SCREEN_ASPECT
+        const canvas = await capturePanel(node, columnWidth, {
+          height: mobile ? Math.round(columnWidth / aspect) : undefined,
+          pixelRatio: mobile ? 2 : 1,
+        })
         if (cancelled) return
         capturedWidth.current = columnWidth
-        setScreen(screenTexture(sliceScreen(canvas, SCREEN_ASPECT), columnWidth))
+        setScreen(
+          screenTexture(
+            sliceScreen(canvas, aspect),
+            columnWidth,
+          ),
+        )
       } catch (error) {
         if (import.meta.env.DEV) {
           console.warn("[github] screen capture failed", error)
@@ -149,7 +196,7 @@ export default function GithubScene() {
       cancelled = true
       window.cancelIdleCallback(idle)
     }
-  }, [narrow, reduced, panelHeight, panelNear, columnWidth])
+  }, [reduced, panelHeight, panelNear, columnWidth, mobile])
 
   /* Drop captures for widths the page no longer draws. */
   useEffect(() => {
@@ -157,43 +204,37 @@ export default function GithubScene() {
     releaseScreenTexturesExcept([SCREEN_PANEL_WIDTH, columnWidth])
   }, [screen, columnWidth])
 
-  if (narrow) {
-    return (
-      <section id="github" className="bg-[#0D1117] px-5 py-16">
-        <div className="mx-auto max-w-[420px] text-center text-[#F4F0E8]">
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-teal-300/80">
-            Bonus
-          </p>
-          <h2 className="mt-3 text-[1.4rem] font-semibold leading-tight">
-            The whole profile, on GitHub.
+  return (
+    <div className="relative bg-[#0D1117]">
+      {mobile && (
+        /*
+         * The pinned copy has no room beside the lid on a phone, and the laptop
+         * crosses it on the way in, so it leads the section in its own block
+         * instead of riding inside the frame.
+         */
+        <div className="px-5 pb-2 pt-14">
+          <h2 className="text-[1.55rem] font-semibold leading-tight text-[#F4F0E8]">
+            Scroll into my GitHub.
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-white/55">
-            Read the README, selected work and experience straight from the profile.
+            The full profile and README — keep scrolling to read it.
           </p>
-          <a
-            href="https://github.com/nbb02"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-5 inline-flex rounded-full bg-teal-400 px-5 py-2.5 text-sm font-semibold text-[#0D1117]"
-          >
-            Open github.com/nbb02 →
-          </a>
         </div>
-      </section>
-    )
-  }
+      )}
 
-  return (
-    <>
-      {!reduced && <Dolly screen={screen} columnWidth={columnWidth} />}
+      {!reduced && (
+        <Dolly
+          screen={screen}
+          columnWidth={columnWidth}
+          mobile={mobile}
+          viewportHeight={viewportHeight}
+        />
+      )}
 
       <section
         id="github"
-        className={
-          reduced
-            ? "relative bg-[#0D1117]"
-            : "relative z-0 -mt-[100svh] bg-[#0D1117]"
-        }
+        className={reduced ? "relative" : "relative z-0"}
+        style={reduced ? undefined : { marginTop: -viewportHeight }}
       >
         <div ref={panelRef} className="w-full">
           <Suspense fallback={null}>
@@ -201,20 +242,25 @@ export default function GithubScene() {
           </Suspense>
         </div>
       </section>
-    </>
+    </div>
   )
 }
 
 function Dolly({
   screen,
   columnWidth,
+  mobile,
+  viewportHeight,
 }: {
   screen: Texture | null
   columnWidth: number
+  mobile: boolean
+  viewportHeight: number
 }) {
   const frameRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
   const bridgeRef = useRef<HTMLDivElement>(null)
+  const bridgeInnerRef = useRef<HTMLDivElement>(null)
   const introRef = useRef<HTMLDivElement>(null)
   const lastOffset = useRef(0)
   const lastSpan = useRef(0)
@@ -232,6 +278,7 @@ function Dolly({
 
       const intro = introRef.current
       const bridge = bridgeRef.current
+      const inner = bridgeInnerRef.current
       const canvas = canvasRef.current
       const quad = screenRect.current
 
@@ -239,11 +286,13 @@ function Dolly({
         const bridgeScale = quad.width / columnWidth
 
         if (bridge) {
-          bridge.style.transform = `translate(${quad.left}px, ${quad.top}px) scale(${bridgeScale})`
+          bridge.style.transform = `translate(${quad.left}px, ${quad.top}px)`
           bridge.style.opacity = p >= PANEL_REVEAL ? "1" : "0"
           bridge.style.visibility =
             p >= PANEL_REVEAL - 0.01 ? "visible" : "hidden"
         }
+
+        if (inner) inner.style.transform = `scale(${bridgeScale})`
 
         /*
          * The panel replaces the screen at the same instant, so the 3D must go with
@@ -331,11 +380,14 @@ function Dolly({
     <section
       ref={targetRef}
       className="relative z-10"
-      style={{ height: `calc(${CINEMATIC_VH}vh + 100svh)` }}
+      style={{
+        height: `calc(${CINEMATIC_VH}vh + ${viewportHeight}px)`,
+      }}
     >
       <div
         ref={frameRef}
-        className="sticky top-0 h-[100svh] overflow-hidden bg-[#0D1117]"
+        className="sticky top-0 overflow-hidden bg-[#0D1117]"
+        style={{ height: viewportHeight }}
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.16)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.16)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_50%_45%,black,transparent_72%)]" />
@@ -345,7 +397,7 @@ function Dolly({
 
         <div
           ref={introRef}
-          className="pointer-events-none absolute top-[12svh] z-10 w-[360px] max-w-[360px]"
+          className="pointer-events-none absolute top-[12svh] z-10 hidden w-[360px] max-w-[360px] lg:block"
           style={{ left: columnLeft(columnWidth) }}
         >
           <h2 className="max-w-[340px] text-[1.6rem] font-semibold leading-tight text-[#F4F0E8] md:text-[2rem]">
@@ -364,6 +416,7 @@ function Dolly({
                 onScreenRect={handleScreenRect}
                 render={render3d}
                 screen={screen}
+                device={mobile ? "phone" : "laptop"}
               />
             </Suspense>
           )}
@@ -375,9 +428,14 @@ function Dolly({
           className="invisible absolute left-0 top-0 z-30 opacity-0"
           style={{ width: columnWidth, transformOrigin: "0 0" }}
         >
-          <Suspense fallback={null}>
-            <GithubPanel />
-          </Suspense>
+          <div
+            ref={bridgeInnerRef}
+            style={{ width: columnWidth, transformOrigin: "0 0" }}
+          >
+            <Suspense fallback={null}>
+              <GithubPanel />
+            </Suspense>
+          </div>
         </div>
       </div>
     </section>

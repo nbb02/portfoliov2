@@ -234,6 +234,9 @@ export default function Laptop() {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const hostRef = useRef<HTMLDivElement>(null)
   const inView = useInView(wrapperRef, "50% 0px")
+  /* The context costs GPU memory whether or not it is drawing, and this one is
+     only ever needed around the hero; the dolly has its own. */
+  const near = useInView(wrapperRef, "150% 0px")
   const [screen, setScreen] = useState<THREE.Texture | null>(
     cachedScreenTexture,
   )
@@ -309,32 +312,34 @@ export default function Laptop() {
           <GithubPanel />
         </div>
       )}
-      <Canvas
-        camera={{ position: [-5, 0, -15], fov: 55 }}
-        dpr={[1, 2]}
-        frameloop={inView ? "always" : "demand"}
-      >
-        <pointLight position={[10, 10, 10]} intensity={1.5} />
-        <Suspense fallback={null}>
-          <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
-            <Model screen={screen} onScreenClick={() => navigateToDesktop()} />
-          </group>
-          <Environment preset="city" />
-        </Suspense>
-        <ContactShadows
-          position={[0, -4.5, 0]}
-          scale={20}
-          blur={2}
-          far={4.5}
-          frames={1}
-        />
-        <OrbitControls
-          enablePan={false}
-          enableZoom={false}
-          minPolarAngle={Math.PI / 2.2}
-          maxPolarAngle={Math.PI / 2.2}
-        />
-      </Canvas>
+      {near && (
+        <Canvas
+          camera={{ position: [-5, 0, -15], fov: 55 }}
+          dpr={[1, 2]}
+          frameloop={inView ? "always" : "demand"}
+        >
+          <pointLight position={[10, 10, 10]} intensity={1.5} />
+          <Suspense fallback={null}>
+            <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
+              <Model screen={screen} onScreenClick={() => navigateToDesktop()} />
+            </group>
+            <Environment preset="city" />
+          </Suspense>
+          <ContactShadows
+            position={[0, -4.5, 0]}
+            scale={20}
+            blur={2}
+            far={4.5}
+            frames={1}
+          />
+          <OrbitControls
+            enablePan={false}
+            enableZoom={false}
+            minPolarAngle={Math.PI / 2.2}
+            maxPolarAngle={Math.PI / 2.2}
+          />
+        </Canvas>
+      )}
     </div>
   )
 }
