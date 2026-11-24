@@ -105,7 +105,7 @@ export default function MoreWork() {
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
           Client and internal builds from earlier years. They don't have public
-          case studies, but they're part of the track record.
+          project overviews, but they're part of the track record.
         </p>
       </div>
 

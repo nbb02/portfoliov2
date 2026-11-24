@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { Link, useSearchParams } from "react-router-dom"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 import ProjectShowcase, { type ShowcaseTab } from "./ProjectShowcase"
 import PrintSetShowcase from "./printset-showcase"
 
@@ -213,7 +213,7 @@ export default function PrintSet() {
   }, [view])
 
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Print layout tool · 2026"
       title="PrintSet"
       intro="Image print layouts at real paper sizes. Drop photos, place them at exact inch positions, then print or export a PDF that measures what it says. One codebase ships as a Windows desktop app and a static web build."
@@ -281,6 +281,6 @@ export default function PrintSet() {
       nextLabel="Next: Client Portal Platform"
     >
       {isShowcase && <PrintSetShowcase />}
-    </CaseStudy>
+    </ProjectOverview>
   )
 }

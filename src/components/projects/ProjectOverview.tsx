@@ -50,7 +50,7 @@ function BulletText({ text }: { text: string }) {
   return <TechText text={text} />
 }
 
-export default function CaseStudy({
+export default function ProjectOverview({
   kicker,
   title,
   intro,

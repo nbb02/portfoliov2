@@ -7,7 +7,7 @@ studies.
 ## Routes
 
 - `/` — v2 home
-- `/projects` — project index + case studies (`client-portal`, `logistics`,
+- `/projects` — project index + project overviews (`client-portal`, `logistics`,
   `vitech`, `load-balancer-monitoring`, `finance`, `huntxp`,
   `recycling-platform`, `virtual-office`, `printset`). PrintSet also has an
   in-page showcase at `/projects/printset?view=showcase`.
