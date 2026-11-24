@@ -3,9 +3,13 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, useGLTF, Float, Environment } from "@react-three/drei"
 import type { GLTF } from "three-stdlib"
 import * as THREE from "three"
+import { useInView } from "./useInView"
 const modelUrl = "/assets/rubiks_cube/rubiks_cube/rubiks_cube.gltf"
 
 export default function Rubiks() {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const inView = useInView(wrapperRef, "50% 0px")
+
   function RubiksModel() {
     const gltf = useGLTF(modelUrl) as GLTF
     const { scene } = gltf
@@ -25,28 +29,31 @@ export default function Rubiks() {
   }
 
   return (
-    <Canvas
-      camera={{ position: [0, 40, 5], fov: 20 }}
-      style={{ background: "transparent" }}
-      gl={{ alpha: true, antialias: true }}
-    >
-      <hemisphereLight args={[0xffffff, 0x444444, 0.45]} />
-      <ambientLight intensity={0.65} />
-      <directionalLight position={[5, 5, 5]} intensity={0.9} />
+    <div ref={wrapperRef} className="h-full w-full">
+      <Canvas
+        camera={{ position: [0, 40, 5], fov: 20 }}
+        style={{ background: "transparent" }}
+        gl={{ alpha: true, antialias: true }}
+        frameloop={inView ? "always" : "demand"}
+      >
+        <hemisphereLight args={[0xffffff, 0x444444, 0.45]} />
+        <ambientLight intensity={0.65} />
+        <directionalLight position={[5, 5, 5]} intensity={0.9} />
 
-      <Suspense fallback={null}>
-        <Environment preset="studio" environmentIntensity={0.6} />
-        <Float speed={1.05} rotationIntensity={0.4} floatIntensity={0.8}>
-          <RubiksModel />
-        </Float>
-      </Suspense>
+        <Suspense fallback={null}>
+          <Environment preset="studio" environmentIntensity={0.6} />
+          <Float speed={1.05} rotationIntensity={0.4} floatIntensity={0.8}>
+            <RubiksModel />
+          </Float>
+        </Suspense>
 
-      <OrbitControls
-        enablePan={false}
-        enableZoom={false}
-        autoRotate
-        autoRotateSpeed={1.1}
-      />
-    </Canvas>
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          autoRotate
+          autoRotateSpeed={1.1}
+        />
+      </Canvas>
+    </div>
   )
 }

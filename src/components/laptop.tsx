@@ -15,6 +15,7 @@ import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../assets/laptop/mac-draco.glb"
 import laptopScreenImage from "../assets/github.com_nbb02_4_35.webp"
 import { TbHandClick } from "react-icons/tb"
+import { useInView } from "./useInView"
 
 type LaptopGLTF = GLTF & {
   nodes: {
@@ -263,10 +264,16 @@ useGLTF.preload(laptopModelUrl)
 export default function Laptop() {
   const navigate = useNavigate()
   const navigateToDesktop = () => navigate("/desktop")
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const inView = useInView(wrapperRef, "50% 0px")
 
   return (
-    <>
-      <Canvas camera={{ position: [-5, 0, -15], fov: 55 }} dpr={[1, 2]}>
+    <div ref={wrapperRef} className="h-full w-full">
+      <Canvas
+        camera={{ position: [-5, 0, -15], fov: 55 }}
+        dpr={[1, 2]}
+        frameloop={inView ? "always" : "demand"}
+      >
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
           <group rotation={[0, Math.PI, 0]} position={[0, 1, 0]}>
@@ -274,7 +281,13 @@ export default function Laptop() {
           </group>
           <Environment preset="city" />
         </Suspense>
-        <ContactShadows position={[0, -4.5, 0]} scale={20} blur={2} far={4.5} />
+        <ContactShadows
+          position={[0, -4.5, 0]}
+          scale={20}
+          blur={2}
+          far={4.5}
+          frames={1}
+        />
         <OrbitControls
           enablePan={false}
           enableZoom={false}
@@ -282,6 +295,6 @@ export default function Laptop() {
           maxPolarAngle={Math.PI / 2.2}
         />
       </Canvas>
-    </>
+    </div>
   )
 }

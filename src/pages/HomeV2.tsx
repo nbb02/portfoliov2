@@ -20,6 +20,7 @@ import {
 } from "react-icons/si"
 import { JOURNEY_ROLES } from "../components/journeyRoles"
 import HomeNav from "../components/home/HomeNav"
+import GithubScene from "../components/home/GithubScene"
 import SelectedWork from "../components/home/SelectedWork"
 import ScrollLink from "../components/home/ScrollLink"
 import SiteFooter from "../components/home/SiteFooter"
@@ -274,6 +275,8 @@ export default function HomeV2() {
             />
           </Suspense>
         </div>
+
+        <GithubScene />
 
         <SiteFooter />
       </main>

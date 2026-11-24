@@ -43,6 +43,12 @@ export default function SiteFooter() {
         <div className="mt-6 flex flex-col gap-4 text-sm text-slate-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Nathaniel B. Berres</p>
           <div className="flex flex-wrap items-center gap-5">
+            <a
+              href="#github"
+              className="font-medium text-slate-200 underline-offset-4 transition-colors hover:text-white hover:underline"
+            >
+              GitHub
+            </a>
             <Link
               to="/projects"
               className="font-medium text-slate-200 underline-offset-4 transition-colors hover:text-white hover:underline"
