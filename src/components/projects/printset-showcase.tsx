@@ -5,21 +5,11 @@ export default function PrintSetShowcase() {
   return (
     <div className="site -mx-5 sm:-mx-8">
       <article>
-        <section className="mx-auto max-w-[1240px] px-5 pt-10 sm:px-8 sm:pt-14">
+        <section className="mx-auto max-w-[1240px] px-5 pt-2 sm:px-8 sm:pt-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <img
-                src="/assets/projects/printset/icon.webp"
-                alt=""
-                width={24}
-                height={24}
-                className="h-6 w-6 rounded-md"
-              />
-              <span className="text-[15px] font-semibold tracking-[-0.03em]">
-                PrintSet
-              </span>
-              <span className="site-eyebrow">Showcase</span>
-            </div>
+            <p className="site-eyebrow">
+              Image layouts · real paper · local first
+            </p>
             <p className="site-eyebrow">Windows desktop + static web</p>
           </div>
 

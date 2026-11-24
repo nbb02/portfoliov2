@@ -16,11 +16,6 @@ const TABS = [
   { to: "/projects/recycling-platform", label: "Recycling Platform" },
   { to: "/projects/virtual-office", label: "Virtual Office" },
   { to: "/projects/printset", label: "PrintSet", end: true },
-  {
-    to: "/projects/printset/showcase",
-    label: "Showcase",
-    end: true,
-  },
 ]
 
 export default function Projects() {

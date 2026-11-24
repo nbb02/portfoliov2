@@ -65,6 +65,8 @@ export default function CaseStudy({
   art,
   showcase,
   links,
+  afterHero,
+  children,
   highlights,
   highlightsKicker = "Highlights",
   highlightsTitle = "Highlights",
@@ -85,6 +87,8 @@ export default function CaseStudy({
   art?: ReactNode
   showcase?: ReactNode
   links?: ProjectLink[]
+  afterHero?: ReactNode
+  children?: ReactNode
   highlights: string[]
   highlightsKicker?: string
   highlightsTitle?: string
@@ -213,6 +217,10 @@ export default function CaseStudy({
           </div>
         </section>
 
+        {afterHero}
+
+        {children}
+
         {sections.map((section) => (
           <section
             key={section.title}
@@ -253,27 +261,29 @@ export default function CaseStudy({
 
         {showcase}
 
-        <section className="rounded-2xl border border-slate-200 bg-white/70 p-6">
-          <p className="text-sm font-semibold text-teal-700">
-            {highlightsKicker}
-          </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-            {highlightsTitle}
-          </h2>
-          <ul className="mt-4 columns-1 gap-x-8 sm:columns-2">
-            {highlights.map((highlight) => (
-              <li
-                key={highlight}
-                className="mb-3 flex break-inside-avoid gap-2.5 text-sm leading-relaxed text-slate-600"
-              >
-                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                  <FiCheck size={11} aria-hidden="true" />
-                </span>
-                <TechText text={highlight} />
-              </li>
-            ))}
-          </ul>
-        </section>
+        {highlights.length > 0 && (
+          <section className="rounded-2xl border border-slate-200 bg-white/70 p-6">
+            <p className="text-sm font-semibold text-teal-700">
+              {highlightsKicker}
+            </p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+              {highlightsTitle}
+            </h2>
+            <ul className="mt-4 columns-1 gap-x-8 sm:columns-2">
+              {highlights.map((highlight) => (
+                <li
+                  key={highlight}
+                  className="mb-3 flex break-inside-avoid gap-2.5 text-sm leading-relaxed text-slate-600"
+                >
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                    <FiCheck size={11} aria-hidden="true" />
+                  </span>
+                  <TechText text={highlight} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {gallery && gallery.length > 0 && (
           <section className="border-t border-slate-300 pt-6">

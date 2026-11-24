@@ -9,8 +9,8 @@ studies.
 - `/` — v2 home
 - `/projects` — project index + case studies (`client-portal`, `logistics`,
   `vitech`, `load-balancer-monitoring`, `finance`, `huntxp`,
-  `recycling-platform`, `virtual-office`, `printset`,
-  `printset/showcase`)
+  `recycling-platform`, `virtual-office`, `printset`). PrintSet also has an
+  in-page showcase at `/projects/printset?view=showcase`.
 - `/references` — credits and asset licenses
 - `/v1` — preserved v1 portfolio
 - `/desktop` — 3D desktop easter egg
