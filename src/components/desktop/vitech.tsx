@@ -1,9 +1,9 @@
 import { FiBarChart2 } from "react-icons/fi"
-import CaseStudy from "../projects/CaseStudy"
+import ProjectOverview from "../projects/ProjectOverview"
 
 export default function ViTech() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Capstone project · 2024"
       title="ViTech Analytics"
       intro="A population management and analytics platform built as a capstone project, with dashboards, QR check-in, role-based access, and exportable reports."

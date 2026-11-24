@@ -7,7 +7,7 @@ import {
   LogisticsCard,
   RecyclingPlatformCard,
   ViTechCard,
-  VirtualOfficeCard,
+  VirtualSpacesCard,
 } from "../components/home/ProjectCards"
 import MoreWork from "../components/home/MoreWork"
 
@@ -51,7 +51,7 @@ export default function Overview() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <HuntXPCard />
           <FinanceCard />
-          <VirtualOfficeCard />
+          <VirtualSpacesCard />
         </div>
       </div>
 

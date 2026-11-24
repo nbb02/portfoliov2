@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="plate-grad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0ea5e9" />
+      <stop offset="1" stop-color="#6366f1" />
+    </linearGradient>
+  </defs>
+  <!-- Floorplate boundary -->
+  <path d="M5 5H18.5V9.5H27V27H10V22.5H5V5Z" fill="#111827" stroke="url(#plate-grad)" stroke-width="2.5" stroke-linejoin="round" />
+  <!-- Interior partition line -->
+  <path d="M10 15H18.5M18.5 9.5V20" stroke="#334155" stroke-width="1.5" stroke-linecap="round" />
+  <!-- Agent presence beacon (Amber) -->
+  <circle cx="14" cy="10.5" r="2.2" fill="#fbbf24" />
+  <!-- Terminal status dot (Cyan) -->
+  <circle cx="22.5" cy="15" r="1.6" fill="#38bdf8" />
+</svg>

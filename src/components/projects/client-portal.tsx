@@ -1,10 +1,10 @@
 import { FiUsers } from "react-icons/fi"
 import { PortalArt } from "../home/ProjectArt"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function ClientPortal() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Enterprise platform · 2026–Present"
       title="Client Portal Platform"
       intro="An existing multi-tenant operations portal covering CRM, project delivery, and a large modular add-on system. I contribute across tenancy, authorization, and delivery workflows."

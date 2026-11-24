@@ -325,14 +325,14 @@ export function HuntXPCard({ className = "" }: { className?: string }) {
   )
 }
 
-export function VirtualOfficeCard({ className = "" }: { className?: string }) {
+export function VirtualSpacesCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/virtual-office"
       className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
     >
       <img
-        src="/assets/projects/virtual-office/office.webp"
+        src="/assets/projects/virtual-office/day.webp"
         alt=""
         loading="lazy"
         aria-hidden="true"
@@ -352,15 +352,14 @@ export function VirtualOfficeCard({ className = "" }: { className?: string }) {
           <FiBox size={18} aria-hidden="true" />
         </div>
         <p className="mt-4 text-[10px] font-semibold text-slate-400">
-          3D environment · 2026
+          3D workspace · 2026
         </p>
         <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">
-          Virtual Office
+          Virtual Spaces
         </h2>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-300">
-          A browser-based 3D developer office with animated agents and a local
-          task bridge. The scene is in place; real integrations are still being
-          wired.
+          A local 3D office where coding agents claim desks and a bay lights up
+          while a tool works. Office, Tools Wing and farm in one scene.
         </p>
       </div>
 

@@ -1,9 +1,9 @@
 import { FiTrendingUp } from "react-icons/fi"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function Finance() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Personal finance · 2026"
       title="Finance PWA"
       intro="A personal finance PWA whose AI assistant can read and act on the same accounts, ledger, budgets, bills, and investments as the UI — with the security boundary kept on the server."

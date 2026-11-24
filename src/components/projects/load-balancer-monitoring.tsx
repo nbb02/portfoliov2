@@ -1,9 +1,9 @@
 import { FiServer } from "react-icons/fi"
-import CaseStudy from "./CaseStudy"
+import ProjectOverview from "./ProjectOverview"
 
 export default function LoadBalancerMonitoring() {
   return (
-    <CaseStudy
+    <ProjectOverview
       kicker="Local infrastructure lab · 2026"
       title="Load Balancer + Observability"
       intro="A self-contained, containerized lab with NGINX load balancing, JWT-protected APIs, Socket.IO realtime messaging, and a full observability stack."

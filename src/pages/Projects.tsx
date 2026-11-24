@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet } from "react-router-dom"
+import { useEffect, useRef } from "react"
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 import HomeNav from "../components/home/HomeNav"
 
 const TABS = [
@@ -13,10 +14,28 @@ const TABS = [
   { to: "/projects/finance", label: "Finance" },
   { to: "/projects/huntxp", label: "HuntXP" },
   { to: "/projects/recycling-platform", label: "Recycling Platform" },
-  { to: "/projects/virtual-office", label: "Virtual Office" },
+  { to: "/projects/virtual-office", label: "Virtual Spaces" },
 ]
 
 export default function Projects() {
+  const { pathname } = useLocation()
+  const navRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const nav = navRef.current
+    const active = nav?.querySelector<HTMLElement>('[aria-current="page"]')
+    if (!nav || !active) return
+
+    const navRect = nav.getBoundingClientRect()
+    const activeRect = active.getBoundingClientRect()
+
+    if (activeRect.right > navRect.right) {
+      nav.scrollLeft += activeRect.right - navRect.right + 8
+    } else if (activeRect.left < navRect.left) {
+      nav.scrollLeft -= navRect.left - activeRect.left + 8
+    }
+  }, [pathname])
+
   return (
     <div className="min-h-screen bg-[#F4F0E8] text-[#11161D] antialiased">
       <HomeNav showExperience={false} />
@@ -29,7 +48,11 @@ export default function Projects() {
           >
             Projects
           </Link>
-          <nav className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          <nav
+            ref={navRef}
+            aria-label="Project sections"
+            className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1"
+          >
             {TABS.map((tab) => (
               <NavLink
                 key={tab.to}
