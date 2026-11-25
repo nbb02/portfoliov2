@@ -1,0 +1,3 @@
+# patch-package hands these to `git apply`, which matches bytes: keep LF on
+# Windows too or every patch fails on checkout with core.autocrlf=true.
+patches/*.patch text eol=lf

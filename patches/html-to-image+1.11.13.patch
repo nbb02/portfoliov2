@@ -1,0 +1,30 @@
+diff --git a/node_modules/html-to-image/es/clone-node.js b/node_modules/html-to-image/es/clone-node.js
+index 114cbf2..14ef664 100644
+--- a/node_modules/html-to-image/es/clone-node.js
++++ b/node_modules/html-to-image/es/clone-node.js
+@@ -92,10 +92,6 @@ function cloneCSSStyle(nativeNode, clonedNode, options) {
+     else {
+         getStyleProperties(options).forEach((name) => {
+             let value = sourceStyle.getPropertyValue(name);
+-            if (name === 'font-size' && value.endsWith('px')) {
+-                const reducedFont = Math.floor(parseFloat(value.substring(0, value.length - 2))) - 0.1;
+-                value = `${reducedFont}px`;
+-            }
+             if (isInstanceOfElement(nativeNode, HTMLIFrameElement) &&
+                 name === 'display' &&
+                 value === 'inline') {
+diff --git a/node_modules/html-to-image/lib/clone-node.js b/node_modules/html-to-image/lib/clone-node.js
+index 214f4d3..e8259aa 100644
+--- a/node_modules/html-to-image/lib/clone-node.js
++++ b/node_modules/html-to-image/lib/clone-node.js
+@@ -174,10 +174,6 @@ function cloneCSSStyle(nativeNode, clonedNode, options) {
+     else {
+         (0, util_1.getStyleProperties)(options).forEach(function (name) {
+             var value = sourceStyle.getPropertyValue(name);
+-            if (name === 'font-size' && value.endsWith('px')) {
+-                var reducedFont = Math.floor(parseFloat(value.substring(0, value.length - 2))) - 0.1;
+-                value = "".concat(reducedFont, "px");
+-            }
+             if ((0, util_1.isInstanceOfElement)(nativeNode, HTMLIFrameElement) &&
+                 name === 'display' &&
+                 value === 'inline') {

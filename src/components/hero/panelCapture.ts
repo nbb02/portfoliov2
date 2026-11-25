@@ -45,8 +45,13 @@ const textures = new Map<string, THREE.Texture>()
  * time the panel's copy changed. Rasterising the panel itself means the screen
  * always shows the current page, and a capture at its full design width
  * downscales into the screen cleanly — a small bitmap would alias into noise.
- * The width is part of the key: the hero captures the narrow layout, the dolly
- * captures the page at the viewport's own width.
+ * The width and the density are part of the key: the hero captures the narrow
+ * layout at 2×, the dolly the page at the viewport's own width and at whatever
+ * ratio the canvas draws it, which is one bitmap per pair.
+ *
+ * `patches/html-to-image+1.11.13.patch` keeps the clone's font sizes exact. The
+ * library shrinks them by up to a pixel, which reflows the snapshot's line
+ * breaks away from the page's and shows up as a word jumping at the handoff.
  */
 export function capturePanel(
   node: HTMLElement,
@@ -125,7 +130,11 @@ export function screenTexture(
   texture.colorSpace = THREE.SRGBColorSpace
   texture.wrapS = THREE.ClampToEdgeWrapping
   texture.wrapT = THREE.ClampToEdgeWrapping
-  texture.minFilter = THREE.LinearMipmapLinearFilter
+  // Bilinear within the nearest mip level: blending two levels together, which
+  // trilinear does, is what softens the page's UI text while the dolly is still
+  // growing the screen. At the handoff the map is 1:1, so this only decides how
+  // the smaller frames read.
+  texture.minFilter = THREE.LinearMipmapNearestFilter
   texture.magFilter = THREE.LinearFilter
   texture.generateMipmaps = true
   texture.needsUpdate = true

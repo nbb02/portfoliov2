@@ -3,11 +3,15 @@ import type { Texture } from "three"
 import { useScrollOffset } from "../hero/useScrollOffset"
 import { clamp01 } from "../hero/easing"
 import { useInView } from "../useInView"
-import { SCREEN_ASPECT, PHONE_SCREEN_ASPECT } from "../hero/screenGeometry"
+import {
+  PHONE_SCREEN_ASPECT,
+  SCREEN_ASPECT,
+  screenCacheKey,
+  screenPixelRatio,
+} from "../hero/screenGeometry"
 import {
   HERO_PANEL_KEY,
   PHONE_PANEL_KEY,
-  SCREEN_PANEL_WIDTH,
   cachedScreenTexture,
   capturePanel,
   releaseScreenTexturesExcept,
@@ -78,15 +82,20 @@ export default function GithubScene() {
   const [viewportHeight, setViewportHeight] = useState(() =>
     typeof window === "undefined" ? 900 : window.innerHeight,
   )
-  const [screen, setScreen] = useState<Texture | null>(
-    () =>
-      /*
-       * The hero's capture is a stand-in until this viewport's own lands: it is
-       * the panel at the layout below the breakpoint, which reads as the same
-       * page on a phone, where the shipping screenshot would not.
-       */
-      cachedScreenTexture(viewportWidth()) ??
-      cachedScreenTexture(SCREEN_PANEL_WIDTH),
+
+  /*
+   * The screen fills the viewport at the end of the dolly, so its capture is
+   * rasterised at the same density the canvas draws at. Both have to move
+   * together: a 1× bitmap behind a 2× canvas is upscaled by the sampler and
+   * again by the display, which is what made the lid look soft on laptops.
+   */
+  const aspect = mobile ? PHONE_SCREEN_ASPECT : SCREEN_ASPECT
+  const screenRatio = screenPixelRatio(columnWidth, aspect)
+  const screenKey = screenCacheKey(columnWidth, screenRatio)
+
+  /* Coming back to the scene reuses this viewport's capture until it is retaken. */
+  const [screen, setScreen] = useState<Texture | null>(() =>
+    cachedScreenTexture(screenKey),
   )
 
   useEffect(() => {
@@ -159,33 +168,30 @@ export default function GithubScene() {
    * capture is the same layout the page draws, the last frame of the dolly and
    * the top of the real page are the same pixels — the handoff cannot flick.
    */
-  const capturedWidth = useRef(0)
+  const capturedKey = useRef("")
   useEffect(() => {
     if (reduced || !panelHeight || !panelNear) return
     const node = panelRef.current
-    if (!node || capturedWidth.current === columnWidth) return
+    if (!node || capturedKey.current === screenKey) return
 
     let cancelled = false
     const run = async () => {
       try {
         /*
-         * The phone's screen ends up as the whole viewport, so its capture is
-         * rasterised at twice the size — but only as far as the screen sees, so
-         * the taller canvas does not cost a full panel's worth of memory.
+         * Only the rows the screen shows are rasterised. At the render's own
+         * density the whole panel would be four times the bitmap for a page
+         * whose lower half never reaches the screen; cropping to the slice
+         * keeps the extra detail inside the memory a 1× full-height capture
+         * already took.
          */
-        const aspect = mobile ? PHONE_SCREEN_ASPECT : SCREEN_ASPECT
         const canvas = await capturePanel(node, columnWidth, {
-          height: mobile ? Math.round(columnWidth / aspect) : undefined,
-          pixelRatio: mobile ? 2 : 1,
+          height: Math.round(columnWidth / aspect),
+          pixelRatio: screenRatio,
+          key: screenKey,
         })
         if (cancelled) return
-        capturedWidth.current = columnWidth
-        setScreen(
-          screenTexture(
-            sliceScreen(canvas, aspect),
-            columnWidth,
-          ),
-        )
+        capturedKey.current = screenKey
+        setScreen(screenTexture(sliceScreen(canvas, aspect), screenKey))
       } catch (error) {
         if (import.meta.env.DEV) {
           console.warn("[github] screen capture failed", error)
@@ -198,18 +204,13 @@ export default function GithubScene() {
       cancelled = true
       window.cancelIdleCallback(idle)
     }
-  }, [reduced, panelHeight, panelNear, columnWidth, mobile])
+  }, [reduced, panelHeight, panelNear, columnWidth, aspect, screenRatio, screenKey])
 
   /* Drop captures for widths the page no longer draws. */
   useEffect(() => {
-    if (!screen || !cachedScreenTexture(columnWidth)) return
-    releaseScreenTexturesExcept([
-      SCREEN_PANEL_WIDTH,
-      HERO_PANEL_KEY,
-      PHONE_PANEL_KEY,
-      columnWidth,
-    ])
-  }, [screen, columnWidth])
+    if (!screen || !cachedScreenTexture(screenKey)) return
+    releaseScreenTexturesExcept([HERO_PANEL_KEY, PHONE_PANEL_KEY, screenKey])
+  }, [screen, screenKey])
 
   return (
     <div className="relative bg-[#0D1117]">
@@ -269,6 +270,12 @@ function Dolly({
   const bridgeRef = useRef<HTMLDivElement>(null)
   const bridgeInnerRef = useRef<HTMLDivElement>(null)
   const introRef = useRef<HTMLDivElement>(null)
+  const introLayout = useRef<{
+    columnWidth: number
+    width: number
+    left: number
+    visible: boolean
+  } | null>(null)
   const lastOffset = useRef(0)
   const lastSpan = useRef(0)
   const screenRect = useRef<ScreenRect | null>(null)
@@ -309,26 +316,42 @@ function Dolly({
         if (canvas) canvas.style.opacity = p >= PANEL_REVEAL ? "0" : "1"
 
         /*
-         * The composition is framed on the viewport height, so on a wide monitor
-         * the lid grows sideways into the copy's column. Keep the copy on the
-         * page's column — the same left edge as every section — and slide it
-         * only as far as needed to clear the lid, keeping the gap the bezel
-         * takes up. Both numbers are bucketed so the idle drift does not move
-         * the text every frame.
+         * The copy is laid out against the lid once, while the dolly is still at
+         * its hero framing. Deriving the width every frame made the text chase
+         * the model's idle drift and reflow word by word; measuring it late — a
+         * reload already inside the pin — could latch a quad with no room left
+         * and hide the copy for good. Until it is measured the CSS column stands,
+         * so the copy is never absent from the part of the scroll that shows it.
          */
         if (intro) {
-          const clearance = Math.max(24, quad.width * 0.08)
-          const available = quad.left - 24 - clearance
+          if (!introLayout.current && p <= INTRO_END) {
+            const clearance = Math.max(24, quad.width * 0.08)
+            const available = quad.left - 24 - clearance
 
-          if (available < 200) {
-            intro.style.visibility = "hidden"
-          } else {
-            const width = Math.min(340, Math.floor(available / 8) * 8)
-            const limit = Math.floor((quad.left - clearance - width) / 8) * 8
+            if (available < 200) {
+              introLayout.current = {
+                columnWidth,
+                width: 340,
+                left: columnLeft(columnWidth),
+                visible: false,
+              }
+            } else {
+              const width = Math.min(340, Math.floor(available / 8) * 8)
+              const limit = Math.floor((quad.left - clearance - width) / 8) * 8
+              introLayout.current = {
+                columnWidth,
+                width,
+                left: Math.max(24, Math.min(columnLeft(columnWidth), limit)),
+                visible: true,
+              }
+            }
+          }
 
-            intro.style.visibility = "visible"
-            intro.style.width = `${width}px`
-            intro.style.left = `${Math.max(24, Math.min(columnLeft(columnWidth), limit))}px`
+          const layout = introLayout.current
+          if (layout && layout.columnWidth === columnWidth) {
+            intro.style.visibility = layout.visible ? "visible" : "hidden"
+            intro.style.width = `${layout.width}px`
+            intro.style.left = `${layout.left}px`
           }
         }
       }
@@ -404,7 +427,7 @@ function Dolly({
 
         <div
           ref={introRef}
-          className="pointer-events-none absolute top-[12svh] z-10 hidden w-[360px] max-w-[360px] lg:block"
+          className="pointer-events-none absolute top-[12svh] z-10 hidden w-[340px] max-w-[340px] lg:block"
           style={{ left: columnLeft(columnWidth) }}
         >
           <h2 className="max-w-[340px] text-[1.6rem] font-semibold leading-tight text-[#F4F0E8] md:text-[2rem]">

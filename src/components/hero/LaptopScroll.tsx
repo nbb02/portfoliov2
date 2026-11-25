@@ -12,6 +12,7 @@ import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../../assets/laptop/mac-draco.glb"
 import laptopScreenImage from "../../assets/hero/screen-panel.jpg"
 import { clamp01, easeInOutCubic, lerp } from "./easing"
+import { SCREEN_MAX_DPR, SCREEN_MIN_DPR } from "./screenGeometry"
 import PhoneModel from "./PhoneModel"
 
 type LaptopGLTF = GLTF & {
@@ -453,7 +454,13 @@ export default function LaptopScroll({
         position: HERO_CAMERA_POSITION,
         fov: CAMERA_FOV,
       }}
-      dpr={[1, 1.5]}
+      /*
+       * The screen is the page itself at the end of the dolly, so the canvas is
+       * rendered at no less than twice the viewport — at 1× the lid's edges
+       * stair-step and no texture can put that detail back. The shadow is baked
+       * from one frame, which pays for the extra fill.
+       */
+      dpr={[SCREEN_MIN_DPR, SCREEN_MAX_DPR]}
       frameloop={render ? "always" : "demand"}
     >
       <pointLight position={[10, 10, 10]} intensity={1.5} />
@@ -463,6 +470,7 @@ export default function LaptopScroll({
         blur={2}
         far={4.5}
         opacity={1}
+        frames={1}
       />
       <CameraRig
         progressRef={progressRef}
