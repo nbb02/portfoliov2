@@ -7,10 +7,11 @@ export default function TagPill({
 }: {
   tag: string
   dark?: boolean
-  size?: "sm" | "md"
+  size?: "xs" | "sm" | "md"
 }) {
   const meta = TAG_ICONS[tag]
   const Icon = meta?.icon
+  const xs = size === "xs"
   const large = size === "md"
   const color = meta
     ? dark
@@ -22,9 +23,11 @@ export default function TagPill({
   return (
     <span
       className={`inline-flex items-center rounded-full border font-semibold ${
-        large
-          ? "gap-2 px-3 py-1.5 text-[11px]"
-          : "gap-1.5 px-2.5 py-1 text-[10px]"
+        xs
+          ? "gap-1 px-1.5 py-0.5 text-[8.5px]"
+          : large
+            ? "gap-2 px-3 py-1.5 text-[11px]"
+            : "gap-1.5 px-2.5 py-1 text-[10px]"
       } ${
         dark
           ? "border-white/15 bg-white/[0.06] text-slate-200"
@@ -33,7 +36,7 @@ export default function TagPill({
     >
       {Icon && (
         <Icon
-          size={large ? 15 : 11}
+          size={xs ? 9 : large ? 15 : 11}
           style={{ color }}
           aria-hidden="true"
         />

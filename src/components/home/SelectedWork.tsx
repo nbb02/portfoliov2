@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import MobileWork from "./MobileWork"
 import {
   ClientPortalCard,
   FinanceCard,
@@ -29,33 +30,37 @@ export default function SelectedWork() {
         </Link>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <ClientPortalCard className="lg:col-span-7 lg:h-[420px]" />
-        <div className="grid gap-4 lg:col-span-5">
-          <LoadBalancerCard className="lg:h-[202px]" />
-          <ViTechCard className="lg:h-[202px]" />
-        </div>
-      </div>
+      <MobileWork />
 
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <LogisticsCard />
-        <RecyclingPlatformCard />
-      </div>
-
-      <div className="mt-10 border-t border-slate-300 pt-8">
-        <div>
-          <p className="text-sm font-semibold text-teal-700">
-            Personal &amp; experiments
-          </p>
-          <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-            Side builds.
-          </h3>
+      <div className="hidden min-[600px]:block">
+        <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-12">
+          <ClientPortalCard className="lg:col-span-7 lg:h-[420px]" />
+          <div className="grid gap-4 lg:col-span-5">
+            <LoadBalancerCard className="lg:h-[202px]" />
+            <ViTechCard className="lg:h-[202px]" />
+          </div>
         </div>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <PrintSetCard />
-          <HuntXPCard />
-          <FinanceCard />
-          <VirtualSpacesCard />
+
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <LogisticsCard />
+          <RecyclingPlatformCard />
+        </div>
+
+        <div className="mt-10 border-t border-slate-300 pt-8">
+          <div>
+            <p className="text-sm font-semibold text-teal-700">
+              Personal &amp; experiments
+            </p>
+            <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+              Side builds.
+            </h3>
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <PrintSetCard />
+            <HuntXPCard />
+            <FinanceCard />
+            <VirtualSpacesCard />
+          </div>
         </div>
       </div>
     </section>

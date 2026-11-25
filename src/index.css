@@ -1162,3 +1162,48 @@ h4 {
     animation: none;
   }
 }
+
+/* Mobile featured card */
+@keyframes work-hair {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes work-art-in {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.work-hair {
+  transform-origin: left center;
+  animation: work-hair 7000ms linear forwards;
+}
+
+.work-hair[data-paused="true"] {
+  animation-play-state: paused;
+}
+
+.work-art-in {
+  animation: work-art-in 520ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-hair {
+    animation: none;
+    transform: scaleX(1);
+  }
+
+  .work-art-in {
+    animation: none;
+  }
+}
