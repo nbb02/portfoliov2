@@ -1,4 +1,4 @@
-import { FiServer } from "react-icons/fi"
+import { FiActivity, FiRadio, FiServer } from "react-icons/fi"
 import ProjectOverview from "./ProjectOverview"
 
 export default function LoadBalancerMonitoring() {
@@ -36,30 +36,24 @@ export default function LoadBalancerMonitoring() {
           value: "Local lab · self-directed",
         },
       ]}
-      sections={[
-        {
-          title: "Features",
-          body: "A production-style backend architecture built to demonstrate distributed behavior and failure handling.",
-          bullets: [
-            "Three backend instances routed through NGINX with instance-level response headers.",
-            "Socket.IO realtime messaging with a Redis adapter for cross-instance events.",
-            "JWT-protected API endpoints and a secure authentication flow.",
-            "Toggleable failure-mode simulation for resilience testing.",
-            "Centralized metrics, dashboards, and structured logs.",
+      brief={{
+        what: {
+          title: "A lab that behaves like production.",
+          points: [
+            "Routing: three Express replicas behind NGINX.",
+            "Realtime: Socket.IO with a Redis adapter across instances.",
+            "Failure modes: toggle instance failures and watch traffic recover.",
           ],
         },
-        {
-          title: "Infrastructure",
-          body: "Dockerized services with externalized configuration and persistent volumes.",
-          bullets: [
-            "NGINX reverse proxy and three stateless Node.js/Express replicas.",
-            "PostgreSQL and Redis for data and cache.",
-            "Prometheus, Grafana, Loki, and Promtail for metrics and logs.",
-            "cAdvisor, Redis Exporter, Node Exporter, and HTTP statistics.",
-            "Structured logging and performance metrics for production-style troubleshooting.",
+        how: {
+          title: "Built to lose an instance.",
+          points: [
+            "Three stateless replicas make an instance loss boring.",
+            "A shared adapter keeps realtime events consistent across replicas.",
+            "Metrics and logs are wired before failures are simulated.",
           ],
         },
-      ]}
+      }}
       preview={{
         src: "/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp",
         alt: "Load balancer visualizer showing traffic across backend instances",
@@ -92,14 +86,22 @@ export default function LoadBalancerMonitoring() {
           alt: "Node metrics",
         },
       ]}
-      highlightsKicker="Capabilities"
-      highlightsTitle="Skills"
-      highlights={[
-        "Distributed architecture and horizontal scaling",
-        "NGINX load balancing and reverse proxying",
-        "Socket.IO realtime state across replicas",
-        "Monitoring with Prometheus, Grafana, and Loki",
-        "Dockerized environments and resilience testing",
+      notes={[
+        {
+          label: "Replicas",
+          text: "Three stateless instances sit behind the proxy.",
+          icon: FiServer,
+        },
+        {
+          label: "Realtime",
+          text: "A shared adapter carries Socket.IO events across replicas.",
+          icon: FiRadio,
+        },
+        {
+          label: "Failure",
+          text: "Instance failures are toggled on purpose, not waited for.",
+          icon: FiActivity,
+        },
       ]}
       nextHref="/projects/finance"
       nextLabel="Next: Finance PWA"

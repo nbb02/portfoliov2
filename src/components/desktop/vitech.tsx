@@ -1,4 +1,4 @@
-import { FiBarChart2 } from "react-icons/fi"
+import { FiBarChart2, FiFileText, FiLayout, FiSliders } from "react-icons/fi"
 import ProjectOverview from "../projects/ProjectOverview"
 
 export default function ViTech() {
@@ -34,30 +34,24 @@ export default function ViTech() {
           value: "Analytics, administration, reporting",
         },
       ]}
-      sections={[
-        {
-          title: "Features",
-          body: "A configurable analytics workspace for population and program data.",
-          bullets: [
-            "Dynamic dashboards with sector filters, stacked charts, and configurable panels.",
-            "Map-based data exploration with popups, filters, and sortable tables.",
-            "Camera-based QR scanning for member check-in and form handling.",
-            "Role-based access control with audit trails and multi-level user management.",
-            "Printable PDF reports, Excel/CSV exports, and chart-embedded documentation.",
-            "Program rules engine with threshold-based configurations.",
+      brief={{
+        what: {
+          title: "Population data made operable.",
+          points: [
+            "Dashboards: sector filters, stacked charts, and configurable panels.",
+            "Exploration: map popups, filters, and sortable tables.",
+            "Operations: QR check-in, roles, audit trails, and exports.",
           ],
         },
-        {
-          title: "Stack",
-          body: "A Laravel/React application with a component-driven dashboard and a containerized deployment path.",
-          bullets: [
-            "Laravel and MySQL for the backend and data model.",
-            "React, Material UI, Chart.js, and SCSS for the frontend.",
-            "Docker for reproducible local and team environments.",
-            "Hostinger, DigitalOcean, and CloudPanel for deployment.",
+        how: {
+          title: "A dashboard that can be reshaped.",
+          points: [
+            "Panels are composed, so each program can change its own view.",
+            "Program rules are configuration, not branches spread through the UI.",
+            "Exports reuse the same data path as the screen, so numbers do not drift.",
           ],
         },
-      ]}
+      }}
       preview={{
         src: "/assets/projects/vitech/dashboard.webp",
         alt: "ViTech analytics dashboard",
@@ -90,14 +84,22 @@ export default function ViTech() {
           alt: "ViTech sector settings",
         },
       ]}
-      highlightsKicker="Capabilities"
-      highlightsTitle="Skills"
-      highlights={[
-        "Data visualization and dashboard design",
-        "Role-based access control and audit trails",
-        "Reporting, exports, and printable documents",
-        "Camera/QR integration and form handling",
-        "Containerized deployment and environment setup",
+      notes={[
+        {
+          label: "Composition",
+          text: "Dashboards are assembled from panels per program.",
+          icon: FiLayout,
+        },
+        {
+          label: "Rules",
+          text: "Program thresholds are configuration, not code branches.",
+          icon: FiSliders,
+        },
+        {
+          label: "Exports",
+          text: "Reports reuse the same data path as the screen.",
+          icon: FiFileText,
+        },
       ]}
       nextHref="/projects/load-balancer-monitoring"
       nextLabel="Next: Load Balancer + Observability"

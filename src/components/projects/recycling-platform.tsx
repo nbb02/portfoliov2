@@ -1,4 +1,4 @@
-import { FiHeart } from "react-icons/fi"
+import { FiGrid, FiHeart, FiLink, FiUsers } from "react-icons/fi"
 import { RecyclingArt } from "../home/ProjectArt"
 import ProjectOverview from "./ProjectOverview"
 
@@ -17,51 +17,40 @@ export default function RecyclingPlatform() {
         { label: "Timeline", value: "2024–2025" },
         { label: "Context", value: "Community platform" },
       ]}
-      sections={[
-        {
-          title: "Features",
-          body: "One platform for residents, partner stores, and administrators.",
-          bullets: [
-            "Role-based access for residents, partner stores, and admins with Sanctum tokens and middleware.",
-            "Recyclables catalog with per-type point values and collection logging.",
-            "Time-limited QR codes for recycling, reward exchanges, and event attendance.",
-            "Points, tiers, and claimable rewards based on cumulative kilograms recycled.",
-            "Partner-store rewards, carts, and point exchanges with stock tracking.",
-            "Community events with participation, attendance, approvals, and point distribution.",
-            "Partner-store reimbursements and a complete transaction ledger.",
+      brief={{
+        what: {
+          title: "A reward loop for three audiences.",
+          points: [
+            "Residents: log collections, earn points, and redeem rewards.",
+            "Partners: manage stock, exchanges, and reimbursements.",
+            "Admins: approve events, collections, and reward issuance.",
           ],
         },
-        {
-          title: "Blockchain verification",
-          body: "The blockchain keeps a public record of rewards, not a wallet.",
-          bullets: [
-            "Recycles, exchanges, reimbursements, and tier rewards store a transaction hash.",
-            "A verification endpoint checks the expected payload against the blockchain node.",
-            "Failed verifications can be retried from the admin side.",
-            "The chain gives an independent record of reward issuance without exposing user details.",
+        how: {
+          title: "Verified by QR, recorded on chain.",
+          points: [
+            "Three roles share one API; permissions live in middleware instead of duplicated screens.",
+            "QR codes expire, so a screenshot cannot be replayed later.",
+            "Chain hashes record reward issuance without putting user data on-chain.",
           ],
         },
+      }}
+      notes={[
         {
-          title: "Architecture",
-          body: "A Laravel backend with a separate frontend for each role.",
-          bullets: [
-            "Laravel 12 and PHP 8.2 with Sanctum authentication and role middleware.",
-            "MySQL models for users, collections, transactions, rewards, tiers, events, and reimbursements.",
-            "Static user, admin, and partner-store frontends served from public/html.",
-            "Queued notifications and transactional email for approvals, collections, and point events.",
-            "Docker-based deployment with a Vite and Tailwind asset pipeline.",
-          ],
+          label: "Role model",
+          text: "Three frontends share one Laravel API and role-scoped middleware.",
+          icon: FiUsers,
         },
-      ]}
-      highlightsKicker="Capabilities"
-      highlightsTitle="Skills"
-      highlights={[
-        "Role-based API design with Sanctum and middleware",
-        "QR-based verification and collection flows",
-        "Points, tiers, and partner reward mechanics",
-        "Blockchain transaction verification and retries",
-        "Community event and reimbursement workflows",
-        "Laravel/MySQL modeling and Docker deployment",
+        {
+          label: "QR flows",
+          text: "Time-limited codes verify collections, exchanges, and event attendance.",
+          icon: FiGrid,
+        },
+        {
+          label: "Chain record",
+          text: "Reward events store a transaction hash and can be retried.",
+          icon: FiLink,
+        },
       ]}
       nextHref="/projects/virtual-office"
       nextLabel="Next: Virtual Spaces"

@@ -1,4 +1,4 @@
-import { FiUsers } from "react-icons/fi"
+import { FiBox, FiFileText, FiLayers, FiUsers } from "react-icons/fi"
 import { PortalArt } from "../home/ProjectArt"
 import ProjectOverview from "./ProjectOverview"
 
@@ -29,36 +29,40 @@ export default function ClientPortal() {
           value: "Tenancy, authorization, reliable delivery",
         },
       ]}
-      sections={[
-        {
-          title: "Features",
-          body: "A shared platform effort across product, design, and engineering. The main areas are:",
-          bullets: [
-            "CRM and delivery workflows: pipelines, deals, contacts, tasks, approvals, and audit trails.",
-            "Modular add-ons: extension points, isolated routes, and versioned modules that ship without modifying core code.",
-            "Integrations: accounting, e-commerce webhooks, calendar sync, email, and messaging behind permission checks.",
-            "Shared practices: additive migrations, deployment verification, and test coverage for tenant boundaries.",
+      brief={{
+        what: {
+          title: "A shared operating system for client work.",
+          points: [
+            "CRM and delivery: pipelines, deals, contacts, tasks, approvals, and audit trails.",
+            "Add-ons: isolated routes and versioned modules that ship without modifying core code.",
+            "Integrations: accounting, commerce, calendar, email, and messaging behind permission checks.",
           ],
         },
-        {
-          title: "Security",
-          body: "Tenant isolation, authorization boundaries, and audit trails are central to the platform.",
-          bullets: [
-            "Tenant isolation: resolve the tenant at the request boundary and scope every read and write.",
+        how: {
+          title: "Tenant boundaries first.",
+          points: [
+            "Tenancy: resolve the tenant at the request boundary and scope every read and write.",
             "Authorization: role checks and policy-based access in front of sensitive actions.",
-            "Auditability: audit trails that keep changes attributable to a real actor.",
-            "Secure integrations: verify webhooks, scope API access to the tenant, and make retries and failures explicit.",
-            "Permission-scoped tooling: agent and integration tools inherit the user's existing rights instead of expanding them.",
+            "Auditability: every change stays attributable to a real actor.",
           ],
         },
-      ]}
-      highlightsKicker="Capabilities"
-      highlightsTitle="Skills"
-      highlights={[
-        "Tenant isolation and boundary testing",
-        "Policy-based authorization and audit trails",
-        "Add-on modules and extension points",
-        "Secure integrations and idempotent retries",
+      }}
+      notes={[
+        {
+          label: "Tenant isolation",
+          text: "Requests resolve a tenant before any query runs.",
+          icon: FiLayers,
+        },
+        {
+          label: "Add-on modules",
+          text: "Extension points and isolated routes keep core changes out of feature work.",
+          icon: FiBox,
+        },
+        {
+          label: "Audit trail",
+          text: "Sensitive actions record the actor and the change.",
+          icon: FiFileText,
+        },
       ]}
       nextHref="/projects/logistics"
       nextLabel="Next: Logistics & Realtime Booking"

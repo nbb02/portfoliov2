@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
+import { FiMonitor, FiMove, FiPrinter } from "react-icons/fi"
 import { Link, useSearchParams } from "react-router-dom"
-import ProjectOverview from "./ProjectOverview"
+import ProjectOverview, { type ProjectBrief } from "./ProjectOverview"
 import ProjectShowcase, { type ShowcaseTab } from "./ProjectShowcase"
 import PrintSetShowcase from "./printset-showcase"
 
@@ -114,41 +115,42 @@ const SHOWCASE: ShowcaseTab[] = [
   },
 ]
 
-const SECTIONS = [
-  {
-    title: "Features",
-    body: "A focused tool for the last step before the printer, not another design editor.",
-    bullets: [
-      "Four layout modes per page: single photo, slot templates, paginated grids, and hand-placed free boxes.",
-      "A slot designer that saves named templates, plus saved custom paper sizes.",
-      "Inline crop with eight handles, quarter-turn rotation, five fit rules and a precise crop modal.",
-      "Undo/redo, multiple autosaved layouts, and a .printset bundle that moves documents and photos between machines.",
-      "Exact-size PDF export and a print stylesheet that keeps the sheet at 1:1.",
-      "No text, effects, layers, accounts or uploads. Photos go on paper at the size you meant.",
+const BRIEF: ProjectBrief = {
+  what: {
+    title: "The last step before the printer.",
+    points: [
+      "Layouts: single photo, slot templates, paginated grids, and free boxes.",
+      "Precision: positions in inches, inline crop, and five fit rules.",
+      "Output: exact-size PDF plus a 1:1 print stylesheet.",
     ],
   },
-  {
-    title: "Engineering",
-    body: "One document model feeds every output, and the geometry stays out of React.",
-    bullets: [
-      "Every placed box stores x, y, width and height in inches; nothing is stored as screen pixels.",
-      "Screen, @media print and pdf-lib all read the same PlacedItem[], which is why the printout matches the window.",
-      "Transform order is fixed: rotation → crop → fit → pan, with one forward geometry function and one inverse.",
-      "Photos decode with EXIF orientation applied, then are stored once in IndexedDB keyed by content hash.",
-      "Layout maths lives in a React-free library and is covered by 123 tests.",
-      "The same static bundle runs inside a Tauri v2 window; native access goes through one fallback-aware module.",
+  how: {
+    title: "One document, every output.",
+    points: [
+      "Positions are stored in inches, so zoom and device pixel ratio cannot change the sheet.",
+      "Screen, print, and PDF read the same placed boxes, so the output matches the editor.",
+      "Rotation, crop, fit and pan always run in the same order, so repeated edits do not drift.",
     ],
   },
-]
+}
 
-const HIGHLIGHTS = [
-  "Inches-first document model and geometry",
-  "Screen, print stylesheet and PDF from one render",
-  "Pure TypeScript layout library with 123 tests",
-  "Tauri v2 desktop shell around a static bundle",
-  "IndexedDB storage with content-hash image dedupe",
-  "Local MCP bridge with undoable AI edits",
-]
+const NOTES = [
+  {
+    label: "Geometry",
+    text: "Every box is stored in inches, never pixels.",
+    icon: FiMove,
+  },
+  {
+    label: "Output",
+    text: "Screen, print and PDF read the same placed boxes.",
+    icon: FiPrinter,
+  },
+  {
+    label: "Desktop",
+    text: "The same static bundle runs in Tauri.",
+    icon: FiMonitor,
+  },
+] as const
 
 const VIEWS = [
   { id: "overview", label: "Overview", to: "/projects/printset" },
@@ -256,7 +258,7 @@ export default function PrintSet() {
           <PrintSetTabs view={view} />
         </div>
       }
-      sections={isShowcase ? [] : SECTIONS}
+      brief={isShowcase ? undefined : BRIEF}
       preview={{
         src: "/assets/projects/printset/editor-grid.webp",
         alt: "PrintSet editor with a four-photo grid on Letter paper",
@@ -274,9 +276,7 @@ export default function PrintSet() {
           />
         )
       }
-      highlightsKicker="Capabilities"
-      highlightsTitle="Skills"
-      highlights={isShowcase ? [] : HIGHLIGHTS}
+      notes={isShowcase ? undefined : NOTES}
       nextHref="/projects/client-portal"
       nextLabel="Next: Client Portal Platform"
     >

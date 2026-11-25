@@ -1,16 +1,10 @@
 import { useCallback, useState, type ReactNode } from "react"
 import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
-import { FiArrowUpRight, FiCheck, FiMaximize2 } from "react-icons/fi"
+import { FiArrowUpRight, FiMaximize2 } from "react-icons/fi"
 import ImageLightbox from "../ImageLightbox"
 import TagPill from "../home/TagPill"
 import TechText from "../home/TechText"
-
-type Section = {
-  title: string
-  body: string
-  bullets?: string[]
-}
 
 type Meta = {
   label: string
@@ -33,6 +27,24 @@ type PreviewImage = GalleryImage & {
   height?: number
 }
 
+type BriefBlock = {
+  title: string
+  points: readonly [string, string, string]
+}
+
+export type ProjectBrief = {
+  what: BriefBlock
+  how: BriefBlock
+}
+
+type BuildNote = {
+  label: string
+  text: string
+  icon: IconType
+}
+
+type BuildNotes = readonly [BuildNote, BuildNote, BuildNote]
+
 function BulletText({ text }: { text: string }) {
   const separator = text.indexOf(":")
 
@@ -50,6 +62,38 @@ function BulletText({ text }: { text: string }) {
   return <TechText text={text} />
 }
 
+function BriefBlockView({
+  label,
+  block,
+}: {
+  label: string
+  block: BriefBlock
+}) {
+  return (
+    <section className="border-t border-slate-300 pt-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-teal-700">
+        {label}
+      </p>
+      <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-slate-950">
+        {block.title}
+      </h2>
+      <ul className="mt-2">
+        {block.points.map((point) => (
+          <li
+            key={point}
+            className="flex gap-2 border-t border-slate-200 py-2.5 text-[15px] leading-relaxed text-slate-600 first:border-t-0 first:pt-0"
+          >
+            <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-teal-600" />
+            <span>
+              <BulletText text={point} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
 export default function ProjectOverview({
   kicker,
   title,
@@ -59,7 +103,8 @@ export default function ProjectOverview({
   icon: Icon,
   iconNode,
   meta,
-  sections,
+  brief,
+  notes,
   gallery,
   preview,
   art,
@@ -67,9 +112,6 @@ export default function ProjectOverview({
   links,
   afterHero,
   children,
-  highlights,
-  highlightsKicker = "Highlights",
-  highlightsTitle = "Highlights",
   nextHref,
   nextLabel,
 }: {
@@ -81,7 +123,8 @@ export default function ProjectOverview({
   icon?: IconType
   iconNode?: ReactNode
   meta: Meta[]
-  sections: Section[]
+  brief?: ProjectBrief
+  notes?: BuildNotes
   gallery?: GalleryImage[]
   preview?: PreviewImage
   art?: ReactNode
@@ -89,9 +132,6 @@ export default function ProjectOverview({
   links?: ProjectLink[]
   afterHero?: ReactNode
   children?: ReactNode
-  highlights: string[]
-  highlightsKicker?: string
-  highlightsTitle?: string
   nextHref: string
   nextLabel: string
 }) {
@@ -219,85 +259,32 @@ export default function ProjectOverview({
 
         {afterHero}
 
-        {children}
-
-        {sections.map((section) => (
-          <section
-            key={section.title}
-            className="border-t border-slate-300 pt-6"
-          >
-            <div className="flex items-center gap-3">
-              <h2 className="shrink-0 text-sm font-semibold text-teal-700">
-                {section.title}
-              </h2>
-              <span
-                className="h-px flex-1 bg-slate-300"
-                aria-hidden="true"
-              />
-            </div>
-
-            <div className="mt-3">
-              <p className="max-w-3xl text-base leading-relaxed text-slate-700">
-                <TechText text={section.body} />
-              </p>
-              {section.bullets && (
-                <ul className="mt-4 columns-1 gap-x-8 sm:columns-2">
-                  {section.bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="mb-2.5 flex break-inside-avoid gap-2 text-[15px] leading-relaxed text-slate-600"
-                    >
-                      <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-teal-600" />
-                      <span>
-                        <BulletText text={bullet} />
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </section>
-        ))}
+        {brief && (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <BriefBlockView label="What it does" block={brief.what} />
+            <BriefBlockView label="Engineering choices" block={brief.how} />
+          </div>
+        )}
 
         {showcase}
 
-        {highlights.length > 0 && (
-          <section className="rounded-2xl border border-slate-200 bg-white/70 p-6">
-            <p className="text-sm font-semibold text-teal-700">
-              {highlightsKicker}
-            </p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-              {highlightsTitle}
-            </h2>
-            <ul className="mt-4 columns-1 gap-x-8 sm:columns-2">
-              {highlights.map((highlight) => (
-                <li
-                  key={highlight}
-                  className="mb-3 flex break-inside-avoid gap-2.5 text-sm leading-relaxed text-slate-600"
-                >
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                    <FiCheck size={11} aria-hidden="true" />
-                  </span>
-                  <TechText text={highlight} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {children}
 
         {gallery && gallery.length > 0 && (
           <section className="border-t border-slate-300 pt-6">
-            <div className="flex items-center gap-3">
-              <p className="shrink-0 text-sm font-semibold text-teal-700">
-                Screens
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-teal-700">Screens</p>
+                <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+                  Selected views
+                </h2>
+              </div>
+              <p className="text-xs text-slate-500">
+                {gallery.length} views
               </p>
-              <span className="h-px flex-1 bg-slate-300" aria-hidden="true" />
             </div>
-            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-              Selected views
-            </h2>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {gallery.map((image, index) => (
                 <button
                   key={image.src}
@@ -326,6 +313,52 @@ export default function ProjectOverview({
                   </span>
                 </button>
               ))}
+            </div>
+          </section>
+        )}
+
+        {notes && notes.length > 0 && (
+          <section className="border-t border-slate-300 pt-6">
+            <div>
+              <p className="text-sm font-semibold text-teal-700">Build notes</p>
+              <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+                The parts that matter.
+              </h2>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+              {notes.map((note, index) => {
+                const NoteIcon = note.icon
+
+                return (
+                  <article
+                    key={note.label}
+                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white/70 p-5"
+                  >
+                    <NoteIcon
+                      size={96}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -bottom-5 -right-4 text-teal-900/[0.05] transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110"
+                    />
+                    <div className="relative">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-100 bg-teal-50 text-teal-700">
+                          <NoteIcon size={17} aria-hidden="true" />
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <h3 className="mt-4 text-base font-semibold tracking-[-0.02em] text-slate-950">
+                        {note.label}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                        <TechText text={note.text} />
+                      </p>
+                    </div>
+                  </article>
+                )
+              })}
             </div>
           </section>
         )}

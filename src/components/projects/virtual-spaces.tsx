@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
+import { FiGitBranch, FiLayers, FiMonitor } from "react-icons/fi"
 import { Link, useSearchParams } from "react-router-dom"
-import ProjectOverview from "./ProjectOverview"
+import ProjectOverview, { type ProjectBrief } from "./ProjectOverview"
 import ProjectShowcase, { type ShowcaseTab } from "./ProjectShowcase"
 import VirtualSpacesShowcase from "./virtual-spaces-showcase"
 
@@ -98,45 +99,42 @@ const SHOWCASE: ShowcaseTab[] = [
   },
 ]
 
-const SECTIONS = [
-  {
-    title: "Features",
-    body: "A small 3D office that lives on your machine and reports what your tools are doing.",
-    bullets: [
-      "Live tool status: reads the local logs and databases of OpenCode, Codex and Antigravity, so a bay lights up while a tool is running.",
-      "Rooms you can watch: agents claim desks, visit the break room, and wander the farm when they are idle.",
-      "Projects drawer: start and stop your local dev servers from inside the scene.",
-      "Settings panel: edit .local/settings.json without touching the file.",
-      "Day and night, keyboard-driven scenes (1–3), a free-fly camera (V) and a clean view (H) for screenshots.",
-      "One renderer, three scenes: the office, the Tools Wing and the farm.",
+const BRIEF: ProjectBrief = {
+  what: {
+    title: "A 3D office for your agents.",
+    points: [
+      "Desks: agents claim seats and bays light up while tools run.",
+      "Routes: characters walk the live floor instead of a static diagram.",
+      "Control: start and stop dev servers from inside the scene.",
     ],
   },
-  {
-    title: "Architecture",
-    body: "One Vite project. Five small bridges answer /api/* as dev-server middleware, and the desktop shell mounts the same five on a plain Node server.",
-    bullets: [
-      "React 18 and React Three Fiber: switching scenes swaps a lazily loaded subtree, never a second canvas.",
-      "Bridges for tool status, projects, configuration, machine resources and office seats.",
-      "Every route is loopback-only and origin-checked; a response carries derived state, never log lines or file paths.",
-      "Bays come from config, so a fourth CLI simply gets a fourth bay.",
-      "Tauri 2 wraps the same bundle, spawns the local server on open and kills its process tree on close.",
-      "Idle means idle: status polls every two seconds and stops entirely while the tab is hidden.",
+  how: {
+    title: "Local data, one scene.",
+    points: [
+      "The floor, walls, doors, and walk graph live in one module.",
+      "Bridges return derived state, never raw logs or file paths.",
+      "The same bridge code runs in the browser build and the desktop shell.",
     ],
   },
-  {
-    title: "Status",
-    body: "The office, Tools Wing and farm are finished enough to live in. Tool, project and seat bridges read the real machine; the next step is more tool integrations and finer reporting from each agent run.",
-  },
-]
+}
 
-const HIGHLIGHTS = [
-  "3D scene composition with React Three Fiber",
-  "Hand-authored walk graphs instead of a physics engine",
-  "Local Node bridges behind Vite middleware",
-  "Tauri 2 desktop shell around a web bundle",
-  "Read-only tool telemetry from logs and SQLite",
-  "Performance-aware rendering and polling",
-]
+const NOTES = [
+  {
+    label: "Scene",
+    text: "Switching scenes swaps a subtree, not a second canvas.",
+    icon: FiLayers,
+  },
+  {
+    label: "Bridges",
+    text: "Endpoints return derived state, never raw logs.",
+    icon: FiGitBranch,
+  },
+  {
+    label: "Shell",
+    text: "The same bridges run in the browser and desktop builds.",
+    icon: FiMonitor,
+  },
+] as const
 
 const VIEWS = [
   { id: "overview", label: "Overview", to: "/projects/virtual-office" },
@@ -240,7 +238,7 @@ export default function VirtualSpaces() {
           <VirtualSpacesTabs view={view} />
         </div>
       }
-      sections={isShowcase ? [] : SECTIONS}
+      brief={isShowcase ? undefined : BRIEF}
       preview={{
         src: "/assets/projects/virtual-office/day.webp",
         alt: "Virtual Spaces office at day with desks, agents, a lounge and a terrace court",
@@ -258,31 +256,7 @@ export default function VirtualSpaces() {
           />
         )
       }
-      gallery={
-        isShowcase
-          ? undefined
-          : [
-              {
-                src: "/assets/projects/virtual-office/clean.webp",
-                alt: "Clean view of the office with every overlay hidden",
-              },
-              {
-                src: "/assets/projects/virtual-office/night.webp",
-                alt: "The office at night with lamps, lit monitors and stars",
-              },
-              {
-                src: "/assets/projects/virtual-office/tools-wing.webp",
-                alt: "Tools Wing with one running bay, a closed bay and recharge pods",
-              },
-              {
-                src: "/assets/projects/virtual-office/farm.webp",
-                alt: "Farm scene with a windmill, crops, pigs and hens",
-              },
-            ]
-      }
-      highlightsKicker="Capabilities"
-      highlightsTitle="Skills"
-      highlights={isShowcase ? [] : HIGHLIGHTS}
+      notes={isShowcase ? undefined : NOTES}
       nextHref="/projects/client-portal"
       nextLabel="Next: Client Portal Platform"
     >
