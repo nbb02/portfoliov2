@@ -1,5 +1,8 @@
+import { useRef } from "react"
 import { Link } from "react-router-dom"
 import MobileWork from "./MobileWork"
+import { useSpotlightCards } from "./useSpotlightCards"
+import HeadlineFill from "./HeadlineFill"
 import {
   ClientPortalCard,
   FinanceCard,
@@ -13,14 +16,23 @@ import {
 } from "./ProjectCards"
 
 export default function SelectedWork() {
+  const sectionRef = useRef<HTMLElement>(null)
+  useSpotlightCards(sectionRef)
+
   return (
-    <section className="mx-auto max-w-[1240px] px-5 pb-20 pt-16 sm:px-8 sm:pb-28 sm:pt-20">
+    <section
+      ref={sectionRef}
+      className="mx-auto max-w-[1240px] px-5 pb-20 pt-16 sm:px-8 sm:pb-28 sm:pt-20"
+    >
       <div className="flex flex-col items-start justify-between gap-4 border-b border-slate-300 pb-6 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm font-semibold text-teal-700">Selected work</p>
-          <h2 className="mt-2 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">
-            Systems I&apos;ve built.
-          </h2>
+          <HeadlineFill
+            as="h2"
+            trigger="view"
+            className="mt-2 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl"
+            text="Systems I've built."
+          />
         </div>
         <Link
           to="/projects"

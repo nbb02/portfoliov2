@@ -413,6 +413,58 @@ export default function ProfessionalExperience({
     gsap.registerPlugin(ScrollTrigger)
 
     const state = { progress: 0 }
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+
+    const timeline = panel.querySelector<HTMLElement>(".journey-timeline")
+    const timelineEntries = timeline
+      ? Array.from(timeline.querySelectorAll<HTMLElement>(".journey-entry"))
+      : []
+
+    const updateTimeline = (progress: number) => {
+      if (!timeline) return
+
+      const value = prefersReducedMotion ? 1 : clamp(progress)
+      timeline.style.setProperty("--timeline", value.toFixed(3))
+
+      timelineEntries.forEach((entry, index) => {
+        const at = Number(entry.dataset.timelineAt)
+        const threshold = Number.isFinite(at)
+          ? at
+          : (index + 0.15) / timelineEntries.length
+        entry.classList.toggle("is-active", value >= threshold)
+      })
+    }
+
+    const measureRail = () => {
+      if (!timeline || timelineEntries.length === 0) return
+
+      const first = timelineEntries[0]
+      const last = timelineEntries[timelineEntries.length - 1]
+      const dotTop =
+        Number.parseFloat(window.getComputedStyle(first, "::before").top) || 15
+      const start = first.offsetTop + dotTop + 4
+      const end = last.offsetTop + dotTop + 4
+      const span = Math.max(1, end - start)
+
+      timelineEntries.forEach((entry) => {
+        const center = entry.offsetTop + dotTop + 4
+        entry.dataset.timelineAt = String((center - start) / span)
+      })
+
+      timeline.style.setProperty("--rail-top", `${start}px`)
+      timeline.style.setProperty("--rail-height", `${Math.max(0, end - start)}px`)
+    }
+
+    measureRail()
+    let railObserver: ResizeObserver | null = null
+
+    if (timeline && typeof ResizeObserver !== "undefined") {
+      railObserver = new ResizeObserver(measureRail)
+      railObserver.observe(timeline)
+    }
+
     const renderScene = () => {
       const scene = buildSceneStyles(state.progress)
 
@@ -435,11 +487,9 @@ export default function ProfessionalExperience({
 
     if (atmosphere) {
       renderScene()
+      updateTimeline(0)
 
       const isDesktop = window.matchMedia("(min-width: 769px)").matches
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches
       let currentState = 0
       let hintVisible = true
 
@@ -463,6 +513,7 @@ export default function ProfessionalExperience({
           trigger: panel,
           start: "top 45%",
           end: "bottom 40%",
+          onUpdate: (self) => updateTimeline(self.progress),
           onEnter: () => setScene(1),
           onLeaveBack: () => setScene(0),
         })
@@ -470,6 +521,7 @@ export default function ProfessionalExperience({
         return () => {
           mobileTrigger.kill()
           gsap.killTweensOf(state)
+          railObserver?.disconnect()
         }
       }
 
@@ -493,12 +545,14 @@ export default function ProfessionalExperience({
           }
 
           setIsNight(sceneTarget >= 0.5)
+          updateTimeline(clamp((self.progress - 0.08) / 0.58))
         },
       })
 
       return () => {
         trigger.kill()
         gsap.killTweensOf(state)
+        railObserver?.disconnect()
       }
     }
 
@@ -518,7 +572,10 @@ export default function ProfessionalExperience({
       })
     }, shell)
 
-    return () => ctx.revert()
+    return () => {
+      railObserver?.disconnect()
+      ctx.revert()
+    }
   }, [atmosphere])
 
   return (
@@ -589,7 +646,10 @@ export default function ProfessionalExperience({
           <h2 className="section-title professional-title">{title}</h2>
 
           {atmosphere ? (
-            <div className="journey-list">
+            <div className="journey-list journey-timeline">
+              <span className="journey-progress" aria-hidden="true">
+                <span />
+              </span>
               {roles.map((role) => (
                 <article
                   key={`${role.title}-${role.company}`}

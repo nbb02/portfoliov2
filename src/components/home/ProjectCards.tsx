@@ -8,6 +8,7 @@ import {
   FiTrendingUp,
 } from "react-icons/fi"
 import TagPill from "./TagPill"
+import ProjectPreview from "./ProjectPreview"
 import {
   CommerceArt,
   LogisticsArt,
@@ -39,7 +40,7 @@ export function ClientPortalCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/client-portal"
-      className={`group relative flex min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-6 text-white shadow-xl ${className}`}
+      className={`group relative flex min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-6 text-white shadow-xl spotlight-card ${className}`}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-25"
@@ -96,14 +97,9 @@ export function LoadBalancerCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/load-balancer-monitoring"
-      className={`group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-slate-800 bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-slate-800 bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
-      <img
-        src="/assets/projects/load-balancer-monitoring/Load Balancer Visualizer.webp"
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-[1.03]"
-      />
+      <ProjectPreview id="loadBalancer" opacityClass="opacity-60" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#11161D] via-[#11161D]/70 to-transparent" />
       <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 backdrop-blur transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
         <FiArrowUpRight size={14} aria-hidden="true" />
@@ -132,14 +128,9 @@ export function ViTechCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/vitech"
-      className={`group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-slate-800 bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-2xl border border-slate-800 bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
-      <img
-        src="/assets/projects/vitech/dashboard.webp"
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover opacity-55 transition-transform duration-500 group-hover:scale-[1.03]"
-      />
+      <ProjectPreview id="vitech" opacityClass="opacity-55" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#11161D] via-[#11161D]/70 to-transparent" />
       <span className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 backdrop-blur transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
         <FiArrowUpRight size={14} aria-hidden="true" />
@@ -166,7 +157,7 @@ export function LogisticsCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/logistics"
-      className={`group relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl bg-[#0F2F2B] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl bg-[#0F2F2B] p-5 text-white spotlight-card spotlight-card--logistics ${className}`}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-30"
@@ -235,15 +226,9 @@ export function FinanceCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/finance"
-      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
-      <img
-        src="/assets/projects/finance/ai-assistant.webp"
-        alt=""
-        loading="lazy"
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
-      />
+      <ProjectPreview id="finance" opacityClass="opacity-30" />
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={GRID_PATTERN}
@@ -282,15 +267,9 @@ export function HuntXPCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/huntxp"
-      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
-      <img
-        src="/assets/projects/huntxp/homepage.webp"
-        alt=""
-        loading="lazy"
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
-      />
+      <ProjectPreview id="huntxp" opacityClass="opacity-30" />
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={GRID_PATTERN}
@@ -329,15 +308,9 @@ export function VirtualSpacesCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/virtual-office"
-      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
-      <img
-        src="/assets/projects/virtual-office/day.webp"
-        alt=""
-        loading="lazy"
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
-      />
+      <ProjectPreview id="virtualSpaces" opacityClass="opacity-30" />
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={GRID_PATTERN}
@@ -379,15 +352,9 @@ export function PrintSetCard({ className = "" }: { className?: string }) {
   return (
     <Link
       to="/projects/printset"
-      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
-      <img
-        src="/assets/projects/printset/editor-grid.webp"
-        alt=""
-        loading="lazy"
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
-      />
+      <ProjectPreview id="printset" opacityClass="opacity-30" />
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={GRID_PATTERN}
@@ -434,7 +401,7 @@ export function RecyclingPlatformCard({
   return (
     <Link
       to="/projects/recycling-platform"
-      className={`group relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white ${className}`}
+      className={`group relative flex min-h-[250px] flex-col justify-between overflow-hidden rounded-2xl bg-[#11161D] p-5 text-white spotlight-card ${className}`}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-25"

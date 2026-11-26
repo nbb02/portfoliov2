@@ -24,6 +24,7 @@ import GithubScene from "../components/home/GithubScene"
 import SelectedWork from "../components/home/SelectedWork"
 import ScrollLink from "../components/home/ScrollLink"
 import SiteFooter from "../components/home/SiteFooter"
+import HeadlineFill from "../components/home/HeadlineFill"
 
 const Laptop = lazy(() => import("../components/laptop"))
 const Rubiks = lazy(() => import("../components/rubiks"))
@@ -69,13 +70,11 @@ export default function HomeV2() {
                 Software Developer · Fullstack & Realtime
               </p>
 
-              <h1 className="mt-5 max-w-[620px] text-[2.35rem] font-semibold leading-[1] tracking-[-0.045em] md:text-[2.85rem]">
-                I build systems that{" "}
-                <span className="whitespace-nowrap text-[#B45309]">
-                  hold up
-                </span>{" "}
-                under real load.
-              </h1>
+              <HeadlineFill
+                className="mt-5 max-w-[620px] text-[2.35rem] font-semibold leading-[1] tracking-[-0.045em] md:text-[2.85rem]"
+                text="I build systems that hold up under real load."
+                accent="hold up"
+              />
 
               <p className="mt-5 max-w-[560px] text-[17px] leading-relaxed text-slate-600">
                 Fullstack engineer focused on multi-tenant platforms, realtime
@@ -85,9 +84,15 @@ export default function HomeV2() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <ScrollLink
                   target="work"
-                  className="rounded-full bg-[#11161D] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
+                  className="group rounded-full bg-[#11161D] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
                 >
-                  View selected work →
+                  View selected work{" "}
+                  <span
+                    aria-hidden="true"
+                    className="inline-block transition-transform duration-300 group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
                 </ScrollLink>
                 <a
                   href="https://www.linkedin.com/in/nathaniel-berres-396397147"
