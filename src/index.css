@@ -481,6 +481,11 @@ h4 {
   width: 100%;
   display: flex;
   align-items: center;
+  background-image: linear-gradient(
+    160deg,
+    var(--scene-top, #fff5cd),
+    var(--scene-bottom, #eefcff)
+  );
 }
 
 .professional-sky {
@@ -497,12 +502,9 @@ h4 {
   border-radius: 9999px;
   isolation: isolate;
   overflow: visible;
-  will-change: left, opacity;
-  transform: translate(-50%, -50%);
-  transition:
-    left 220ms ease-out,
-    top 220ms ease-out,
-    opacity 220ms ease-out;
+  /* Positioned by GSAP transforms against the section's own size: animating
+     left/top here relaid out a full-viewport blurred layer on every frame. */
+  will-change: transform, opacity;
 }
 
 .sky-body::before {

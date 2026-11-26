@@ -31,19 +31,18 @@ type SkyOrbProps = {
   className: string
   orbRef: RefObject<HTMLDivElement | null>
   modelUrl: string
-  left: string
-  top: string
   opacity: number
   active: boolean
 }
 
 type SceneStyles = {
-  sectionBackground: string
+  sceneTop: string
+  sceneBottom: string
   themeVars: Record<string, string>
-  sunLeft: string
-  moonLeft: string
-  sunTop: string
-  moonTop: string
+  sunLeft: number
+  moonLeft: number
+  sunTop: number
+  moonTop: number
   sunOpacity: number
   moonOpacity: number
 }
@@ -112,7 +111,7 @@ function clamp(value: number, min = 0, max = 1) {
 }
 
 function toPercent(start: number, end: number, t: number) {
-  return `${start + (end - start) * t}%`
+  return start + (end - start) * t
 }
 
 function easeInOutSine(t: number) {
@@ -121,7 +120,7 @@ function easeInOutSine(t: number) {
 
 function arcPercent(start: number, control: number, end: number, t: number) {
   const inverse = 1 - t
-  return `${inverse * inverse * start + 2 * inverse * t * control + t * t * end}%`
+  return inverse * inverse * start + 2 * inverse * t * control + t * t * end
 }
 
 function buildSceneStyles(progress: number): SceneStyles {
@@ -149,7 +148,8 @@ function buildSceneStyles(progress: number): SceneStyles {
   const moonMotion = easeInOutSine(moonlightProgress)
 
   return {
-    sectionBackground: `linear-gradient(160deg, ${bgTop}, ${bgBottom})`,
+    sceneTop: bgTop,
+    sceneBottom: bgBottom,
     themeVars: {
       "--experience-kicker": mixColor(
         [22, 78, 99],
@@ -292,8 +292,6 @@ function SkyOrb({
   className,
   orbRef,
   modelUrl,
-  left,
-  top,
   opacity,
   active,
 }: SkyOrbProps) {
@@ -301,7 +299,7 @@ function SkyOrb({
     <div
       ref={orbRef}
       className={className}
-      style={{ left, top, opacity }}
+      style={{ opacity }}
       aria-hidden="true"
     >
       {active && (
@@ -320,8 +318,12 @@ function SkyOrb({
         />
 
         <Suspense fallback={null}>
-          <Environment preset={body === "sun" ? "sunset" : "night"} />
           <SkyScene body={body} modelUrl={modelUrl} />
+        </Suspense>
+        {/* The environment's HDRI is remote; suspending it here would keep the
+            orb dark until the download lands. */}
+        <Suspense fallback={null}>
+          <Environment preset={body === "sun" ? "sunset" : "night"} />
         </Suspense>
 
         <OrbitControls
@@ -384,11 +386,15 @@ export default function ProfessionalExperience({
     const observer = new IntersectionObserver(
       (entries) => {
         inRange = entries.some((entry) => entry.isIntersecting)
-        /* Keep observing: leaving range unmounts the sky's two contexts, which
-           is most of the page's WebGL budget. */
+        /*
+         * Keep observing and unmount outside a generous margin: two contexts
+         * plus two HDRI environments are most of the page's WebGL budget.
+         * Building them just over a screen early means the sun is lit by the
+         * time the journey is on screen when scrolling back up.
+         */
         sync()
       },
-      { rootMargin: "700px 0px" },
+      { rootMargin: "1200px 0px" },
     )
 
     observer.observe(section)
@@ -465,28 +471,58 @@ export default function ProfessionalExperience({
       railObserver.observe(timeline)
     }
 
+    const written = {
+      top: "",
+      bottom: "",
+      vars: new Map<string, string>(),
+    }
+
     const renderScene = () => {
       const scene = buildSceneStyles(state.progress)
+      const width = panel.clientWidth
+      const height = panel.clientHeight
 
-      panel.style.backgroundImage = scene.sectionBackground
-      Object.entries(scene.themeVars).forEach(([key, value]) => {
+      /*
+       * The palette is two custom properties rather than a rebuilt gradient
+       * string, and the orbs move on transforms: `left`/`top` on a blurred,
+       * full-section layout invalidated the whole journey every scroll frame.
+       * The colours are already rounded, so identical values are skipped
+       * rather than re-invalidating the whole subtree.
+       */
+      if (written.top !== scene.sceneTop) {
+        written.top = scene.sceneTop
+        panel.style.setProperty("--scene-top", scene.sceneTop)
+      }
+      if (written.bottom !== scene.sceneBottom) {
+        written.bottom = scene.sceneBottom
+        panel.style.setProperty("--scene-bottom", scene.sceneBottom)
+      }
+      for (const [key, value] of Object.entries(scene.themeVars)) {
+        if (written.vars.get(key) === value) continue
+        written.vars.set(key, value)
         panel.style.setProperty(key, value)
-      })
+      }
 
       gsap.set(sun, {
-        left: scene.sunLeft,
-        top: scene.sunTop,
+        xPercent: -50,
+        yPercent: -50,
+        x: (scene.sunLeft / 100) * width,
+        y: (scene.sunTop / 100) * height,
         opacity: scene.sunOpacity,
       })
       gsap.set(moon, {
-        left: scene.moonLeft,
-        top: scene.moonTop,
+        xPercent: -50,
+        yPercent: -50,
+        x: (scene.moonLeft / 100) * width,
+        y: (scene.moonTop / 100) * height,
         opacity: scene.moonOpacity,
       })
     }
 
+    /* Positions the orbs even on the page that has no scroll choreography. */
+    renderScene()
+
     if (atmosphere) {
-      renderScene()
       updateTimeline(0)
 
       const isDesktop = window.matchMedia("(min-width: 769px)").matches
@@ -586,7 +622,6 @@ export default function ProfessionalExperience({
       <div
         className="professional-section"
         ref={sectionPanelRef}
-        style={{ backgroundImage: initialScene.sectionBackground }}
       >
         {atmosphere && (
           <>
@@ -624,8 +659,6 @@ export default function ProfessionalExperience({
             className="sky-body sky-body-shell sky-sun"
             orbRef={sunRef}
             modelUrl={sunModelUrl}
-            left={initialScene.sunLeft}
-            top={initialScene.sunTop}
             opacity={initialScene.sunOpacity}
             active={showSky}
           />
@@ -634,8 +667,6 @@ export default function ProfessionalExperience({
             className="sky-body sky-body-shell sky-moon"
             orbRef={moonRef}
             modelUrl={moonModelUrl}
-            left={initialScene.moonLeft}
-            top={initialScene.moonTop}
             opacity={initialScene.moonOpacity}
             active={showSky}
           />

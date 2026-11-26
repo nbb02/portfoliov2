@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type RefObject } from "react"
+import { useCallback, useEffect, useRef, type RefObject } from "react"
 
 const WAVE_DURATION = 520
 const WAVE_STAGGER = 85
@@ -23,16 +23,23 @@ function columnsOf(tiles: HTMLElement[]) {
 }
 
 export function useStackRipple(ref: RefObject<HTMLElement | null>) {
+  const visible = useRef(false)
+  const columns = useRef(0)
+
   const replay = useCallback(() => {
     const grid = ref.current
-    if (!grid || calm()) return
+    if (!grid || !visible.current || calm()) return
 
     const tiles = tilesOf(grid)
-    const columns = columnsOf(tiles)
+    if (!tiles.length) return
+    /* Measured by the resize observer, not per wave: `offsetTop` on sixteen
+       tiles forces a layout, and this runs on a timer rather than a scroll. */
+    if (!columns.current) columns.current = columnsOf(tiles)
 
     tiles.forEach((tile, index) => {
       const delay =
-        (index % columns + Math.floor(index / columns) * 2) * WAVE_STAGGER
+        (index % columns.current + Math.floor(index / columns.current) * 2) *
+        WAVE_STAGGER
       tile.animate(
         [
           { translate: "0 0" },
@@ -53,6 +60,28 @@ export function useStackRipple(ref: RefObject<HTMLElement | null>) {
   }, [ref])
 
   useEffect(() => {
+    const grid = ref.current
+    if (!grid) return
+
+    const measure = () => {
+      columns.current = columnsOf(tilesOf(grid))
+    }
+    measure()
+
+    const resize = new ResizeObserver(measure)
+    resize.observe(grid)
+
+    /* The wave is decorative and invisible off screen; running it there only
+       kept the layout busy behind a scrolled-away section. */
+    const view = new IntersectionObserver(
+      (entries) => {
+        visible.current = Boolean(entries[0]?.isIntersecting)
+        if (visible.current) replay()
+      },
+      { rootMargin: "200px 0px" },
+    )
+    view.observe(grid)
+
     let interval: number | undefined
     const start = window.setTimeout(() => {
       replay()
@@ -62,6 +91,8 @@ export function useStackRipple(ref: RefObject<HTMLElement | null>) {
     return () => {
       window.clearTimeout(start)
       if (interval) window.clearInterval(interval)
+      resize.disconnect()
+      view.disconnect()
     }
   }, [replay])
 }

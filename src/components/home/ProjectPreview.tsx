@@ -53,6 +53,18 @@ export default function ProjectPreview({
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)")
   const shots = SHOTS[id] ?? []
   const [index, setIndex] = useState(0)
+  /*
+   * Two frames are mounted at a time: the one on show and the one about to be.
+   * A card used to hold all of its screenshots, so a scroll through the grid
+   * decoded every reel at once; the rest join as the reel reaches them.
+   */
+  const [mounted, setMounted] = useState(() => Math.min(2, shots.length))
+
+  useEffect(() => {
+    setMounted((current) =>
+      Math.max(current, Math.min(shots.length, index + 2)),
+    )
+  }, [index, shots.length])
 
   useEffect(() => {
     if (!inView || reduceMotion || shots.length < 2) return
@@ -73,7 +85,7 @@ export default function ProjectPreview({
       className="pointer-events-none absolute inset-0"
       aria-hidden="true"
     >
-      {shots.map((src, shotIndex) => (
+      {shots.slice(0, mounted).map((src, shotIndex) => (
         <img
           key={src}
           src={src}

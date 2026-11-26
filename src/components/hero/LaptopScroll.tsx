@@ -6,7 +6,7 @@ import {
   useTexture,
   ContactShadows,
 } from "@react-three/drei"
-import { useEffect, useMemo, useRef } from "react"
+import { Suspense, useEffect, useMemo, useRef } from "react"
 import type { RefObject } from "react"
 import type { GLTF } from "three-stdlib"
 import laptopModelUrl from "../../assets/laptop/mac-draco.glb"
@@ -14,6 +14,8 @@ import laptopScreenImage from "../../assets/hero/screen-panel.jpg"
 import { clamp01, easeInOutCubic, lerp } from "./easing"
 import { SCREEN_MAX_DPR, SCREEN_MIN_DPR } from "./screenGeometry"
 import { phoneDollyProgress, phoneHeroScale } from "./phoneTimeline"
+import { HERO_PANEL_KEY, PHONE_PANEL_KEY } from "./panelCapture"
+import { releaseScreenTexturesExcept, screenTexture } from "./screenTextures"
 import PhoneModel from "./PhoneModel"
 
 type LaptopGLTF = GLTF & {
@@ -233,6 +235,8 @@ function CameraRig({
       step: new THREE.Quaternion(),
       look: new THREE.Matrix4(),
       corner: new THREE.Vector3(),
+      axisA: new THREE.Vector3(),
+      axisB: new THREE.Vector3(),
     }
   }, [])
 
@@ -275,10 +279,10 @@ function CameraRig({
      * longer one: a laptop's screen is landscape but a phone's is portrait, and
      * fitting the taller extent to the viewport's width would shrink it to half.
      */
-    const axisA = new THREE.Vector3()
+    const axisA = scratch.axisA
       .setComponent(rest[0], 1)
       .applyQuaternion(scratch.meshQuat)
-    const axisB = new THREE.Vector3()
+    const axisB = scratch.axisB
       .setComponent(rest[1], 1)
       .applyQuaternion(scratch.meshQuat)
     const wide =
@@ -442,17 +446,32 @@ export default function LaptopScroll({
   onScreenRect,
   heroFitRef,
   render,
-  screen,
+  screenCanvas,
+  screenKey,
   device = "laptop",
 }: {
   progressRef: ProgressRef
   onScreenRect?: (rect: ScreenRect | null) => void
   heroFitRef?: RefObject<HeroFit>
   render: boolean
-  screen?: THREE.Texture | null
+  screenCanvas?: HTMLCanvasElement | null
+  screenKey?: string
   device?: DollyDevice
 }) {
   const screenRef = useRef<THREE.Mesh>(null)
+  const screen = useMemo(
+    () => (screenCanvas ? screenTexture(screenCanvas, screenKey) : null),
+    [screenCanvas, screenKey],
+  )
+
+  useEffect(() => {
+    if (!screenCanvas) return
+    releaseScreenTexturesExcept([
+      HERO_PANEL_KEY,
+      PHONE_PANEL_KEY,
+      screenKey ?? "",
+    ])
+  }, [screenCanvas, screenKey])
 
   return (
     <Canvas
@@ -496,7 +515,13 @@ export default function LaptopScroll({
           <Model progressRef={progressRef} screenRef={screenRef} screen={screen} />
         </group>
       )}
-      <Environment preset="city" />
+      {/*
+       * The environment is a remote HDRI; suspending it with the model would
+       * hold the whole scene back until that download finishes.
+       */}
+      <Suspense fallback={null}>
+        <Environment preset="city" />
+      </Suspense>
     </Canvas>
   )
 }

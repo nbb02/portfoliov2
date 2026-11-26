@@ -57,7 +57,14 @@ function VisitorTracking() {
 
   useEffect(() => {
     const path = `${location.pathname}${location.search}${location.hash}`
-    void trackPageVisit(path)
+    /*
+     * Analytics is not on the critical path: importing the Firestore SDK on the
+     * route change raced the hero's own chunks for the first load.
+     */
+    const idle = window.requestIdleCallback(() => void trackPageVisit(path), {
+      timeout: 3000,
+    })
+    return () => window.cancelIdleCallback(idle)
   }, [location.pathname, location.search, location.hash])
 
   return null

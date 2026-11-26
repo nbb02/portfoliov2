@@ -17,9 +17,11 @@ export const PHONE_SCREEN_ASPECT = 390 / 844
  * and the page inside is sampled off the renderer's own resolution, which is
  * what makes the flight look soft; the hero already supersamples for the same
  * reason. The capture follows this ratio, so the screen stays 1:1 with it.
+ * Three renderers' worth of fill at 3× bought nothing visible over 2× — the
+ * screen is a plane — and cost a third of the frame budget on a retina display.
  */
 export const SCREEN_MIN_DPR = 2
-export const SCREEN_MAX_DPR = 3
+export const SCREEN_MAX_DPR = 2
 
 /** Past this many texels the capture costs more than the screen can show. */
 const MAX_SCREEN_TEXELS = 20_000_000

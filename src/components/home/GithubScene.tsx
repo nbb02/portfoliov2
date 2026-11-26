@@ -1,5 +1,4 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
-import type { Texture } from "three"
 import { useScrollOffset } from "../hero/useScrollOffset"
 import { clamp01 } from "../hero/easing"
 import { useInView } from "../useInView"
@@ -12,10 +11,10 @@ import {
 import {
   HERO_PANEL_KEY,
   PHONE_PANEL_KEY,
-  cachedScreenTexture,
+  cachedScreenCanvas,
   capturePanel,
-  releaseScreenTexturesExcept,
-  screenTexture,
+  releaseScreenCanvasesExcept,
+  rememberScreenCanvas,
   sliceScreen,
 } from "../hero/panelCapture"
 import type { ScreenRect } from "../hero/LaptopScroll"
@@ -94,8 +93,8 @@ export default function GithubScene() {
   const screenKey = screenCacheKey(columnWidth, screenRatio)
 
   /* Coming back to the scene reuses this viewport's capture until it is retaken. */
-  const [screen, setScreen] = useState<Texture | null>(() =>
-    cachedScreenTexture(screenKey),
+  const [screenCanvas, setScreenCanvas] = useState<HTMLCanvasElement | null>(
+    () => cachedScreenCanvas(screenKey),
   )
 
   useEffect(() => {
@@ -191,7 +190,9 @@ export default function GithubScene() {
         })
         if (cancelled) return
         capturedKey.current = screenKey
-        setScreen(screenTexture(sliceScreen(canvas, aspect), screenKey))
+        const slice = sliceScreen(canvas, aspect)
+        rememberScreenCanvas(slice, screenKey)
+        setScreenCanvas(slice)
       } catch (error) {
         if (import.meta.env.DEV) {
           console.warn("[github] screen capture failed", error)
@@ -206,11 +207,12 @@ export default function GithubScene() {
     }
   }, [reduced, panelHeight, panelNear, columnWidth, aspect, screenRatio, screenKey])
 
-  /* Drop captures for widths the page no longer draws. */
+  /* Drop captures for widths the page no longer draws. The textures that go
+     with them are released by the dolly, which is where three is loaded. */
   useEffect(() => {
-    if (!screen || !cachedScreenTexture(screenKey)) return
-    releaseScreenTexturesExcept([HERO_PANEL_KEY, PHONE_PANEL_KEY, screenKey])
-  }, [screen, screenKey])
+    if (!screenCanvas || !cachedScreenCanvas(screenKey)) return
+    releaseScreenCanvasesExcept([HERO_PANEL_KEY, PHONE_PANEL_KEY, screenKey])
+  }, [screenCanvas, screenKey])
 
   return (
     <div className="relative bg-[#0D1117]">
@@ -232,7 +234,8 @@ export default function GithubScene() {
 
       {!reduced && (
         <Dolly
-          screen={screen}
+          screenCanvas={screenCanvas}
+          screenKey={screenKey}
           columnWidth={columnWidth}
           mobile={mobile}
           viewportHeight={viewportHeight}
@@ -255,12 +258,14 @@ export default function GithubScene() {
 }
 
 function Dolly({
-  screen,
+  screenCanvas,
+  screenKey,
   columnWidth,
   mobile,
   viewportHeight,
 }: {
-  screen: Texture | null
+  screenCanvas: HTMLCanvasElement | null
+  screenKey: string
   columnWidth: number
   mobile: boolean
   viewportHeight: number
@@ -404,7 +409,15 @@ function Dolly({
     [applyProgress],
   )
   const { targetRef } = useScrollOffset<HTMLElement>(handleOffset)
-  const inView = useInView(targetRef, "120% 0px")
+  /*
+   * Mount the dolly a couple of screens early rather than a screen: building the
+   * context and uploading the model is the expensive half, and doing it off
+   * screen means the first visible frame is already warm.
+   */
+  const mounted = useInView(targetRef, "250% 0px")
+  /* Drawing follows actual visibility, so a warm canvas that is still above the
+     pin does not compete with the hero for the frame. */
+  const visible = useInView(targetRef, "0px 0px")
 
   return (
     <section
@@ -439,13 +452,14 @@ function Dolly({
         </div>
 
         <div ref={canvasRef} className="pointer-events-none absolute inset-0 z-20">
-          {inView && (
+          {mounted && (
             <Suspense fallback={null}>
               <LaptopScroll
                 progressRef={cinemaRef}
                 onScreenRect={handleScreenRect}
-                render={render3d}
-                screen={screen}
+                render={render3d && visible}
+                screenCanvas={screenCanvas}
+                screenKey={screenKey}
                 device={mobile ? "phone" : "laptop"}
               />
             </Suspense>

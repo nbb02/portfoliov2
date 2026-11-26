@@ -23,11 +23,10 @@ import {
   PHONE_PANEL_KEY,
   PHONE_PANEL_WIDTH,
   SCREEN_PANEL_WIDTH,
-  cachedScreenTexture,
+  cachedScreenCanvas,
   capturePanel,
-  fitScreenMap,
-  screenTexture,
 } from "./hero/panelCapture"
+import { fitScreenMap, screenTexture } from "./hero/screenTextures"
 
 type LaptopGLTF = GLTF & {
   nodes: {
@@ -363,19 +362,22 @@ export default function Laptop() {
   const hostRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
   const inView = useInView(wrapperRef, "50% 0px")
-  /* The context costs GPU memory whether or not it is drawing, and this one is
-     only ever needed around the hero; the dolly has its own. */
-  const near = useInView(wrapperRef, "150% 0px")
-  const [screen, setScreen] = useState<THREE.Texture | null>(() =>
-    cachedScreenTexture(panelKey) ?? cachedScreenTexture(SCREEN_PANEL_WIDTH),
-  )
+  /* The context costs GPU memory whether or not it is drawing, so it is only
+     built once the slot is a few screens away — far enough that the upload
+     finishes before the lid is visible again after a trip down the page. */
+  const near = useInView(wrapperRef, "250% 0px")
+  const [screen, setScreen] = useState<THREE.Texture | null>(() => {
+    const canvas =
+      cachedScreenCanvas(panelKey) ?? cachedScreenCanvas(SCREEN_PANEL_WIDTH)
+    return canvas ? screenTexture(canvas, panelKey) : null
+  })
   const [captureHost, setCaptureHost] = useState(false)
 
   /* Show the cached capture for this layout straight away when there is one. */
   useEffect(() => {
-    const cached = cachedScreenTexture(panelKey)
+    const cached = cachedScreenCanvas(panelKey)
     if (cached) {
-      setScreen(cached)
+      setScreen(screenTexture(cached, panelKey))
       setCaptureHost(false)
       return
     }
@@ -463,8 +465,8 @@ export default function Laptop() {
       {near && (
         <Canvas
           camera={{ position: [-5, 0, -15], fov: 55 }}
-          dpr={[2, 3]}
-          frameloop={inView ? "always" : "demand"}
+          dpr={[1.5, 2]}
+          frameloop={inView ? "always" : "never"}
         >
           <pointLight position={[10, 10, 10]} intensity={1.5} />
           <Suspense fallback={null}>
@@ -475,6 +477,10 @@ export default function Laptop() {
                 onScreenClick={desktop ? navigateToDesktop : undefined}
               />
             </group>
+          </Suspense>
+          {/* Its own boundary: the lid should paint from the point light while
+              the environment's HDRI is still on the wire. */}
+          <Suspense fallback={null}>
             <Environment preset="city" />
           </Suspense>
           <ContactShadows
