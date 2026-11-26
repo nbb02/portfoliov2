@@ -16,6 +16,7 @@ import { SCREEN_MAX_DPR, SCREEN_MIN_DPR } from "./screenGeometry"
 import { phoneDollyProgress, phoneHeroScale } from "./phoneTimeline"
 import { HERO_PANEL_KEY, PHONE_PANEL_KEY } from "./panelCapture"
 import { releaseScreenTexturesExcept, screenTexture } from "./screenTextures"
+import FallbackEnvironment from "./FallbackEnvironment"
 import PhoneModel from "./PhoneModel"
 
 type LaptopGLTF = GLTF & {
@@ -280,9 +281,11 @@ function CameraRig({
      * fitting the taller extent to the viewport's width would shrink it to half.
      */
     const axisA = scratch.axisA
+      .set(0, 0, 0)
       .setComponent(rest[0], 1)
       .applyQuaternion(scratch.meshQuat)
     const axisB = scratch.axisB
+      .set(0, 0, 0)
       .setComponent(rest[1], 1)
       .applyQuaternion(scratch.meshQuat)
     const wide =
@@ -517,8 +520,10 @@ export default function LaptopScroll({
       )}
       {/*
        * The environment is a remote HDRI; suspending it with the model would
-       * hold the whole scene back until that download finishes.
+       * hold the whole scene back until that download finishes. The fallback
+       * keeps metal from reading as black in the meantime.
        */}
+      <FallbackEnvironment />
       <Suspense fallback={null}>
         <Environment preset="city" />
       </Suspense>

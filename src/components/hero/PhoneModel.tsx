@@ -32,6 +32,15 @@ const TRACK_WIDTH = 12.5 * 1.3
 const BEAM_WIDTH = 10 * 1.3
 const CORE_WIDTH = 3.1 * 1.3
 
+/*
+ * The beams are a glow, not geometry: drawing them at half the skin's size
+ * keeps the soft edges and quarters the bitmap this texture re-uploads while
+ * the back is on screen.
+ */
+const LIGHT_SCALE = 0.5
+const LIGHT_W = Math.round(TEX_W * LIGHT_SCALE)
+const LIGHT_H = Math.round(TEX_H * LIGHT_SCALE)
+
 const scaleX = TEX_W / MOCK_W
 const scaleY = TEX_H / MOCK_H
 const scale = (scaleX + scaleY) / 2
@@ -91,9 +100,15 @@ function drawTracks(context: CanvasRenderingContext2D) {
   context.restore()
 }
 
+function clearBeams(context: CanvasRenderingContext2D) {
+  context.setTransform(1, 0, 0, 1, 0, 0)
+  context.clearRect(0, 0, LIGHT_W, LIGHT_H)
+}
+
 function drawBeams(context: CanvasRenderingContext2D, time: number) {
-  context.clearRect(0, 0, TEX_W, TEX_H)
+  clearBeams(context)
   context.save()
+  context.scale(LIGHT_SCALE, LIGHT_SCALE)
   context.globalCompositeOperation = "lighter"
   context.lineCap = "round"
 
@@ -163,6 +178,8 @@ export default function PhoneModel({
 }) {
   const spinner = useRef<THREE.Group>(null)
   const lastPaint = useRef(0)
+  const beamTime = useRef(0)
+  const beamsOn = useRef(false)
 
   const { scene, nodes, materials } = useGLTF(phoneModelUrl)
   const backImage = useTexture(phoneBackImage)
@@ -175,8 +192,8 @@ export default function PhoneModel({
     base.height = TEX_H
     const baseContext = base.getContext("2d")
     const light = document.createElement("canvas")
-    light.width = TEX_W
-    light.height = TEX_H
+    light.width = LIGHT_W
+    light.height = LIGHT_H
     const lightContext = light.getContext("2d")
     if (!baseContext || !lightContext) {
       throw new Error("phone back: 2d canvas unavailable")
@@ -323,7 +340,7 @@ export default function PhoneModel({
     }
   }, [backMaterial, skin])
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const progress = progressRef.current
     const front = phoneFront(progress)
     const drift = 1 - clamp01(progress / DRIFT_END)
@@ -342,11 +359,35 @@ export default function PhoneModel({
     }
 
     /* The back is only on screen before the turn is over. */
-    if (progress > 0.26) return
-    if (t - lastPaint.current < 1 / 30) return
-    lastPaint.current = t
+    if (progress > 0.26) {
+      if (beamsOn.current) {
+        beamsOn.current = false
+        clearBeams(skin.lightContext)
+        // three.js objects are mutable by design; a hook result being one is fine.
+        // eslint-disable-next-line react-hooks/immutability
+        skin.lightTexture.needsUpdate = true
+      }
+      return
+    }
 
-    drawBeams(skin.lightContext, t)
+    /*
+     * Drawn time, not the wall clock. The canvas stops rendering when it leaves
+     * the viewport, so a clock read from `getElapsedTime()` hands the first
+     * visible frame a phase from whenever it last ran — and a delta covering
+     * the whole pause. Starting at zero on each pass is what makes the relay
+     * read as a relay instead of picking up mid-sweep.
+     */
+    if (!beamsOn.current) {
+      beamsOn.current = true
+      beamTime.current = 0
+      lastPaint.current = -1
+    }
+
+    beamTime.current += Math.min(delta, 1 / 15)
+    if (beamTime.current - lastPaint.current < 1 / 30) return
+    lastPaint.current = beamTime.current
+
+    drawBeams(skin.lightContext, beamTime.current)
     // three.js objects are mutable by design; a hook result being one is fine.
     // eslint-disable-next-line react-hooks/immutability
     skin.lightTexture.needsUpdate = true

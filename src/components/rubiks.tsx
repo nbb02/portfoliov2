@@ -4,6 +4,7 @@ import { OrbitControls, useGLTF, Float, Environment } from "@react-three/drei"
 import type { GLTF } from "three-stdlib"
 import * as THREE from "three"
 import { useInView } from "./useInView"
+import FallbackEnvironment from "./hero/FallbackEnvironment"
 const modelUrl = "/assets/rubiks_cube/rubiks_cube/rubiks_cube.gltf"
 
 export default function Rubiks() {
@@ -50,6 +51,7 @@ export default function Rubiks() {
             <RubiksModel />
           </Float>
         </Suspense>
+        <FallbackEnvironment />
         <Suspense fallback={null}>
           <Environment preset="studio" environmentIntensity={0.6} />
         </Suspense>

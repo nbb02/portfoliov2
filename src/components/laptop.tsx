@@ -27,6 +27,7 @@ import {
   capturePanel,
 } from "./hero/panelCapture"
 import { fitScreenMap, screenTexture } from "./hero/screenTextures"
+import FallbackEnvironment from "./hero/FallbackEnvironment"
 
 type LaptopGLTF = GLTF & {
   nodes: {
@@ -480,6 +481,7 @@ export default function Laptop() {
           </Suspense>
           {/* Its own boundary: the lid should paint from the point light while
               the environment's HDRI is still on the wire. */}
+          <FallbackEnvironment />
           <Suspense fallback={null}>
             <Environment preset="city" />
           </Suspense>
