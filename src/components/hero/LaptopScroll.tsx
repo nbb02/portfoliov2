@@ -13,6 +13,7 @@ import laptopModelUrl from "../../assets/laptop/mac-draco.glb"
 import laptopScreenImage from "../../assets/hero/screen-panel.jpg"
 import { clamp01, easeInOutCubic, lerp } from "./easing"
 import { SCREEN_MAX_DPR, SCREEN_MIN_DPR } from "./screenGeometry"
+import { phoneDollyProgress, phoneHeroScale } from "./phoneTimeline"
 import PhoneModel from "./PhoneModel"
 
 type LaptopGLTF = GLTF & {
@@ -245,7 +246,9 @@ function CameraRig({
 
     // Back off along the same sight line when the canvas is taller than the slot,
     // so the laptop keeps the size it has in the hero card.
-    const fit = heroFitRef?.current?.distanceScale ?? 1
+    const fit = track
+      ? phoneHeroScale(progressRef.current)
+      : (heroFitRef?.current?.distanceScale ?? 1)
     scratch.hero.copy(HERO_TARGET).addScaledVector(HERO_DIRECTION, HERO_DISTANCE * fit)
 
     mesh.updateWorldMatrix(true, false)
@@ -327,8 +330,11 @@ function CameraRig({
      */
     const distance = (halfWidth * size.height) / (size.width * tanY)
 
+    const raw = clamp01(progressRef.current)
     const blend = easeInOutCubic(
-      (clamp01(progressRef.current) - DOLLY_START) / (DOLLY_END - DOLLY_START),
+      track
+        ? phoneDollyProgress(raw)
+        : (raw - DOLLY_START) / (DOLLY_END - DOLLY_START),
     )
 
     /*
