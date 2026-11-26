@@ -1,3 +1,4 @@
+import { useRef } from "react"
 import {
   ClientPortalCard,
   EcommerceCard,
@@ -11,22 +12,41 @@ import {
   VirtualSpacesCard,
 } from "../components/home/ProjectCards"
 import MoreWork from "../components/home/MoreWork"
+import { useShowUp } from "../components/projects/useShowUp"
 
 export default function Overview() {
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useShowUp(rootRef, "overview")
+
   return (
-    <div className="space-y-8">
-      <div className="border-b border-slate-300 pb-6">
-        <p className="text-sm font-semibold text-teal-700">All work</p>
-        <h1 className="mt-2 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">
-          Projects &amp; systems.
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
-          A visual index of production systems across enterprise platforms,
-          realtime booking, observability, and data.
-        </p>
+    <div ref={rootRef} className="space-y-8">
+      <div
+        data-showup-group="head"
+        data-showup-targets=":scope > div"
+        className="border-b border-slate-300 pb-6"
+      >
+        <div className="overflow-hidden pb-1 -mb-1">
+          <p className="text-sm font-semibold text-teal-700">All work</p>
+        </div>
+        <div className="overflow-hidden pb-1 -mb-1">
+          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl">
+            Projects &amp; systems.
+          </h1>
+        </div>
+        <div className="overflow-hidden pb-1 -mb-1">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
+            A visual index of production systems across enterprise platforms,
+            realtime booking, observability, and data.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div
+        data-showup-group="curtain"
+        data-showup-targets=":scope > a, :scope > div > a"
+        className="grid grid-cols-1 gap-4 lg:grid-cols-12"
+      >
         <ClientPortalCard className="lg:col-span-7 lg:h-[420px]" />
         <div className="grid gap-4 lg:col-span-5">
           <LoadBalancerCard className="lg:h-[202px]" />
@@ -34,7 +54,11 @@ export default function Overview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div
+        data-showup-group="curtain"
+        data-showup-targets=":scope > *"
+        className="grid grid-cols-1 gap-4 md:grid-cols-3"
+      >
         <LogisticsCard />
         <EcommerceCard />
         <RecyclingPlatformCard />
@@ -49,7 +73,11 @@ export default function Overview() {
             Side builds.
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div
+          data-showup-group="flip"
+          data-showup-targets=":scope > *"
+          className="grid grid-cols-1 gap-4 [perspective:1200px] sm:grid-cols-2"
+        >
           <PrintSetCard />
           <HuntXPCard />
           <FinanceCard />
@@ -57,7 +85,9 @@ export default function Overview() {
         </div>
       </div>
 
-      <MoreWork />
+      <div data-showup-group="rise" data-showup-targets="article">
+        <MoreWork />
+      </div>
     </div>
   )
 }

@@ -69,6 +69,7 @@ export default function ProjectPreview({
   return (
     <div
       ref={ref}
+      data-showup-media
       className="pointer-events-none absolute inset-0"
       aria-hidden="true"
     >

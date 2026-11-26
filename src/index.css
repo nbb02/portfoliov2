@@ -1232,6 +1232,27 @@ h4 {
   color: #b45309;
 }
 
+/* Project hero: a caret while the H1 types itself in. The h1 keeps a visually
+   hidden copy of the full title, so the DOM text never depends on the cursor. */
+.project-title--typing > span[aria-hidden="true"]::after {
+  content: "▌";
+  margin-left: 2px;
+  color: #5eead4;
+  animation: projectCaret 1s steps(1) infinite;
+}
+
+@keyframes projectCaret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-title--typing > span[aria-hidden="true"]::after {
+    animation: none;
+  }
+}
+
 /* Spotlight work cards. At rest the border is the card colour, so there is no
    visible outline. On hover a gold/teal glow rolls around the 3px border,
    following the pointer, while the interior wash does the same inside. */

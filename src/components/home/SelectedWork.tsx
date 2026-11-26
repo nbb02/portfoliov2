@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import MobileWork from "./MobileWork"
 import { useSpotlightCards } from "./useSpotlightCards"
 import HeadlineFill from "./HeadlineFill"
+import { useShowUp } from "../projects/useShowUp"
 import {
   ClientPortalCard,
   FinanceCard,
@@ -18,6 +19,7 @@ import {
 export default function SelectedWork() {
   const sectionRef = useRef<HTMLElement>(null)
   useSpotlightCards(sectionRef)
+  useShowUp(sectionRef, "home")
 
   return (
     <section
@@ -45,7 +47,11 @@ export default function SelectedWork() {
       <MobileWork />
 
       <div className="hidden min-[600px]:block">
-        <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div
+          data-showup-group="curtain"
+          data-showup-targets=":scope > a, :scope > div > a"
+          className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-12"
+        >
           <ClientPortalCard className="lg:col-span-7 lg:h-[420px]" />
           <div className="grid gap-4 lg:col-span-5">
             <LoadBalancerCard className="lg:h-[202px]" />
@@ -53,7 +59,11 @@ export default function SelectedWork() {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div
+          data-showup-group="curtain"
+          data-showup-targets=":scope > *"
+          className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2"
+        >
           <LogisticsCard />
           <RecyclingPlatformCard />
         </div>
@@ -67,7 +77,11 @@ export default function SelectedWork() {
               Side builds.
             </h3>
           </div>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div
+            data-showup-group="flip"
+            data-showup-targets=":scope > *"
+            className="mt-4 grid grid-cols-1 gap-4 [perspective:1200px] sm:grid-cols-2"
+          >
             <PrintSetCard />
             <HuntXPCard />
             <FinanceCard />

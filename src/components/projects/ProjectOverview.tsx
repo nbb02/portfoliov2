@@ -1,10 +1,17 @@
-import { useCallback, useState, type ReactNode } from "react"
+import {
+  Fragment,
+  useCallback,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react"
 import { Link } from "react-router-dom"
 import type { IconType } from "react-icons"
 import { FiArrowUpRight, FiMaximize2 } from "react-icons/fi"
 import ImageLightbox from "../ImageLightbox"
 import TagPill from "../home/TagPill"
 import TechText from "../home/TechText"
+import { useProjectIntro } from "./useProjectIntro"
 
 type Meta = {
   label: string
@@ -136,6 +143,15 @@ export default function ProjectOverview({
   nextLabel: string
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const titleVisualRef = useRef<HTMLSpanElement>(null)
+  const stackRef = useRef<HTMLDivElement>(null)
+  const { titleMode } = useProjectIntro({
+    title,
+    titleRef,
+    visualRef: titleVisualRef,
+    stackRef,
+  })
 
   const closeLightbox = useCallback(() => setActiveIndex(null), [])
   const changeLightbox = useCallback((index: number) => {
@@ -163,8 +179,27 @@ export default function ProjectOverview({
                   <p className="text-sm font-semibold text-teal-300">{kicker}</p>
                 </div>
 
-                <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
-                  {title}
+                <h1
+                  ref={titleRef}
+                  className="mt-4 max-w-3xl overflow-hidden pb-3 -mb-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl"
+                >
+                  <span className="sr-only">{title}</span>
+                  <span
+                    ref={titleVisualRef}
+                    aria-hidden="true"
+                    className="inline-block"
+                  >
+                    {titleMode === "blur"
+                      ? title.split(" ").map((word, index, words) => (
+                          <Fragment key={`${word}-${index}`}>
+                            <span data-title-word className="inline-block">
+                              {word}
+                            </span>
+                            {index < words.length - 1 ? " " : null}
+                          </Fragment>
+                        ))
+                      : title}
+                  </span>
                 </h1>
                 <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-300">
                   {intro}
@@ -178,6 +213,7 @@ export default function ProjectOverview({
 
                 {stack && stack.length > 0 && (
                   <div
+                    ref={stackRef}
                     className="mt-4 flex flex-wrap items-center gap-2"
                     aria-label="Tech stack"
                   >
