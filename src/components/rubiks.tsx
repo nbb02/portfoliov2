@@ -10,10 +10,8 @@ const modelUrl = "/assets/rubiks_cube/rubiks_cube/rubiks_cube.gltf"
 export default function Rubiks() {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inView = useInView(wrapperRef, "50% 0px")
-  /* Holding a context costs GPU memory even when it is not drawing, and the page
-     has several; this one only has to exist near the hero, and it is built far
-     enough ahead that the model is uploaded before the cube is on screen. */
-  const near = useInView(wrapperRef, "250% 0px")
+  /* Mounted once and kept: see the `latch` argument on `useInView`. */
+  const near = useInView(wrapperRef, "250% 0px", true)
 
   function RubiksModel() {
     const gltf = useGLTF(modelUrl) as GLTF

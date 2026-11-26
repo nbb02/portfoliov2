@@ -94,5 +94,5 @@ export function useStackRipple(ref: RefObject<HTMLElement | null>) {
       resize.disconnect()
       view.disconnect()
     }
-  }, [replay])
+  }, [ref, replay])
 }

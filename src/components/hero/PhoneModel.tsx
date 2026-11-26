@@ -388,8 +388,6 @@ export default function PhoneModel({
     lastPaint.current = beamTime.current
 
     drawBeams(skin.lightContext, beamTime.current)
-    // three.js objects are mutable by design; a hook result being one is fine.
-    // eslint-disable-next-line react-hooks/immutability
     skin.lightTexture.needsUpdate = true
   })
 

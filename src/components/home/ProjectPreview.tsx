@@ -61,16 +61,13 @@ export default function ProjectPreview({
   const [mounted, setMounted] = useState(() => Math.min(2, shots.length))
 
   useEffect(() => {
-    setMounted((current) =>
-      Math.max(current, Math.min(shots.length, index + 2)),
-    )
-  }, [index, shots.length])
-
-  useEffect(() => {
     if (!inView || reduceMotion || shots.length < 2) return
 
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % shots.length)
+      /* Grows with the reel, in the timer rather than an effect: a card only
+         keeps the frames it has reached. */
+      setMounted((current) => Math.min(shots.length, current + 1))
     }, 2400)
 
     return () => window.clearInterval(timer)

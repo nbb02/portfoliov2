@@ -363,10 +363,9 @@ export default function Laptop() {
   const hostRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<OrbitControlsImpl>(null)
   const inView = useInView(wrapperRef, "50% 0px")
-  /* The context costs GPU memory whether or not it is drawing, so it is only
-     built once the slot is a few screens away — far enough that the upload
-     finishes before the lid is visible again after a trip down the page. */
-  const near = useInView(wrapperRef, "250% 0px")
+  /* Built once, then kept: a context is rebuilt far more often by unmounting
+     than it is ever worth in saved memory. Drawing is still gated by `inView`. */
+  const near = useInView(wrapperRef, "250% 0px", true)
   const [screen, setScreen] = useState<THREE.Texture | null>(() => {
     const canvas =
       cachedScreenCanvas(panelKey) ?? cachedScreenCanvas(SCREEN_PANEL_WIDTH)

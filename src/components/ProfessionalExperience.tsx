@@ -1,5 +1,6 @@
 import {
   Suspense,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -15,9 +16,8 @@ import {
   OrbitControls,
   useGLTF,
 } from "@react-three/drei"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import * as THREE from "three"
+import { useScrollOffset } from "./hero/useScrollOffset"
 import type { RoleItem } from "./journeyRoles"
 const sunModelUrl = "/assets/sun/sun/scene.gltf"
 const moonModelUrl = "/assets/moon/scene.gltf"
@@ -32,7 +32,10 @@ type SkyOrbProps = {
   orbRef: RefObject<HTMLDivElement | null>
   modelUrl: string
   opacity: number
+  /** Mounted: stays true once the sky has been built. */
   active: boolean
+  /** Drawing: follows the section's visibility, independent of mounting. */
+  drawing: boolean
 }
 
 type SceneStyles = {
@@ -267,7 +270,11 @@ function SkyScene({ body, modelUrl }: { body: SkyBody; modelUrl: string }) {
       return
     }
 
-    modelRef.current.rotation.y += delta * (body === "sun" ? 0.45 : 0.28)
+    /* Clamped: the loop is stopped between visits, and the first frame back
+       would otherwise carry the whole gap and snap the rotation. */
+    const step = Math.min(delta, 1 / 30)
+
+    modelRef.current.rotation.y += step * (body === "sun" ? 0.45 : 0.28)
     modelRef.current.rotation.x =
       Math.sin(state.clock.elapsedTime * 0.7) * 0.08 + tilt
   })
@@ -294,6 +301,7 @@ function SkyOrb({
   modelUrl,
   opacity,
   active,
+  drawing,
 }: SkyOrbProps) {
   return (
     <div
@@ -308,6 +316,12 @@ function SkyOrb({
         camera={{ position: [0, 0, 9], fov: body === "sun" ? 32 : 30 }}
         dpr={[1, 2]}
         gl={{ alpha: true, antialias: true }}
+        /*
+         * "never", not "demand": OrbitControls' autoRotate invalidates every
+         * frame, so a demand loop keeps drawing the orb long after the journey
+         * has scrolled away.
+         */
+        frameloop={drawing ? "always" : "never"}
       >
         <ambientLight intensity={1.1} />
         <directionalLight position={[3, 4, 5]} intensity={1.8} />
@@ -355,19 +369,33 @@ export default function ProfessionalExperience({
   className?: string
   atmosphere?: boolean
 }) {
-  const sectionRef = useRef<HTMLElement>(null)
   const sectionPanelRef = useRef<HTMLDivElement>(null)
   const sunRef = useRef<HTMLDivElement>(null)
   const moonRef = useRef<HTMLDivElement>(null)
   const [isNight, setIsNight] = useState(false)
   const [showHint, setShowHint] = useState(true)
   const [showSky, setShowSky] = useState(!atmosphere)
+  /* Once the sky has been built it stays: two contexts and a 5 MB model are
+     cheaper to keep than to rebuild mid-scroll on the way back up. */
+  const [skyReady, setSkyReady] = useState(!atmosphere)
   const initialScene = buildSceneStyles(0)
+
+  /*
+   * GSAP's ScrollTrigger used to drive this section. It runs its update on every
+   * scroll event anywhere on the page, so it kept costing a third of the main
+   * thread while the visitor read the section below — a rAF-throttled rect read
+   * gives the same number and nothing else.
+   */
+  const driveRef = useRef<(progress: number) => void>(() => {})
+  const handleScroll = useCallback((offset: number, span: number) => {
+    driveRef.current(span > 0 ? clamp(offset / span) : 0)
+  }, [])
+  const { targetRef } = useScrollOffset<HTMLElement>(handleScroll)
 
   useEffect(() => {
     if (!atmosphere) return
 
-    const section = sectionRef.current
+    const section = targetRef.current
     if (!section) return
 
     const desktopQuery = window.matchMedia("(min-width: 769px)")
@@ -376,6 +404,8 @@ export default function ProfessionalExperience({
     const sync = () => {
       const active = desktopQuery.matches && inRange
       setShowSky(active)
+      /* Latch, in the callback rather than an effect: see `useInView`. */
+      if (active) setSkyReady(true)
 
       if (active) {
         void useGLTF.preload(sunModelUrl)
@@ -404,10 +434,10 @@ export default function ProfessionalExperience({
       observer.disconnect()
       desktopQuery.removeEventListener("change", sync)
     }
-  }, [atmosphere])
+  }, [atmosphere, targetRef])
 
   useLayoutEffect(() => {
-    const shell = sectionRef.current
+    const shell = targetRef.current
     const panel = sectionPanelRef.current
     const sun = sunRef.current
     const moon = moonRef.current
@@ -415,8 +445,6 @@ export default function ProfessionalExperience({
     if (!shell || !panel || !sun || !moon) {
       return
     }
-
-    gsap.registerPlugin(ScrollTrigger)
 
     const state = { progress: 0 }
     const prefersReducedMotion = window.matchMedia(
@@ -428,10 +456,17 @@ export default function ProfessionalExperience({
       ? Array.from(timeline.querySelectorAll<HTMLElement>(".journey-entry"))
       : []
 
+    let lastTimeline = -1
+
     const updateTimeline = (progress: number) => {
       if (!timeline) return
 
       const value = prefersReducedMotion ? 1 : clamp(progress)
+      /* Only touched when it moves: this is called on every scroll frame. */
+      const key = Math.round(value * 1000) / 1000
+      if (key === lastTimeline) return
+      lastTimeline = key
+
       timeline.style.setProperty("--timeline", value.toFixed(3))
 
       timelineEntries.forEach((entry, index) => {
@@ -461,6 +496,8 @@ export default function ProfessionalExperience({
 
       timeline.style.setProperty("--rail-top", `${start}px`)
       timeline.style.setProperty("--rail-height", `${Math.max(0, end - start)}px`)
+      /* Fresh thresholds: let the next frame re-apply the active classes. */
+      lastTimeline = -1
     }
 
     measureRail()
@@ -471,16 +508,33 @@ export default function ProfessionalExperience({
       railObserver.observe(timeline)
     }
 
+    /* The orbs sit at percentages of the panel, so its size is read here and on
+       resize rather than inside the scroll callback. */
+    const size = { w: panel.clientWidth, h: panel.clientHeight }
+    const sizeObserver = new ResizeObserver(() => {
+      size.w = panel.clientWidth
+      size.h = panel.clientHeight
+    })
+    sizeObserver.observe(panel)
+
     const written = {
       top: "",
       bottom: "",
       vars: new Map<string, string>(),
     }
 
+    const placeOrb = (
+      element: HTMLElement,
+      left: number,
+      top: number,
+      opacity: number,
+    ) => {
+      element.style.transform = `translate(-50%, -50%) translate3d(${(left / 100) * size.w}px, ${(top / 100) * size.h}px, 0)`
+      element.style.opacity = String(opacity)
+    }
+
     const renderScene = () => {
       const scene = buildSceneStyles(state.progress)
-      const width = panel.clientWidth
-      const height = panel.clientHeight
 
       /*
        * The palette is two custom properties rather than a rebuilt gradient
@@ -503,20 +557,8 @@ export default function ProfessionalExperience({
         panel.style.setProperty(key, value)
       }
 
-      gsap.set(sun, {
-        xPercent: -50,
-        yPercent: -50,
-        x: (scene.sunLeft / 100) * width,
-        y: (scene.sunTop / 100) * height,
-        opacity: scene.sunOpacity,
-      })
-      gsap.set(moon, {
-        xPercent: -50,
-        yPercent: -50,
-        x: (scene.moonLeft / 100) * width,
-        y: (scene.moonTop / 100) * height,
-        opacity: scene.moonOpacity,
-      })
+      placeOrb(sun, scene.sunLeft, scene.sunTop, scene.sunOpacity)
+      placeOrb(moon, scene.moonLeft, scene.moonTop, scene.moonOpacity)
     }
 
     /* Positions the orbs even on the page that has no scroll choreography. */
@@ -528,48 +570,41 @@ export default function ProfessionalExperience({
       const isDesktop = window.matchMedia("(min-width: 769px)").matches
       let currentState = 0
       let hintVisible = true
+      let sceneFrame = 0
 
+      const easeInOut = (t: number) =>
+        t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2
+
+      /* The phone crossfades day into night over 1.6s; this is that tween. */
       const setScene = (nextState: number) => {
         if (nextState === currentState) return
 
         currentState = nextState
         setIsNight(nextState === 1)
+        cancelAnimationFrame(sceneFrame)
 
-        gsap.killTweensOf(state)
-        gsap.to(state, {
-          progress: nextState,
-          duration: prefersReducedMotion ? 0.01 : 1.6,
-          ease: "power2.inOut",
-          onUpdate: renderScene,
-        })
-      }
-
-      if (!isDesktop) {
-        const mobileTrigger = ScrollTrigger.create({
-          trigger: panel,
-          start: "top 45%",
-          end: "bottom 40%",
-          onUpdate: (self) => updateTimeline(self.progress),
-          onEnter: () => setScene(1),
-          onLeaveBack: () => setScene(0),
-        })
-
-        return () => {
-          mobileTrigger.kill()
-          gsap.killTweensOf(state)
-          railObserver?.disconnect()
+        if (prefersReducedMotion) {
+          state.progress = nextState
+          renderScene()
+          return
         }
+
+        const from = state.progress
+        const started = performance.now()
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - started) / 1600)
+          state.progress = from + (nextState - from) * easeInOut(t)
+          renderScene()
+          if (t < 1) sceneFrame = requestAnimationFrame(tick)
+        }
+        sceneFrame = requestAnimationFrame(tick)
       }
 
-      // Desktop drives the palette from scroll distance rather than a fixed
-      // duration, so a fast flick still lands on the right scene instead of
-      // outrunning a timed tween and never being seen.
-      const trigger = ScrollTrigger.create({
-        trigger: shell,
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: (self) => {
-          const sceneTarget = clamp(self.progress / SCENE_SCROLL_SPAN)
+      if (isDesktop) {
+        // Desktop drives the palette from scroll distance rather than a fixed
+        // duration, so a fast flick still lands on the right scene.
+        driveRef.current = (progress) => {
+          const sceneTarget = clamp(progress / SCENE_SCROLL_SPAN)
 
           state.progress = sceneTarget
           renderScene()
@@ -581,42 +616,50 @@ export default function ProfessionalExperience({
           }
 
           setIsNight(sceneTarget >= 0.5)
-          updateTimeline(clamp((self.progress - 0.08) / 0.58))
-        },
-      })
+          updateTimeline(clamp((progress - 0.08) / 0.58))
+        }
+      } else {
+        /*
+         * Phones keep the viewport-anchored range the trigger used: "top 45%"
+         * to "bottom 40%" of the panel, so the palette flips where it always
+         * did. The rect is read here because that range is viewport-relative,
+         * not section-relative.
+         */
+        driveRef.current = () => {
+          const rect = shell.getBoundingClientRect()
+          const scrollY = window.scrollY
+          const start = scrollY + rect.top - window.innerHeight * 0.45
+          const end = scrollY + rect.bottom - window.innerHeight * 0.4
+          const progress = clamp((scrollY - start) / Math.max(1, end - start))
+
+          updateTimeline(progress)
+          setScene(progress > 0 ? 1 : 0)
+        }
+      }
 
       return () => {
-        trigger.kill()
-        gsap.killTweensOf(state)
+        driveRef.current = () => {}
+        cancelAnimationFrame(sceneFrame)
         railObserver?.disconnect()
+        sizeObserver.disconnect()
       }
     }
 
-    const ctx = gsap.context(() => {
+    driveRef.current = (progress) => {
+      state.progress = progress
       renderScene()
-
-      gsap.to(state, {
-        progress: 1,
-        ease: "none",
-        onUpdate: renderScene,
-        scrollTrigger: {
-          trigger: shell,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1.2,
-        },
-      })
-    }, shell)
+    }
 
     return () => {
+      driveRef.current = () => {}
       railObserver?.disconnect()
-      ctx.revert()
+      sizeObserver.disconnect()
     }
-  }, [atmosphere])
+  }, [atmosphere, targetRef])
 
   return (
     <section
-      ref={sectionRef}
+      ref={targetRef}
       className={`professional-scroll-shell ${className}`}
     >
       <div
@@ -660,7 +703,8 @@ export default function ProfessionalExperience({
             orbRef={sunRef}
             modelUrl={sunModelUrl}
             opacity={initialScene.sunOpacity}
-            active={showSky}
+            active={skyReady}
+            drawing={showSky}
           />
           <SkyOrb
             body="moon"
@@ -668,7 +712,8 @@ export default function ProfessionalExperience({
             orbRef={moonRef}
             modelUrl={moonModelUrl}
             opacity={initialScene.moonOpacity}
-            active={showSky}
+            active={skyReady}
+            drawing={showSky}
           />
         </div>
 

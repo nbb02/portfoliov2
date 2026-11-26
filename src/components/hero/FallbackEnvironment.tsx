@@ -10,7 +10,7 @@ let cached: THREE.CanvasTexture | null = null
  * diffuse response, so without an environment map a metalness-heavy model
  * renders as a black silhouette rather than an under-lit one.
  */
-export function fallbackEnvironment() {
+function fallbackEnvironment() {
   if (cached) return cached
 
   const canvas = document.createElement("canvas")
@@ -44,6 +44,8 @@ export default function FallbackEnvironment() {
 
   useEffect(() => {
     const previous = scene.environment
+    // three.js objects are mutable by design; a hook result being one is fine.
+    // eslint-disable-next-line react-hooks/immutability
     scene.environment = fallbackEnvironment()
     return () => {
       scene.environment = previous

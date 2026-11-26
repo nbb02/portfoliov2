@@ -75,7 +75,6 @@ export function capturePanel(
       height: options.height,
       pixelRatio: options.pixelRatio ?? 1,
       backgroundColor: "#0D1117",
-      cacheBust: true,
       // The host is parked offscreen so it never shows; the clone has to be
       // laid out at the origin or the capture comes back blank.
       style: { position: "static", left: "auto", top: "auto" },

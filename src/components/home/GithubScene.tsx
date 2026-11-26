@@ -5,8 +5,8 @@ import { useInView } from "../useInView"
 import {
   PHONE_SCREEN_ASPECT,
   SCREEN_ASPECT,
+  SCREEN_CAPTURE_RATIO,
   screenCacheKey,
-  screenPixelRatio,
 } from "../hero/screenGeometry"
 import {
   HERO_PANEL_KEY,
@@ -34,6 +34,13 @@ const CINEMATIC_VH = 200
  */
 const PANEL_REVEAL = 0.95
 const INTRO_END = 0.18
+
+/**
+ * Progress at which the swapped-in panel is mounted. It used to be mounted with
+ * the whole dolly, which put a second copy of the panel's DOM — several hundred
+ * nodes — into the layout for the entire scroll toward this section.
+ */
+const BRIDGE_MOUNT = 0.8
 
 /**
  * The width gate picks the device, not the choreography: a phone screen is the
@@ -83,13 +90,13 @@ export default function GithubScene() {
   )
 
   /*
-   * The screen fills the viewport at the end of the dolly, so its capture is
-   * rasterised at the same density the canvas draws at. Both have to move
-   * together: a 1× bitmap behind a 2× canvas is upscaled by the sampler and
-   * again by the display, which is what made the lid look soft on laptops.
+   * The screen fills the viewport at the end of the dolly, so its capture used
+   * to be rasterised at the same density the canvas draws at. It is rasterised
+   * at 1× now: the rasterise is a long main-thread task, and it was the one
+   * thing that reliably stuttered the scroll into this section.
    */
   const aspect = mobile ? PHONE_SCREEN_ASPECT : SCREEN_ASPECT
-  const screenRatio = screenPixelRatio(columnWidth, aspect)
+  const screenRatio = SCREEN_CAPTURE_RATIO
   const screenKey = screenCacheKey(columnWidth, screenRatio)
 
   /* Coming back to the scene reuses this viewport's capture until it is retaken. */
@@ -167,21 +174,27 @@ export default function GithubScene() {
    * capture is the same layout the page draws, the last frame of the dolly and
    * the top of the real page are the same pixels — the handoff cannot flick.
    */
-  const capturedKey = useRef("")
+  /*
+   * Starts from the cached bitmap when there is one: this ref is per mount, and
+   * a mount that starts at "" re-rasterises the whole panel even though the
+   * canvas is already in memory.
+   */
+  const capturedKey = useRef(cachedScreenCanvas(screenKey) ? screenKey : "")
   useEffect(() => {
     if (reduced || !panelHeight || !panelNear) return
     const node = panelRef.current
     if (!node || capturedKey.current === screenKey) return
 
     let cancelled = false
+    let started = false
+    let settle = 0
+    let idle = 0
+
     const run = async () => {
       try {
         /*
-         * Only the rows the screen shows are rasterised. At the render's own
-         * density the whole panel would be four times the bitmap for a page
-         * whose lower half never reaches the screen; cropping to the slice
-         * keeps the extra detail inside the memory a 1× full-height capture
-         * already took.
+         * Only the rows the screen shows are rasterised: a full-height capture
+         * would be mostly page that never reaches the screen.
          */
         const canvas = await capturePanel(node, columnWidth, {
           height: Math.round(columnWidth / aspect),
@@ -200,10 +213,27 @@ export default function GithubScene() {
       }
     }
 
-    const idle = window.requestIdleCallback(run, { timeout: 4000 })
+    /*
+     * Rasterising the panel is a long task. Running it on proximity put it in
+     * the middle of the scroll toward this section, which is what made the
+     * approach stutter; it waits for the scroll to settle instead.
+     */
+    const schedule = () => {
+      if (started) return
+      window.clearTimeout(settle)
+      settle = window.setTimeout(() => {
+        started = true
+        idle = window.requestIdleCallback(run, { timeout: 2000 })
+      }, 250)
+    }
+
+    schedule()
+    window.addEventListener("scroll", schedule, { passive: true })
     return () => {
       cancelled = true
-      window.cancelIdleCallback(idle)
+      window.removeEventListener("scroll", schedule)
+      window.clearTimeout(settle)
+      if (idle) window.cancelIdleCallback(idle)
     }
   }, [reduced, panelHeight, panelNear, columnWidth, aspect, screenRatio, screenKey])
 
@@ -285,8 +315,11 @@ function Dolly({
   const lastSpan = useRef(0)
   const screenRect = useRef<ScreenRect | null>(null)
   const cinemaRef = useRef(0)
+  const applied = useRef({ p: -1, quad: "" })
   const [render3d, setRender3d] = useState(true)
   const render3dRef = useRef(true)
+  const [bridgeOn, setBridgeOn] = useState(false)
+  const bridgeOnRef = useRef(false)
 
   const applyProgress = useCallback(
     (offset: number, span: number) => {
@@ -295,11 +328,28 @@ function Dolly({
       const p = span > 0 ? clamp01(offset / span) : 0
       cinemaRef.current = p
 
+      /*
+       * Every one of these writes invalidates style for the frame's subtree,
+       * and the bridge inside it is the whole panel — about 5 ms a frame. Once
+       * the dolly is released nothing changes, so leave the DOM alone: the
+       * panel below scrolls with no style work at all.
+       */
+      const quad = screenRect.current
+      const quadKey = quad
+        ? `${quad.left}|${quad.top}|${quad.width}|${quad.height}`
+        : ""
+      if (applied.current.p === p && applied.current.quad === quadKey) return
+      applied.current = { p, quad: quadKey }
+
+      if (p >= BRIDGE_MOUNT && !bridgeOnRef.current) {
+        bridgeOnRef.current = true
+        setBridgeOn(true)
+      }
+
       const intro = introRef.current
       const bridge = bridgeRef.current
       const inner = bridgeInnerRef.current
       const canvas = canvasRef.current
-      const quad = screenRect.current
 
       if (quad && quad.width > 1) {
         const bridgeScale = quad.width / columnWidth
@@ -410,11 +460,11 @@ function Dolly({
   )
   const { targetRef } = useScrollOffset<HTMLElement>(handleOffset)
   /*
-   * Mount the dolly a couple of screens early rather than a screen: building the
-   * context and uploading the model is the expensive half, and doing it off
-   * screen means the first visible frame is already warm.
+   * Built once and kept, like the hero: unmounting this canvas means re-creating
+   * a full-viewport context, re-uploading the model and rasterising the panel
+   * again the next time it comes into range.
    */
-  const mounted = useInView(targetRef, "250% 0px")
+  const mounted = useInView(targetRef, "250% 0px", true)
   /* Drawing follows actual visibility, so a warm canvas that is still above the
      pin does not compete with the hero for the frame. */
   const visible = useInView(targetRef, "0px 0px")
@@ -476,9 +526,11 @@ function Dolly({
             ref={bridgeInnerRef}
             style={{ width: columnWidth, transformOrigin: "0 0" }}
           >
-            <Suspense fallback={null}>
-              <GithubPanel />
-            </Suspense>
+            {bridgeOn && (
+              <Suspense fallback={null}>
+                <GithubPanel />
+              </Suspense>
+            )}
           </div>
         </div>
       </div>
