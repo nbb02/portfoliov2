@@ -53,7 +53,7 @@ function play(
     created.push(
       el.animate(
         [
-          { clipPath: "inset(100% 0 0 0 round 16px)" },
+          { clipPath: "inset(0 0 100% 0 round 16px)" },
           { clipPath: "inset(0 0 0 0 round 16px)" },
         ],
         { duration: 700, delay, easing: EASE, fill: "backwards" },

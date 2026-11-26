@@ -272,6 +272,8 @@ export default function MobileWork() {
     <div className="min-[600px]:hidden">
       <div
         className="relative mt-8"
+        data-showup-group="curtain"
+        data-showup-targets=":scope > a"
         onPointerEnter={pause}
         onPointerLeave={resume}
         onFocus={pause}
@@ -347,7 +349,11 @@ export default function MobileWork() {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5">
+      <div
+        className="mt-4 grid grid-cols-2 gap-2.5"
+        data-showup-group="curtain"
+        data-showup-targets=":scope > *"
+      >
         {others.map((entry) => (
           <Tile key={entry.id} project={entry} />
         ))}
@@ -369,7 +375,11 @@ export default function MobileWork() {
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2.5">
+      <div
+        className="mt-3 grid grid-cols-2 gap-2.5 [perspective:1200px]"
+        data-showup-group="flip"
+        data-showup-targets=":scope > *"
+      >
         {SIDE_BUILDS.map((entry) => (
           <Tile key={entry.id} project={entry} compact />
         ))}
